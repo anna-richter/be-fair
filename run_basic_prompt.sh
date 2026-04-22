@@ -5,7 +5,7 @@
 #SBATCH --job-name=basic_prompt
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --mem=16G
+#SBATCH --mem-per-cpu=16G
 #SBATCH --partition=gpu
 #SBATCH --account=sc-users
 #SBATCH --output=basic_prompt_1.o%j 
