@@ -1,16 +1,18 @@
 #!/bin/bash
 
 #SBATCH --time 12:00:00
-#SBATCH --gres=gpu:1 
-#SBATCH -J basic_prompt
+#SBATCH --gres=shard:1 
+#SBATCH --job-name=basic_prompt
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=16G
-#SBATCH --comment=”preemption=yes;requeue=true;gpu_mps=yes”
+#SBATCH --partition=gpu
+#SBATCH --account=sc-users
+#SBATCH --output=basic_prompt_1.o%j 
+#SBATCH --error=basic_prompt_1.e%j
 
 
-source /share/apps/anaconda3/2025.06/etc/profile.d/conda.sh
-conda activate /scratch/ar10265/be-fair/be-fair-env
+conda activate be_fair_env
 export OPENAI_API_KEY=$OPENAI_API_KEY
 
 srun aide agent.expose_prediction=true \
