@@ -1,15 +1,15 @@
 #!/bin/bash
 
-#SBATCH --time 12:00:00
-#SBATCH --gres=shard:1 
-#SBATCH --job-name=7_basic_prompt
+#SBATCH --time 24:00:00
+#SBATCH --gres=gpu:1 
+#SBATCH --job-name=%a_basic_prompt
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem-per-cpu=16G
 #SBATCH --partition=gpu
 #SBATCH --account=sc-users
-#SBATCH --output=7_basic_prompt.o%j 
-#SBATCH --error=7_basic_prompt.e%j
+#SBATCH --output=%a_basic_prompt.o%j 
+#SBATCH --error=%a_basic_prompt.e%j
 
 
 source /opt/miniforge/etc/profile.d/conda.sh
