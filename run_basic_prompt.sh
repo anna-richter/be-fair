@@ -2,16 +2,17 @@
 
 #SBATCH --time 12:00:00
 #SBATCH --gres=shard:1 
-#SBATCH --job-name=basic_prompt
+#SBATCH --job-name=7_basic_prompt
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem-per-cpu=16G
 #SBATCH --partition=gpu
 #SBATCH --account=sc-users
-#SBATCH --output=basic_prompt_1.o%j 
-#SBATCH --error=basic_prompt_1.e%j
+#SBATCH --output=7_basic_prompt.o%j 
+#SBATCH --error=7_basic_prompt.e%j
 
 
+source /opt/miniforge/etc/profile.d/conda.sh
 conda activate be_fair_env
 export OPENAI_API_KEY=$OPENAI_API_KEY
 
