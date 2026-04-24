@@ -208,6 +208,7 @@ __marimo__/
 
 # custom
 *.jpg
+*.png
 .DS_Store
 *.pth
 *.pkl
