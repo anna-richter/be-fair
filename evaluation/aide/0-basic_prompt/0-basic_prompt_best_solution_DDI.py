@@ -9,6 +9,9 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import StratifiedKFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
+# --- BEGIN CHANGE ---
+import joblib
+# --- END CHANGE ---
 
 
 class SkinDataset(Dataset):

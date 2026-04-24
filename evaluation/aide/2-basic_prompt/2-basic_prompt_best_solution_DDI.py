@@ -12,6 +12,9 @@ from sklearn.metrics import roc_auc_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
+# --- BEGIN CHANGE ---
+import joblib
+# --- END CHANGE ---
 
 
 class ImagePathsDataset(Dataset):
@@ -185,5 +188,61 @@ def main():
     print("Saved submission.csv to ./working/")
 
 
+# --- BEGIN CHANGE ---
+#if __name__ == "__main__":
+#    main()
+# --- END CHANGE ---
+
+# --- BEGIN CHANGE ---
 if __name__ == "__main__":
-    main()
+    mlp_path = os.path.join("working", "mlp_models.pkl")
+    if not os.path.exists(mlp_path):
+        print(f"Warning: model artifact not found at {mlp_path}. Skipping DDI inference.")
+        exit(1)
+    DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+    backbone = timm.create_model("efficientnet_b0", pretrained=False)
+    backbone.eval()
+    backbone.feature_dim = backbone.num_features
+    backbone_path = os.path.join("working", "model.pth")
+    if os.path.exists(backbone_path):
+        backbone.load_state_dict(torch.load(backbone_path, map_location=DEVICE))
+    backbone = backbone.to(DEVICE)
+    mlp_models = joblib.load(mlp_path)
+    transform_orig = T.Compose(
+        [
+            T.Resize((224, 224)),
+            T.ToTensor(),
+            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
+    transform_flip = T.Compose(
+        [
+            T.Resize((224, 224)),
+            T.RandomHorizontalFlip(p=1.0),
+            T.ToTensor(),
+            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
+    ddi_image_dir = os.path.join("..", "..", "DDI", "images")
+    ddi_paths = sorted(
+        os.path.join(ddi_image_dir, f)
+        for f in os.listdir(ddi_image_dir)
+        if f.lower().endswith(".png")
+    )
+    preds = predict(
+        ddi_paths,
+        backbone,
+        mlp_models,
+        device=DEVICE,
+        transforms=[transform_orig, transform_flip],
+        batch_size=32,
+    )
+    predictions = pd.DataFrame(
+        {
+            "DDI_file": [os.path.basename(p) for p in ddi_paths],
+            "predicted_probability": preds,
+        }
+    )
+    predictions.to_csv("2-basic_prompt_DDI_predictions.csv", index=False)
+    print(f"Saved {len(predictions)} predictions to 2-basic_prompt_DDI_predictions.csv")
+# --- END CHANGE ---

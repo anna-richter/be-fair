@@ -185,10 +185,15 @@ def main():
             [
                 os.path.join(TEST_DIR, f)
                 for f in os.listdir(TEST_DIR)
-                if f.endswith(".jpg")
+# --- BEGIN CHANGE ---
+#                if f.endswith(".jpg")
+                if f.endswith(".png")
+# --- END CHANGE ---
             ]
         )
         test_probs = predict(model, test_paths, base_transform, tta_transforms, DEVICE)
+# --- BEGIN CHANGE ---
+        """
         submission = pd.DataFrame(
             {
                 "image_name": [
@@ -197,9 +202,79 @@ def main():
                 "malignant_probability": test_probs,
             }
         )
+        """
+        submission = pd.DataFrame(
+            {
+                "DDI_file": [os.path.basename(p) for p in test_paths],
+                "predicted_probability": test_probs,
+            }
+        )
+# --- END CHANGE ---
         os.makedirs("./working", exist_ok=True)
         submission.to_csv("./working/submission.csv", index=False)
 
 
+# --- BEGIN CHANGE ---
+#if __name__ == "__main__":
+#    main()
+# --- END CHANGE ---
+
+# --- BEGIN CHANGE ---
 if __name__ == "__main__":
-    main()
+    model_path = os.path.join("working", "model.pth")
+    if not os.path.exists(model_path):
+        print(f"Warning: model artifact not found at {model_path}. Skipping DDI inference.")
+        exit(1)
+    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    base_transform = T.Compose(
+        [
+            T.Resize((224, 224)),
+            T.ToTensor(),
+            T.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+        ]
+    )
+    tta_h = T.Compose(
+        [
+            T.Resize((224, 224)),
+            T.RandomHorizontalFlip(p=1.0),
+            T.ToTensor(),
+            T.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+        ]
+    )
+    tta_v = T.Compose(
+        [
+            T.Resize((224, 224)),
+            T.RandomVerticalFlip(p=1.0),
+            T.ToTensor(),
+            T.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+        ]
+    )
+    tta_hv = T.Compose(
+        [
+            T.Resize((224, 224)),
+            T.RandomHorizontalFlip(p=1.0),
+            T.RandomVerticalFlip(p=1.0),
+            T.ToTensor(),
+            T.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+        ]
+    )
+    tta_transforms = [base_transform, tta_h, tta_v, tta_hv]
+    model = timm.create_model("efficientnet_b0", pretrained=False, num_classes=1)
+    model.load_state_dict(torch.load(model_path, map_location=DEVICE))
+    model = model.to(DEVICE)
+    ddi_image_dir = os.path.join("..", "..", "DDI", "images")
+    ddi_paths = sorted(
+        os.path.join(ddi_image_dir, f)
+        for f in os.listdir(ddi_image_dir)
+        if f.lower().endswith(".png")
+    )
+    ddi_probs = predict(model, ddi_paths, base_transform, tta_transforms, DEVICE)
+    predictions = pd.DataFrame(
+        {
+            "DDI_file": [os.path.basename(p) for p in ddi_paths],
+            "predicted_probability": ddi_probs,
+        }
+    )
+    predictions.to_csv("6-basic_prompt_DDI_predictions.csv", index=False)
+    print(f"Saved {len(predictions)} predictions to 6-basic_prompt_DDI_predictions.csv")
+# --- END CHANGE ---

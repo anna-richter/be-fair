@@ -24,7 +24,10 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, idx):
         name = self.names[idx]
-        path = os.path.join(self.dir, name + ".jpg")
+# --- BEGIN CHANGE ---
+#        path = os.path.join(self.dir, name + ".jpg")
+        path = os.path.join(self.dir, name + ".png")
+# --- END CHANGE ---
         img = Image.open(path).convert("RGB")
         return self.transform(img), name
 
@@ -62,20 +65,33 @@ def predict(image_folder: str, model_path: str = "working/pipeline.pkl"):
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
     )
+# --- BEGIN CHANGE ---
+    """
     imgs = [
         os.path.splitext(f)[0]
         for f in os.listdir(image_folder)
         if f.lower().endswith(".jpg")
     ]
+    """
+    imgs = sorted(
+        os.path.splitext(f)[0]
+        for f in os.listdir(image_folder)
+        if f.lower().endswith(".png")
+    )
+# --- END CHANGE ---
     ds = ImageDataset(imgs, image_folder, tfm)
     loader = DataLoader(ds, batch_size=64, shuffle=False, num_workers=4)
     feats, names = extract_features(backbone, loader, device)
     pipeline = joblib.load(model_path)
     probs = pipeline.predict_proba(feats)[:, 1]
-    return pd.DataFrame({"image_name": names, "malignant_prob": probs})
+# --- BEGIN CHANGE ---
+#    return pd.DataFrame({"image_name": names, "malignant_prob": probs})
+    return pd.DataFrame({"DDI_file": [n + ".png" for n in names], "predicted_probability": probs})
+# --- END CHANGE ---
 
 
 if __name__ == "__main__":
+    """
     # Paths
     csv_path = "./input/mydataset.csv"
     image_dir = "./input/MyImages"
@@ -137,3 +153,12 @@ if __name__ == "__main__":
     if os.path.isdir(test_folder):
         sub = predict(test_folder, os.path.join(working_dir, "pipeline.pkl"))
         sub.to_csv(os.path.join(working_dir, "submission.csv"), index=False)
+    """
+
+# --- BEGIN CHANGE ---
+if __name__ == "__main__":
+    ddi_image_dir = os.path.join("..", "..", "DDI", "images")
+    predictions = predict(ddi_image_dir, model_path=os.path.join("working", "pipeline.pkl"))
+    predictions.to_csv("10-basic_prompt_DDI_predictions.csv", index=False)
+    print(f"Saved {len(predictions)} predictions to 10-basic_prompt_DDI_predictions.csv")
+# --- END CHANGE ---

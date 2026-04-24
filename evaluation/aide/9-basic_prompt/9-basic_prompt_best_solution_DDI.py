@@ -39,8 +39,12 @@ def predict(
     model.eval()
     results = []
     for fname in sorted(os.listdir(image_folder)):
-        if not fname.lower().endswith(".jpg"):
+# --- BEGIN CHANGE ---
+#        if not fname.lower().endswith(".jpg"):
+#            continue
+        if not fname.lower().endswith(".png"):
             continue
+# --- END CHANGE ---
         image = Image.open(os.path.join(image_folder, fname)).convert("RGB")
         img_t = transform(image).unsqueeze(0).to(device)  # 1,C,H,W
         with torch.no_grad():
@@ -48,7 +52,10 @@ def predict(
             logits2 = model(torch.flip(img_t, dims=[3]))
             avg_logit = (logits1 + logits2) / 2
             prob = torch.sigmoid(avg_logit).cpu().item()
-        results.append({"image_name": os.path.splitext(fname)[0], "probability": prob})
+# --- BEGIN CHANGE ---
+#        results.append({"image_name": os.path.splitext(fname)[0], "probability": prob})
+        results.append({"DDI_file": fname, "predicted_probability": prob})
+# --- END CHANGE ---
     return pd.DataFrame(results)
 
 
@@ -138,5 +145,33 @@ def main():
         print("Saved submission.csv")
 
 
+# --- BEGIN CHANGE ---
+#if __name__ == "__main__":
+#    main()
+# --- END CHANGE ---
+
+# --- BEGIN CHANGE ---
 if __name__ == "__main__":
-    main()
+    model_path = os.path.join("working", "model.pth")
+    if not os.path.exists(model_path):
+        print(f"Warning: model artifact not found at {model_path}. Skipping DDI inference.")
+        exit(1)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    val_tf = transforms.Compose(
+        [
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
+    model = models.efficientnet_b0(pretrained=False)
+    in_features = model.classifier[1].in_features
+    model.classifier[1] = nn.Linear(in_features, 1)
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model = model.to(device)
+    ddi_image_dir = os.path.join("..", "..", "DDI", "images")
+    predictions = predict(ddi_image_dir, model, device, val_tf)
+    predictions.to_csv("9-basic_prompt_DDI_predictions.csv", index=False)
+    print(f"Saved {len(predictions)} predictions to 9-basic_prompt_DDI_predictions.csv")
+# --- END CHANGE ---

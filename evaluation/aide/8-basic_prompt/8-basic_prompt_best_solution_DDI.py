@@ -144,5 +144,28 @@ def main():
     print(f"Best Validation AUROC: {best_auc:.4f}")
 
 
+# --- BEGIN CHANGE ---
+#if __name__ == "__main__":
+#    main()
+# --- END CHANGE ---
+
+# --- BEGIN CHANGE ---
 if __name__ == "__main__":
-    main()
+    model_path = os.path.join("working", "model.pth")
+    if not os.path.exists(model_path):
+        print(f"Warning: model artifact not found at {model_path}. Skipping DDI inference.")
+        exit(1)
+    ddi_image_dir = os.path.join("..", "..", "DDI", "images")
+    ddi_paths = sorted(
+        os.path.join(ddi_image_dir, f)
+        for f in os.listdir(ddi_image_dir)
+        if f.lower().endswith(".png")
+    )
+    results = predict(ddi_paths, model_path=model_path)
+    predictions = pd.DataFrame([
+        {"DDI_file": os.path.basename(p), "predicted_probability": prob}
+        for p, prob in results.items()
+    ])
+    predictions.to_csv("8-basic_prompt_DDI_predictions.csv", index=False)
+    print(f"Saved {len(predictions)} predictions to 8-basic_prompt_DDI_predictions.csv")
+# --- END CHANGE ---

@@ -8,8 +8,12 @@ from torchvision import transforms, models
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score
 import lightgbm as lgb
+# --- BEGIN CHANGE ---
+import joblib
+# --- END CHANGE ---
 
 # 1. Load metadata and labels
+"""
 df = pd.read_csv("input/mydataset.csv")
 df["binary_label"] = (df["label"] == "malignant").astype(int)
 image_paths = (
@@ -18,6 +22,7 @@ image_paths = (
     .tolist()
 )
 y = df["binary_label"].values
+"""
 
 # 2. Prepare device, backbone and transforms
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -56,9 +61,12 @@ def extract_features(paths):
 
 
 # 3. Extract features
-features = extract_features(image_paths)
+# --- BEGIN CHANGE ---
+#features = extract_features(image_paths)
+# --- END CHANGE ---
 
 # 4. 5‐fold CV with LightGBM
+"""
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 aucs = []
 for train_idx, val_idx in skf.split(features, y):
@@ -78,6 +86,7 @@ final_clf = lgb.LGBMClassifier(
     n_estimators=200, learning_rate=0.05, random_state=42, n_jobs=-1
 )
 final_clf.fit(features, y)
+"""
 
 
 def predict(image_dir):
@@ -88,7 +97,10 @@ def predict(image_dir):
     Returns:
         pandas.DataFrame: columns ['image_name','malignant_prob']
     """
-    img_files = sorted([f for f in os.listdir(image_dir) if f.lower().endswith(".jpg")])
+# --- BEGIN CHANGE ---
+#    img_files = sorted([f for f in os.listdir(image_dir) if f.lower().endswith(".jpg")])
+    img_files = sorted([f for f in os.listdir(image_dir) if f.lower().endswith(".png")])
+# --- END CHANGE ---
     probs = []
     with torch.no_grad():
         for fname in img_files:
@@ -108,11 +120,29 @@ def predict(image_dir):
             feat = (agg / len(variants)).reshape(1, -1)
             p = final_clf.predict_proba(feat)[0, 1]
             probs.append(p)
-    return pd.DataFrame({"image_name": img_files, "malignant_prob": probs})
+# --- BEGIN CHANGE ---
+#    return pd.DataFrame({"image_name": img_files, "malignant_prob": probs})
+    return pd.DataFrame({"DDI_file": img_files, "predicted_probability": probs})
+# --- END CHANGE ---
 
 
 # 6. Generate submission
+"""
 submission = predict("input/MyImages")
 os.makedirs("working", exist_ok=True)
 submission.to_csv("working/submission.csv", index=False)
 print("Saved submission.csv with malignancy probabilities.")
+"""
+
+# --- BEGIN CHANGE ---
+if __name__ == "__main__":
+    artifact_path = os.path.join("working", "final_model.pth")
+    if not os.path.exists(artifact_path):
+        print(f"Warning: model artifact not found at {artifact_path}. Skipping DDI inference.")
+        exit(1)
+    final_clf = joblib.load(artifact_path)
+    ddi_image_dir = os.path.join("..", "..", "DDI", "images")
+    predictions = predict(ddi_image_dir)
+    predictions.to_csv("7-basic_prompt_DDI_predictions.csv", index=False)
+    print(f"Saved {len(predictions)} predictions to 7-basic_prompt_DDI_predictions.csv")
+# --- END CHANGE ---

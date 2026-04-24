@@ -53,6 +53,21 @@ predictions.to_csv("run_DDI_predictions.csv", index=False)
 - DDI images as `.png` files in `evaluation/DDI/images/`.
 - An evaluation script located under `evaluation/aide/<run_name>/` (examples: `evaluation/aide/10-basic_prompt/10-basic_prompt_best_solution_DDI.py`, `evaluation/aide/9-basic_prompt/9-basic_prompt_best_solution_DDI.py`).
 
+### Missing artifact policy
+
+If a required model artifact does not exist under `working/`, **do not attempt to re-run a training script**. Instead, the DDI `__main__` entrypoint must check for the artifact's existence and emit a clear warning before exiting:
+
+```python
+# --- BEGIN CHANGE ---
+model_path = os.path.join("working", "<artifact_name>")
+if not os.path.exists(model_path):
+    print(f"Warning: model artifact not found at {model_path}. Skipping DDI inference.")
+    exit(1)
+# --- END CHANGE ---
+```
+
+This keeps the script safe to run even when artifacts are missing, without silently producing empty or incorrect predictions.
+
 ---
 
 ## Step-by-Step Procedure
