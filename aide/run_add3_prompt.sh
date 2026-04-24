@@ -16,8 +16,6 @@ source /opt/miniforge/etc/profile.d/conda.sh
 conda activate be_fair_env_cuda
 export OPENAI_API_KEY=$OPENAI_API_KEY
 
-cd aide
-
 srun aide agent.expose_prediction=true \
 	exp_name="addition_3" \
 	data_dir="MyData" \
