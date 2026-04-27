@@ -213,3 +213,5 @@ __marimo__/
 *.pth
 *.pkl
 *.pt
+*.joblib
+aide/workspaces/3-basic_prompt/lgb_model.txt
