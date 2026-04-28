@@ -209,14 +209,6 @@ for epoch in range(epochs):
 
 os.makedirs("./working", exist_ok=True)
 torch.save(model.state_dict(), "./working/final_model.pth")
-# start change
-_ddi_files = sorted(os.listdir("/home/anri21/be-fair/evaluation/DDI/images"))
-_preds = predict("/home/anri21/be-fair/evaluation/DDI/images")
-pd.DataFrame({
-    "DDI_file": _ddi_files,
-    "predicted_probability": [float(_preds[f]) for f in _ddi_files]
-}).to_csv("./DDI_predictions.csv", index=False)
-# end change
 
 
 def predict(folder: str):
@@ -241,3 +233,13 @@ def predict(folder: str):
         img = Image.open(os.path.join(folder, fname)).convert("RGB")
         results[fname] = tta_inference(mdl, img)
     return results
+
+
+# start change
+_ddi_files = sorted(os.listdir("/home/anri21/be-fair/evaluation/DDI/images"))
+_preds = predict("/home/anri21/be-fair/evaluation/DDI/images")
+pd.DataFrame({
+    "DDI_file": _ddi_files,
+    "predicted_probability": [float(_preds[f]) for f in _ddi_files]
+}).to_csv("./DDI_predictions.csv", index=False)
+# end change

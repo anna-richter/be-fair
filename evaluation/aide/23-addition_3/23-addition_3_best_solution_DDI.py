@@ -96,6 +96,7 @@ if __name__ == "__main__":
     MODEL2_PATH = "./working/efficientnetb3.pth"
     BATCH_SIZE, LR, EPOCHS, ALPHA = 32, 1e-4, 3, 0.4
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    os.makedirs("./working", exist_ok=True)
 
     df = pd.read_csv(CSV_PATH)
     df = df[df["label"].isin(["malignant", "benign", "non-neoplastic"])].copy()
