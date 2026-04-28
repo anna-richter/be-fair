@@ -16,6 +16,7 @@ source /opt/miniforge/etc/profile.d/conda.sh
 conda activate be_fair_env_cuda
 
 cd ${SLURM_ARRAY_TASK_ID}-*
-srun python best_solution.py
-mv DDI_predictions.csv ${SLURM_ARRAY_TASK_ID}_DDI_predictions.csv
+export DIR_NAME=$(basename "$PWD")
+srun python ${DIR_NAME}_best_solution_DDI.py
+mv DDI_predictions.csv ${DIR_NAME}_DDI_predictions.csv
 cd ..
