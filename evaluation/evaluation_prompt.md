@@ -1,6 +1,6 @@
 # DDI Evaluation: Adapt an Evaluation Script for Inference (Evaluation Folder Only)
 
-This document records the steps to convert an existing **evaluation script** (e.g. `evaluation/aide/<run_name>/<run_name>_best_solution_DDI.py`) into an **inference-only** script that evaluates a pretrained model on the DDI dataset **using only files inside the `evaluation/` folder**.
+This document records the steps to convert an existing **evaluation script** (e.g. `evaluation/aide/<run_name>/best_solution.py`) into an **inference-only** script that evaluates a pretrained model on the DDI dataset **using only files inside the `evaluation/` folder**.
 
 Constraints for this repo:
 
@@ -49,9 +49,9 @@ predictions.to_csv("run_DDI_predictions.csv", index=False)
 
 ## Prerequisites
 
-- A trained model artifact saved under `evaluation/aide/<run_name>/working/` (examples in this repo include `pipeline.pkl`, `*.pth`, `*.pt`).
+- A trained model artifact saved under `evaluation/aide/<run_name>/working/` (examples in this repo include `pipeline.pkl`, `*.pth`, `*.pt`). It can be in saved under `evaluation/aide/<run_name>/` too in some cases.
 - DDI images as `.png` files in `evaluation/DDI/images/`.
-- An evaluation script located under `evaluation/aide/<run_name>/` (examples: `evaluation/aide/10-basic_prompt/10-basic_prompt_best_solution_DDI.py`, `evaluation/aide/9-basic_prompt/9-basic_prompt_best_solution_DDI.py`).
+- An evaluation script located under `evaluation/aide/<run_name>/` (examples: `evaluation/aide/10-basic_prompt/best_solution.py`, `evaluation/aide/9-basic_prompt/best_solution.py`).
 
 ### Missing artifact policy
 
