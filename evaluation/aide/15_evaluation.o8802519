@@ -1,0 +1,48 @@
+Extracting embeddings: original...
+  horizontal flip...
+  vertical flip...
+  rotation 90°...
+[LightGBM] [Info] Number of positive: 1810, number of negative: 11451
+[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.070192 seconds.
+You can set `force_col_wise=true` to remove the overhead.
+[LightGBM] [Info] Total Bins 326400
+[LightGBM] [Info] Number of data points in the train set: 13261, number of used features: 1280
+[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.136490 -> initscore=-1.844750
+[LightGBM] [Info] Start training from score -1.844750
+[LightGBM] [Info] Number of positive: 1810, number of negative: 11451
+[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.070460 seconds.
+You can set `force_col_wise=true` to remove the overhead.
+[LightGBM] [Info] Total Bins 326400
+[LightGBM] [Info] Number of data points in the train set: 13261, number of used features: 1280
+[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.136490 -> initscore=-1.844750
+[LightGBM] [Info] Start training from score -1.844750
+[LightGBM] [Info] Number of positive: 1811, number of negative: 11451
+[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.071772 seconds.
+You can set `force_col_wise=true` to remove the overhead.
+[LightGBM] [Info] Total Bins 326400
+[LightGBM] [Info] Number of data points in the train set: 13262, number of used features: 1280
+[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.136556 -> initscore=-1.844198
+[LightGBM] [Info] Start training from score -1.844198
+[LightGBM] [Info] Number of positive: 1811, number of negative: 11451
+[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.072245 seconds.
+You can set `force_col_wise=true` to remove the overhead.
+[LightGBM] [Info] Total Bins 326400
+[LightGBM] [Info] Number of data points in the train set: 13262, number of used features: 1280
+[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.136556 -> initscore=-1.844198
+[LightGBM] [Info] Start training from score -1.844198
+[LightGBM] [Info] Number of positive: 1810, number of negative: 11452
+[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.077245 seconds.
+You can set `force_col_wise=true` to remove the overhead.
+[LightGBM] [Info] Total Bins 326400
+[LightGBM] [Info] Number of data points in the train set: 13262, number of used features: 1280
+[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.136480 -> initscore=-1.844838
+[LightGBM] [Info] Start training from score -1.844838
+CV AUROC with 4-way TTA and train-on-avg: 0.8935
+Avg AUROC gap (light vs dark): 0.0124
+[LightGBM] [Info] Number of positive: 2263, number of negative: 14314
+[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.091804 seconds.
+You can set `force_col_wise=true` to remove the overhead.
+[LightGBM] [Info] Total Bins 326400
+[LightGBM] [Info] Number of data points in the train set: 16577, number of used features: 1280
+[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.136514 -> initscore=-1.844547
+[LightGBM] [Info] Start training from score -1.844547

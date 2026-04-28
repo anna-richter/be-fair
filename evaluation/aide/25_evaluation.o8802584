@@ -1,0 +1,6 @@
+Fold 0 AUROC with Mixup+TTA: 0.9288
+Fold 1 AUROC with Mixup+TTA: 0.9336
+Fold 2 AUROC with Mixup+TTA: 0.9265
+Fold 3 AUROC with Mixup+TTA: 0.9160
+Fold 4 AUROC with Mixup+TTA: 0.9274
+Mean CV AUROC with Mixup+TTA: 0.9264 ± 0.0058

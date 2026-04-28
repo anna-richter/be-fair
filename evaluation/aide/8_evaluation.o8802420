@@ -1,0 +1,25 @@
+Extracting TTA features (8-way: rotations × flips)...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[734]	valid_0's auc: 0.928513
+Fold 1 AUC: 0.9285, best_iter=734
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[605]	valid_0's auc: 0.927365
+Fold 2 AUC: 0.9274, best_iter=605
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[585]	valid_0's auc: 0.922263
+Fold 3 AUC: 0.9223, best_iter=585
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[348]	valid_0's auc: 0.909668
+Fold 4 AUC: 0.9097, best_iter=348
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[394]	valid_0's auc: 0.924999
+Fold 5 AUC: 0.9250, best_iter=394
+Mean CV AUC: 0.9226
+Retraining on full data for 586 rounds...
+Model saved to ./working/lgbm_model.pkl
+Saved predictions to ./working/submission.csv

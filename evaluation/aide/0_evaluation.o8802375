@@ -1,0 +1,6 @@
+Epoch 1/5 - Train Loss: 0.0223
+Epoch 2/5 - Train Loss: 0.0180
+Epoch 3/5 - Train Loss: 0.0161
+Epoch 4/5 - Train Loss: 0.0144
+Epoch 5/5 - Train Loss: 0.0134
+Validation AUROC (TenCrop TTA, AdamW+WD): 0.9304

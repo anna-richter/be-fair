@@ -1,0 +1,31 @@
+Fold 0 Epoch 1 - Loss: 0.5487
+Fold 0 Epoch 2 - Loss: 0.4896
+Fold 0 Epoch 3 - Loss: 0.4200
+Fold 0 Epoch 4 - Loss: 0.3826
+Fold 0 Epoch 5 - Loss: 0.3876
+Fold 0 ROC AUC: 0.9419
+Fold 1 Epoch 1 - Loss: 0.5331
+Fold 1 Epoch 2 - Loss: 0.4787
+Fold 1 Epoch 3 - Loss: 0.4301
+Fold 1 Epoch 4 - Loss: 0.4038
+Fold 1 Epoch 5 - Loss: 0.3925
+Fold 1 ROC AUC: 0.9464
+Fold 2 Epoch 1 - Loss: 0.5475
+Fold 2 Epoch 2 - Loss: 0.4831
+Fold 2 Epoch 3 - Loss: 0.4230
+Fold 2 Epoch 4 - Loss: 0.4062
+Fold 2 Epoch 5 - Loss: 0.3973
+Fold 2 ROC AUC: 0.9380
+Fold 3 Epoch 1 - Loss: 0.5433
+Fold 3 Epoch 2 - Loss: 0.4857
+Fold 3 Epoch 3 - Loss: 0.4216
+Fold 3 Epoch 4 - Loss: 0.4027
+Fold 3 Epoch 5 - Loss: 0.3879
+Fold 3 ROC AUC: 0.9316
+Fold 4 Epoch 1 - Loss: 0.5459
+Fold 4 Epoch 2 - Loss: 0.4879
+Fold 4 Epoch 3 - Loss: 0.4260
+Fold 4 Epoch 4 - Loss: 0.4008
+Fold 4 Epoch 5 - Loss: 0.3819
+Fold 4 ROC AUC: 0.9449
+Overall OOF ROC AUC: 0.9406

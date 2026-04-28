@@ -1,0 +1,6 @@
+Fold 1 AUROC with TTA: 0.9151
+Fold 2 AUROC with TTA: 0.9120
+Fold 3 AUROC with TTA: 0.9255
+Fold 4 AUROC with TTA: 0.9136
+Fold 5 AUROC with TTA: 0.9206
+Mean CV AUROC with TTA: 0.9174

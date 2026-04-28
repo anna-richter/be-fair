@@ -1,0 +1,37 @@
+Fold 1 Epoch 1: val AUROC=0.9081
+Fold 1 Epoch 2: val AUROC=0.9072
+Fold 1 Epoch 3: val AUROC=0.9248
+Fold 1 Epoch 4: val AUROC=0.9284
+Fold 1 Epoch 5: val AUROC=0.9282
+Fold 1 best AUROC: 0.9284
+Fold 2 Epoch 1: val AUROC=0.8895
+Fold 2 Epoch 2: val AUROC=0.9253
+Fold 2 Epoch 3: val AUROC=0.9313
+Fold 2 Epoch 4: val AUROC=0.9397
+Fold 2 Epoch 5: val AUROC=0.9306
+Fold 2 best AUROC: 0.9397
+Fold 3 Epoch 1: val AUROC=0.8981
+Fold 3 Epoch 2: val AUROC=0.9122
+Fold 3 Epoch 3: val AUROC=0.9164
+Fold 3 Epoch 4: val AUROC=0.9270
+Fold 3 Epoch 5: val AUROC=0.9299
+Fold 3 best AUROC: 0.9299
+Fold 4 Epoch 1: val AUROC=0.9001
+Fold 4 Epoch 2: val AUROC=0.9057
+Fold 4 Epoch 3: val AUROC=0.9233
+Fold 4 Epoch 4: val AUROC=0.9258
+Fold 4 Epoch 5: val AUROC=0.9221
+Fold 4 best AUROC: 0.9258
+Fold 5 Epoch 1: val AUROC=0.9095
+Fold 5 Epoch 2: val AUROC=0.9220
+Fold 5 Epoch 3: val AUROC=0.9261
+Fold 5 Epoch 4: val AUROC=0.9191
+Fold 5 Epoch 5: val AUROC=0.9219
+Fold 5 best AUROC: 0.9261
+CV Mean AUROC: 0.9300 ± 0.0051
+Full data training epoch 1 complete
+Full data training epoch 2 complete
+Full data training epoch 3 complete
+Full data training epoch 4 complete
+Full data training epoch 5 complete
+Final model trained on full data and saved to working/best_model.pth

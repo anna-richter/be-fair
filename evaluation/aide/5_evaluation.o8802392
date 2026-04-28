@@ -1,0 +1,6 @@
+Epoch 1/5 Train Loss: 0.3244
+Epoch 2/5 Train Loss: 0.2860
+Epoch 3/5 Train Loss: 0.2685
+Epoch 4/5 Train Loss: 0.2569
+Epoch 5/5 Train Loss: 0.2390
+Validation TTA AUROC with Mixup + RandomErasing: 0.9205

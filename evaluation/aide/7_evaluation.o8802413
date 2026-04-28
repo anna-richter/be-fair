@@ -1,0 +1,9 @@
+Epoch 1/8 - Val AUROC: 0.8956
+Epoch 2/8 - Val AUROC: 0.9148
+Epoch 3/8 - Val AUROC: 0.9245
+Epoch 4/8 - Val AUROC: 0.9366
+Epoch 5/8 - Val AUROC: 0.9408
+Epoch 6/8 - Val AUROC: 0.9442
+Epoch 7/8 - Val AUROC: 0.9409
+Epoch 8/8 - Val AUROC: 0.9471
+Best Validation AUROC: 0.9471

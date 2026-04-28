@@ -1,0 +1,11 @@
+Epoch 1 train loss: 0.9376
+Epoch 2 train loss: 0.7655
+Epoch 3 train loss: 0.6823
+Epoch 4 train loss: 0.6212
+Epoch 5 train loss: 0.5445
+Epoch 6 train loss: 0.5010
+Epoch 7 train loss: 0.4518
+Epoch 8 train loss: 0.4369
+Epoch 9 train loss: 0.3975
+Epoch 10 train loss: 0.3860
+Validation AUROC: 0.9202

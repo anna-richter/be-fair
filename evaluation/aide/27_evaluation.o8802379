@@ -1,0 +1,8 @@
+Epoch 1 - Val AUROC (4-way TTA): 0.8758
+Epoch 2 - Val AUROC (4-way TTA): 0.8877
+Epoch 3 - Val AUROC (4-way TTA): 0.8862
+Epoch 4 - Val AUROC (4-way TTA): 0.9069
+Epoch 5 - Val AUROC (4-way TTA): 0.8814
+Best Val AUROC: 0.9069
+Best Val AUROC: 0.9069
+Saved DDI_predictions.csv with 656 predictions

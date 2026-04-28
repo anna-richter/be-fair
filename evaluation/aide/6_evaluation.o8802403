@@ -1,0 +1,6 @@
+Epoch 1 Loss: 0.5086
+Epoch 2 Loss: 0.4441
+Epoch 3 Loss: 0.4016
+Epoch 4 Loss: 0.3602
+Epoch 5 Loss: 0.3306
+Validation AUROC with WeightedSampler + 10-Crop TTA: 0.9334

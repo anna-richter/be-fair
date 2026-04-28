@@ -1,0 +1,13 @@
+Fold 1
+  Fold 1 AUROC (4-view TTA): 0.9391
+Fold 2
+  Fold 2 AUROC (4-view TTA): 0.9511
+Fold 3
+  Fold 3 AUROC (4-view TTA): 0.9436
+Fold 4
+  Fold 4 AUROC (4-view TTA): 0.9428
+Fold 5
+  Fold 5 AUROC (4-view TTA): 0.9481
+
+CV AUROC with CosineAnnealingLR & 4-view TTA: 0.9449 ± 0.0042
+Submission saved to working/submission.csv

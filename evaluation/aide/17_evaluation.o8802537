@@ -1,0 +1,6 @@
+Fold 1 AUROC: 0.9063
+Fold 2 AUROC: 0.9043
+Fold 3 AUROC: 0.8972
+Fold 4 AUROC: 0.8907
+Fold 5 AUROC: 0.9111
+Mean CV AUROC with EfficientNet-B0: 0.9019

@@ -1,0 +1,42 @@
+Fold 1/5
+ Epoch 1: Val AUROC 0.9160
+ Epoch 2: Val AUROC 0.9238
+ Epoch 3: Val AUROC 0.9315
+ Epoch 4: Val AUROC 0.9269
+ Epoch 5: Val AUROC 0.9358
+ Fold 1 best AUROC: 0.9358
+
+Fold 2/5
+ Epoch 1: Val AUROC 0.9208
+ Epoch 2: Val AUROC 0.9257
+ Epoch 3: Val AUROC 0.9358
+ Epoch 4: Val AUROC 0.9375
+ Epoch 5: Val AUROC 0.9414
+ Fold 2 best AUROC: 0.9414
+
+Fold 3/5
+ Epoch 1: Val AUROC 0.9109
+ Epoch 2: Val AUROC 0.9270
+ Epoch 3: Val AUROC 0.9297
+ Epoch 4: Val AUROC 0.9374
+ Epoch 5: Val AUROC 0.9235
+ Fold 3 best AUROC: 0.9374
+
+Fold 4/5
+ Epoch 1: Val AUROC 0.8942
+ Epoch 2: Val AUROC 0.9134
+ Epoch 3: Val AUROC 0.9250
+ Epoch 4: Val AUROC 0.9293
+ Epoch 5: Val AUROC 0.9335
+ Fold 4 best AUROC: 0.9335
+
+Fold 5/5
+ Epoch 1: Val AUROC 0.9170
+ Epoch 2: Val AUROC 0.9362
+ Epoch 3: Val AUROC 0.9393
+ Epoch 4: Val AUROC 0.9476
+ Epoch 5: Val AUROC 0.9448
+ Fold 5 best AUROC: 0.9476
+
+All fold AUROCs: [0.9357864941990334, 0.9413989401197744, 0.9374063038028678, 0.9334938597114851, 0.9476176372132054]
+Mean CV AUROC: 0.9391

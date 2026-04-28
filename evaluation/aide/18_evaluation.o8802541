@@ -1,0 +1,7 @@
+Fold 1 AUROC: overall=0.9121, light=0.9084, dark=0.9304, gap=0.0220
+Fold 2 AUROC: overall=0.9079, light=0.8964, dark=0.9082, gap=0.0119
+Fold 3 AUROC: overall=0.9279, light=0.9149, dark=0.9703, gap=0.0554
+Fold 4 AUROC: overall=0.9039, light=0.8905, dark=0.9411, gap=0.0507
+Fold 5 AUROC: overall=0.8976, light=0.8961, dark=0.9060, gap=0.0099
+Mean AUROC: overall=0.9099±0.0102, light=0.9012, dark=0.9312, gap=0.0300
+Final model saved to ./working/model_densenet121.pth

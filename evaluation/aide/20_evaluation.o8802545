@@ -1,0 +1,7 @@
+Fold 1: AUROC=0.9143, gap=0.0273
+Fold 2: AUROC=0.9045, gap=0.0184
+Fold 3: AUROC=0.8891, gap=0.0081
+Fold 4: AUROC=0.8926, gap=0.0240
+Fold 5: AUROC=0.9033, gap=0.0071
+Mean CV AUROC: 0.9008
+Mean fairness gap (light vs dark): 0.0170

@@ -1,0 +1,7 @@
+Fold 1 AUROC: 0.9350
+Fold 2 AUROC: 0.9384
+Fold 3 AUROC: 0.9329
+Fold 4 AUROC: 0.9253
+Fold 5 AUROC: 0.9376
+Mean CV AUROC: 0.9338
+Model saved.
