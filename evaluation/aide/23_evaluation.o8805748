@@ -1,0 +1,7 @@
+Epoch 1/3 train loss: 0.2903
+Epoch 2/3 train loss: 0.2293
+Epoch 3/3 train loss: 0.2138
+Epoch 1/3 train loss: 0.3416
+Epoch 2/3 train loss: 0.2475
+Epoch 3/3 train loss: 0.2180
+Validation AUROC (Ensemble): 0.9346
