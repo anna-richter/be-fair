@@ -1,0 +1,167 @@
+DEBUG Environment variable FAISS_OPT_LEVEL is not set, so let's pick the instruction set according to the current CPU
+INFO Loading faiss with AVX2 support.
+INFO Successfully loaded faiss with AVX2 support.
+DEBUG PyTorch version 2.5.1 available.
+INFO Loading indices from disk
+WARNING No index exists at /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/indices/BAAI_bge-base-en-v1.5
+INFO Building tutorial indices...
+INFO Building indices for tools: ['FlagEmbedding', 'machine learning', 'wav2vec2', 'qwen3', 'autogluon.tabular', 'autogluon.multimodal', 'autogluon.timeseries']
+INFO Processing tool: FlagEmbedding
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG Starting new HTTPS connection (1): huggingface.co:443
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG Attempting to acquire lock 22589777258368 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/37fca74771bc76a8e01178ce3a6055a0995f8093.lock
+DEBUG Lock 22589777258368 acquired on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/37fca74771bc76a8e01178ce3a6055a0995f8093.lock
+DEBUG https://huggingface.co:443 "GET /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 366
+DEBUG Attempting to release lock 22589777258368 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/37fca74771bc76a8e01178ce3a6055a0995f8093.lock
+DEBUG Lock 22589777258368 released on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/37fca74771bc76a8e01178ce3a6055a0995f8093.lock
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/vocab.txt HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/vocab.txt HTTP/1.1" 200 0
+DEBUG Attempting to acquire lock 22590870874320 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/fb140275c155a9c7c5a3b3e0e77a9e839594a938.lock
+DEBUG Lock 22590870874320 acquired on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/fb140275c155a9c7c5a3b3e0e77a9e839594a938.lock
+DEBUG https://huggingface.co:443 "GET /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/vocab.txt HTTP/1.1" 200 None
+DEBUG Attempting to release lock 22590870874320 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/fb140275c155a9c7c5a3b3e0e77a9e839594a938.lock
+DEBUG Lock 22590870874320 released on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/fb140275c155a9c7c5a3b3e0e77a9e839594a938.lock
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer.json HTTP/1.1" 200 0
+DEBUG Attempting to acquire lock 22589745879792 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/688882a79f44442ddc1f60d70334a7ff5df0fb47.lock
+DEBUG Lock 22589745879792 acquired on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/688882a79f44442ddc1f60d70334a7ff5df0fb47.lock
+DEBUG https://huggingface.co:443 "GET /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer.json HTTP/1.1" 200 None
+DEBUG Attempting to release lock 22589745879792 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/688882a79f44442ddc1f60d70334a7ff5df0fb47.lock
+DEBUG Lock 22589745879792 released on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/688882a79f44442ddc1f60d70334a7ff5df0fb47.lock
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/added_tokens.json HTTP/1.1" 404 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/special_tokens_map.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/special_tokens_map.json HTTP/1.1" 200 0
+DEBUG Attempting to acquire lock 22589743729360 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/a8b3208c2884c4efb86e49300fdd3dc877220cdf.lock
+DEBUG Lock 22589743729360 acquired on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/a8b3208c2884c4efb86e49300fdd3dc877220cdf.lock
+DEBUG https://huggingface.co:443 "GET /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/special_tokens_map.json HTTP/1.1" 200 125
+DEBUG Attempting to release lock 22589743729360 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/a8b3208c2884c4efb86e49300fdd3dc877220cdf.lock
+DEBUG Lock 22589743729360 released on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/a8b3208c2884c4efb86e49300fdd3dc877220cdf.lock
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/chat_template.jinja HTTP/1.1" 404 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+DEBUG Attempting to acquire lock 22591595109296 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/09a8200d8a549a3b9dba53b67156ca26810cc720.lock
+DEBUG Lock 22591595109296 acquired on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/09a8200d8a549a3b9dba53b67156ca26810cc720.lock
+DEBUG https://huggingface.co:443 "GET /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 777
+DEBUG Attempting to release lock 22591595109296 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/09a8200d8a549a3b9dba53b67156ca26810cc720.lock
+DEBUG Lock 22591595109296 released on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/09a8200d8a549a3b9dba53b67156ca26810cc720.lock
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/adapter_config.json HTTP/1.1" 404 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/model.safetensors HTTP/1.1" 302 0
+DEBUG Attempting to acquire lock 22589529140848 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/c7c1988aae201f80cf91a5dbbd5866409503b89dcaba877ca6dba7dd0a5167d7.lock
+DEBUG Lock 22589529140848 acquired on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/c7c1988aae201f80cf91a5dbbd5866409503b89dcaba877ca6dba7dd0a5167d7.lock
+DEBUG https://huggingface.co:443 "GET /api/models/BAAI/bge-base-en-v1.5/xet-read-token/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a HTTP/1.1" 200 399
+DEBUG Attempting to release lock 22589529140848 on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/c7c1988aae201f80cf91a5dbbd5866409503b89dcaba877ca6dba7dd0a5167d7.lock
+DEBUG Lock 22589529140848 released on /home/anri21/.cache/huggingface/hub/.locks/models--BAAI--bge-base-en-v1.5/c7c1988aae201f80cf91a5dbbd5866409503b89dcaba877ca6dba7dd0a5167d7.lock
+ERROR Error building tutorials index for FlagEmbedding: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building condensed_tutorials index for FlagEmbedding: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Processing tool: machine learning
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building tutorials index for machine learning: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building condensed_tutorials index for machine learning: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Processing tool: wav2vec2
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building tutorials index for wav2vec2: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building condensed_tutorials index for wav2vec2: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Processing tool: qwen3
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building tutorials index for qwen3: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building condensed_tutorials index for qwen3: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Processing tool: autogluon.tabular
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building tutorials index for autogluon.tabular: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building condensed_tutorials index for autogluon.tabular: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Processing tool: autogluon.multimodal
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building tutorials index for autogluon.multimodal: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building condensed_tutorials index for autogluon.multimodal: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Processing tool: autogluon.timeseries
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building tutorials index for autogluon.timeseries: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Loading embedding model: BAAI/bge-base-en-v1.5
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer_config.json HTTP/1.1" 200 0
+DEBUG https://huggingface.co:443 "HEAD /BAAI/bge-base-en-v1.5/resolve/main/config.json HTTP/1.1" 307 0
+DEBUG https://huggingface.co:443 "HEAD /api/resolve-cache/models/BAAI/bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/config.json HTTP/1.1" 200 0
+ERROR Error building condensed_tutorials index for autogluon.timeseries: BertModel.__init__() got an unexpected keyword argument 'dtype'
+INFO Saving indices to disk
+INFO Tutorial indices built and saved successfully.
+DEBUG Request options: {'method': 'get', 'url': '/models', 'post_parser': <function SyncAPIClient._request_api_list.<locals>._parser at 0x148b887c7ce0>, 'json_data': None}
+DEBUG Sending HTTP Request: GET https://api.openai.com/v1/models
+DEBUG connect_tcp.started host='proxy.charite.de' port=8080 local_address=None timeout=5.0 socket_options=None
+DEBUG connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x148b8009f740>
+DEBUG send_request_headers.started request=<Request [b'CONNECT']>
+DEBUG send_request_headers.complete
+DEBUG send_request_body.started request=<Request [b'CONNECT']>
+DEBUG send_request_body.complete
+DEBUG receive_response_headers.started request=<Request [b'CONNECT']>
+DEBUG receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'Connection established', [])
+DEBUG start_tls.started ssl_context=<ssl.SSLContext object at 0x148b88033ad0> server_hostname='api.openai.com' timeout=5.0
+DEBUG start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x148b889cbfe0>
+DEBUG send_request_headers.started request=<Request [b'GET']>
+DEBUG send_request_headers.complete
+DEBUG send_request_body.started request=<Request [b'GET']>
+DEBUG send_request_body.complete
+DEBUG receive_response_headers.started request=<Request [b'GET']>
+DEBUG receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 30 Apr 2026 21:24:22 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Server', b'cloudflare'), (b'openai-version', b'2020-10-01'), (b'x-request-id', b'75abe84d-d3d9-4221-9609-eb49af59942d'), (b'openai-processing-ms', b'557'), (b'x-openai-proxy-wasm', b'v0.1'), (b'cf-cache-status', b'DYNAMIC'), (b'set-cookie', b'__cf_bm=wObjHkyFgrbVYaPwg3KabAw8Ev_KOYw2SQRuZXqDhOM-1777584261.6993098-1.0.1.1-l5HjHOTkyymkSCdehHlRqwinFU7mCtAqUm.CBukoEYwhwdhnW8_iBUImEang9bHxWM8hr_8NmTYDkIIAj5toC5EuTRK9RcRg_B73MaboM.EEF7wVmW1YPnA4jkISU_W1; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Thu, 30 Apr 2026 21:54:22 GMT'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'X-Content-Type-Options', b'nosniff'), (b'Content-Encoding', b'gzip'), (b'CF-RAY', b'9f499ce39c3af558-TXL'), (b'alt-svc', b'h3=":443"; ma=86400')])
+INFO HTTP Request: GET https://api.openai.com/v1/models "HTTP/1.1 200 OK"
+DEBUG receive_response_body.started request=<Request [b'GET']>
+DEBUG receive_response_body.complete
+DEBUG response_closed.started
+DEBUG response_closed.complete
+DEBUG HTTP Response: GET https://api.openai.com/v1/models "200 OK" Headers({'date': 'Thu, 30 Apr 2026 21:24:22 GMT', 'content-type': 'application/json', 'transfer-encoding': 'chunked', 'connection': 'keep-alive', 'server': 'cloudflare', 'openai-version': '2020-10-01', 'x-request-id': '75abe84d-d3d9-4221-9609-eb49af59942d', 'openai-processing-ms': '557', 'x-openai-proxy-wasm': 'v0.1', 'cf-cache-status': 'DYNAMIC', 'set-cookie': '__cf_bm=wObjHkyFgrbVYaPwg3KabAw8Ev_KOYw2SQRuZXqDhOM-1777584261.6993098-1.0.1.1-l5HjHOTkyymkSCdehHlRqwinFU7mCtAqUm.CBukoEYwhwdhnW8_iBUImEang9bHxWM8hr_8NmTYDkIIAj5toC5EuTRK9RcRg_B73MaboM.EEF7wVmW1YPnA4jkISU_W1; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Thu, 30 Apr 2026 21:54:22 GMT', 'strict-transport-security': 'max-age=31536000; includeSubDomains; preload', 'x-content-type-options': 'nosniff', 'content-encoding': 'gzip', 'cf-ray': '9f499ce39c3af558-TXL', 'alt-svc': 'h3=":443"; ma=86400'})
+DEBUG request_id: 75abe84d-d3d9-4221-9609-eb49af59942d

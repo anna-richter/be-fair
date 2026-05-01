@@ -1,0 +1,107 @@
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/a │
+│ ssistant/cli/app.py:123 in main                                              │
+│                                                                              │
+│   120 │   │   if not provider_config_path.exists():                          │
+│   121 │   │   │   provider_config_path = DEFAULT_CONFIG_PATH                 │
+│   122 │                                                                      │
+│ ❱ 123 │   run_agent(                                                         │
+│   124 │   │   input_data_folder=input_data_folder,                           │
+│   125 │   │   output_folder=output_dir,                                      │
+│   126 │   │   config_path=str(provider_config_path),                         │
+│                                                                              │
+│ /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/a │
+│ ssistant/coding_agent.py:131 in run_agent                                    │
+│                                                                              │
+│   128 │                                                                      │
+│   129 │   if manager is None:                                                │
+│   130 │   │   # Create a new NodeManager instance                            │
+│ ❱ 131 │   │   manager = NodeManager(                                         │
+│   132 │   │   │   input_data_folder=input_data_folder,                       │
+│   133 │   │   │   output_folder=output_folder,                               │
+│   134 │   │   │   config=config,                                             │
+│                                                                              │
+│ /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/a │
+│ ssistant/managers/node_manager.py:299 in __init__                            │
+│                                                                              │
+│    296 │   │   self.target_prompt_instance = None                            │
+│    297 │   │                                                                 │
+│    298 │   │   # Initialize the agent components                             │
+│ ❱  299 │   │   self._init_agents()                                           │
+│    300 │                                                                     │
+│    301 │   def _init_agents(self):                                           │
+│    302 │   │   """Initialize all required agents."""                         │
+│                                                                              │
+│ /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/a │
+│ ssistant/managers/node_manager.py:382 in _init_agents                        │
+│                                                                              │
+│    379 │   │   )                                                             │
+│    380 │   │                                                                 │
+│    381 │   │   # Python coder                                                │
+│ ❱  382 │   │   self.python_coder = CoderAgent(                               │
+│    383 │   │   │   config=self.config,                                       │
+│    384 │   │   │   manager=self,                                             │
+│    385 │   │   │   language="python",                                        │
+│                                                                              │
+│ /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/a │
+│ ssistant/agents/coder_agent.py:41 in __init__                                │
+│                                                                              │
+│   38 │   │   )                                                               │
+│   39 │   │                                                                   │
+│   40 │   │   if self.coder_llm_config.multi_turn:                            │
+│ ❱ 41 │   │   │   self.coder_llm = init_llm(                                  │
+│   42 │   │   │   │   llm_config=self.coder_llm_config,                       │
+│   43 │   │   │   │   agent_name=f"{self.language}_{self.coding_mode}",       │
+│   44 │   │   │   │   multi_turn=self.coder_llm_config.multi_turn,            │
+│                                                                              │
+│ /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/a │
+│ ssistant/agents/utils.py:12 in init_llm                                      │
+│                                                                              │
+│    9 │   │   session_name = f"multi_turn_{agent_name}_{timestamp}"           │
+│   10 │   else:                                                               │
+│   11 │   │   session_name = f"single_turn_{agent_name}_{timestamp}"          │
+│ ❱ 12 │   llm = ChatLLMFactory.get_chat_model(llm_config,                     │
+│      session_name=session_name)                                              │
+│   13 │                                                                       │
+│   14 │   return llm                                                          │
+│   15                                                                         │
+│                                                                              │
+│ /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/a │
+│ ssistant/llm/llm_factory.py:64 in get_chat_model                             │
+│                                                                              │
+│   61 │   │   │   valid_models = cls.get_valid_models(provider)               │
+│   62 │   │   │   if model not in valid_models:                               │
+│   63 │   │   │   │   if model[3:] not in valid_models:  # TODO: better logic │
+│      for cross region inference                                              │
+│ ❱ 64 │   │   │   │   │   raise ValueError(                                   │
+│   65 │   │   │   │   │   │   f"Invalid model: {model} for provider           │
+│      {provider}. All valid models are {valid_models}. If you are using       │
+│      Bedrock, please check if the requested model is available in the        │
+│      provided AWS_DEFAULT_REGION: {os.environ.get('AWS_DEFAULT_REGION')}"    │
+│   66 │   │   │   │   │   )                                                   │
+│   67                                                                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ValueError: Invalid model: gpt-5-2025-08-07 for provider openai. All valid 
+models are ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4-0613', 'gpt-4', 
+'gpt-3.5-turbo-instruct', 'gpt-3.5-turbo-instruct-0914', 'gpt-3.5-turbo-1106', 
+'gpt-3.5-turbo-0125', 'gpt-4-turbo', 'gpt-4-turbo-2024-04-09', 'gpt-4o', 
+'gpt-4o-2024-05-13', 'gpt-4o-mini-2024-07-18', 'gpt-4o-mini', 
+'gpt-4o-2024-08-06', 'gpt-4o-audio-preview', 'gpt-4o-realtime-preview', 
+'gpt-4o-realtime-preview-2024-12-17', 'gpt-4o-audio-preview-2024-12-17', 
+'gpt-4o-mini-realtime-preview-2024-12-17', 
+'gpt-4o-mini-audio-preview-2024-12-17', 'o1-2024-12-17', 'o1', 
+'gpt-4o-mini-realtime-preview', 'gpt-4o-mini-audio-preview', 'o3-mini', 
+'o3-mini-2025-01-31', 'gpt-4o-2024-11-20', 
+'gpt-4o-mini-search-preview-2025-03-11', 'gpt-4o-mini-search-preview', 
+'gpt-4o-transcribe', 'gpt-4o-mini-transcribe', 'o1-pro-2025-03-19', 'o1-pro', 
+'gpt-4o-mini-tts', 'o3-2025-04-16', 'o3', 'gpt-4.1-2025-04-14', 'gpt-4.1', 
+'gpt-4.1-mini-2025-04-14', 'gpt-4.1-mini', 'gpt-4.1-nano-2025-04-14', 
+'gpt-4.1-nano', 'o3-pro', 'gpt-4o-realtime-preview-2025-06-03', 
+'gpt-4o-audio-preview-2025-06-03', 'o3-pro-2025-06-10', 'o3-deep-research', 
+'gpt-4o-transcribe-diarize', 'o3-deep-research-2025-06-26', 
+'gpt-4o-mini-transcribe-2025-12-15', 'gpt-4o-mini-transcribe-2025-03-20', 
+'gpt-4o-mini-tts-2025-03-20', 'gpt-4o-mini-tts-2025-12-15', 
+'gpt-4o-search-preview', 'gpt-4o-search-preview-2025-03-11']. If you are using 
+Bedrock, please check if the requested model is available in the provided 
+AWS_DEFAULT_REGION: None
+srun: error: s-sc-gpu007: task 0: Exited with exit code 1
