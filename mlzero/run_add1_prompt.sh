@@ -18,6 +18,8 @@ export OPENAI_API_KEY=$OPENAI_API_KEY
 
 srun mlzero \
 	--input /home/anri21/be-fair/mlzero/addition_1/data \
-	--output /home/anri21/be-fair/mlzero/addition_1 \
-	--provider openai \
- 	--verbosity 4
+	--config /home/anri21/be-fair/mlzero/conf.yaml \
+	--max-iterations 20 \
+	--output /home/anri21/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-addition_1 \
+	--verbosity 4 \
+	--continuous_improvement
