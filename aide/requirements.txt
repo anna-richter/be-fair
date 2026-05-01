@@ -1,4 +1,3 @@
-# pip install torch torchvision torchaudio \
-#  --index-url https://download.pytorch.org/whl/cu127
+# pip install torch torchvision torchaudio  --index-url https://download.pytorch.org/whl/cu126
 
 aideml @ git+https://github.com/anna-richter/aideml.git@989e8e2df8a14eaa6dafd3747a6c77df615aed8e
