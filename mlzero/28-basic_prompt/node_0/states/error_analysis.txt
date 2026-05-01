@@ -1,0 +1,4 @@
+ERROR_SUMMARY: The UnboundLocalError occurs because the variable `TEST_CSV` is assigned within a conditional block inside the `main()` function, making it a local variable. However, it is referenced before any assignment in the line `if not os.path.exists(TEST_CSV):`, leading to the error since Python treats any variable assigned within a function as local unless declared global.
+
+SUGGESTED_FIX:  
+Move the assignment of `TEST_CSV` (and any other path variables) outside the `main()` function so they are defined at the module/global scope, or explicitly declare `TEST_CSV` as `global` inside `main()` if you intend to modify it. This ensures `TEST_CSV` is always initialized before being accessed, preventing the UnboundLocalError.

@@ -1,0 +1,1 @@
+UnboundLocalError: The variable TEST_CSV is being assigned within a conditional block, which causes it to be treated as a local variable. When referenced before assignment (in the if not os.path.exists(TEST_CSV): check), this leads to an UnboundLocalError. The code fails before any model training or prediction occurs.

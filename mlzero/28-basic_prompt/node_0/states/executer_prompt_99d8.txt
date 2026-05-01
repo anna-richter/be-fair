@@ -1,0 +1,580 @@
+You are an expert code evaluator. Analyze the execution results of the following Python code and determine if the execution was successful or if issues need to be fixed.
+
+### Task Descriptions
+**Task Type:** Image classification (binary classification)
+
+**Input Format:** Images of skin lesions (image files referenced by image_name in the dataset).
+
+**Prediction Output Format:** For each input image, output a malignancy probability (a float between 0 and 1).
+
+**Additional Requirements:**  
+- The model should be trained to classify lesions as malignant or benign.
+- The trained model must be saved.
+- A function must be provided that takes a folder path containing new images and returns a malignancy probability for each image.
+- Evaluation metric: Area under the receiver operator curve (AUROC).
+
+### Data Structure
+Absolute path to the folder: /home/anri21/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/mydataset.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### Python Code
+"""
+Skin Lesion Malignancy Prediction Script
+
+This script trains an image classification model using AutoGluon MultiModal to predict the probability
+that a skin lesion is malignant, based on images referenced in a CSV file. It performs the following:
+
+- Loads and preprocesses the data (removes NA labels, drops index column).
+- Trains a binary image classification model (malignant vs. benign).
+- Saves the trained model to a timestamped folder in the specified output directory.
+- Predicts malignancy probabilities for the test set, preserving original indices and output format.
+- Provides a function to predict malignancy probabilities for a folder of new images.
+- Performs validation checks to ensure output correctness.
+
+Installation requirements (run before executing this script):
+# pip install autogluon.multimodal
+# pip install pandas numpy
+
+Author: AutoML Agent
+"""
+
+import os
+import shutil
+import random
+import time
+import pandas as pd
+import numpy as np
+from autogluon.multimodal import MultiModalPredictor
+
+# Set random seed for reproducibility
+RANDOM_SEED = 42
+
+# Paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/basic_prompt_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/28-basic_prompt/node_0/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+# Assume test file is named 'test.csv' in the same folder (adjust if needed)
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+IMAGE_FOLDER = DATA_DIR  # Images are referenced by image_name in the CSV
+
+# Output file name (format/extension must match test file)
+RESULTS_BASENAME = "results"
+
+def get_timestamp_folder(base_dir):
+    """Generate a random timestamped folder path under base_dir."""
+    ts = int(time.time() * 1000) + random.randint(0, 9999)
+    folder = os.path.join(base_dir, f"model_{ts}")
+    return folder
+
+def get_image_path(row):
+    """Helper to get absolute image path from image_name."""
+    return os.path.join(IMAGE_FOLDER, row['image_name'])
+
+def prepare_data(df):
+    """Drop NA labels and unnecessary index column from training data."""
+    # Drop rows where label is NA
+    df = df.dropna(subset=['label'])
+    # Drop index column if present
+    for idx_col in ['Unnamed: 0', 'index']:
+        if idx_col in df.columns:
+            df = df.drop(columns=[idx_col])
+    return df
+
+def encode_label(df):
+    """Convert 'label' column to binary: 1 for malignant, 0 for non-malignant."""
+    # Lowercase for robustness
+    df['label'] = df['label'].str.lower()
+    df['label'] = (df['label'] == 'malignant').astype(int)
+    return df
+
+def main():
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    # Remove NA labels and index column from training data only
+    train_df = prepare_data(train_df)
+    train_df = encode_label(train_df)
+    # Add absolute image path column for AutoGluon
+    train_df['image_path'] = train_df.apply(get_image_path, axis=1)
+
+    # 2. Prepare test data
+    # Find test file (must match extension/format of train)
+    # Try common test file names if not found
+    if not os.path.exists(TEST_CSV):
+        # Try to find a test file in the data directory
+        for fname in os.listdir(DATA_DIR):
+            if fname.lower().startswith("test") and fname.lower().endswith(".csv"):
+                TEST_CSV = os.path.join(DATA_DIR, fname)
+                break
+        else:
+            raise FileNotFoundError("Test CSV file not found in data directory.")
+    test_df = pd.read_csv(TEST_CSV)
+    test_index = test_df.index.copy()
+    # Drop index column if present (but DO NOT drop any rows)
+    for idx_col in ['Unnamed: 0', 'index']:
+        if idx_col in test_df.columns:
+            test_df = test_df.drop(columns=[idx_col])
+    # Add absolute image path column for AutoGluon
+    test_df['image_path'] = test_df.apply(get_image_path, axis=1)
+
+    # 3. Train model
+    # Use AUROC as eval metric for binary classification
+    model_save_path = get_timestamp_folder(OUTPUT_DIR)
+    os.makedirs(model_save_path, exist_ok=True)
+    predictor = MultiModalPredictor(
+        label='label',
+        problem_type='binary',
+        eval_metric='roc_auc',
+        path=model_save_path,
+        seed=RANDOM_SEED,
+    )
+    # Only use image_path and label for training
+    train_data = train_df[['image_path', 'label']]
+    predictor.fit(
+        train_data,
+        presets='best_quality',
+        time_limit=None,
+    )
+
+    # 4. Predict on test set
+    # Only use image_path for prediction
+    test_data = test_df[['image_path']].copy()
+    # Get probability for class '1' (malignant)
+    y_pred_proba = predictor.predict_proba(test_data)
+    # y_pred_proba is a DataFrame with columns [0, 1] (for each class)
+    # We want the probability for class 1 (malignant)
+    if 1 in y_pred_proba.columns:
+        malignancy_prob = y_pred_proba[1]
+    else:
+        # Sometimes columns are strings
+        malignancy_prob = y_pred_proba['1']
+
+    # Prepare output DataFrame
+    # Output column name must match training or sample submission
+    # We'll use 'label' as the output column (since that's the target in train)
+    results_df = pd.DataFrame({'label': malignancy_prob})
+    # Restore original test indices
+    results_df.index = test_index
+
+    # 5. Save results in the same format/extension as test file
+    # Determine extension
+    test_ext = os.path.splitext(TEST_CSV)[1].lower()
+    results_path = os.path.join(OUTPUT_DIR, RESULTS_BASENAME + test_ext)
+    if test_ext == '.csv':
+        results_df.to_csv(results_path, index=True)  # preserve index
+    elif test_ext in ['.parquet', '.pq']:
+        results_df.to_parquet(results_path, index=True)
+    elif test_ext in ['.xlsx', '.xls']:
+        results_df.to_excel(results_path, index=True)
+    else:
+        raise ValueError(f"Unsupported test file extension: {test_ext}")
+
+    # 6. Validation checks
+    # a) Check number of rows matches test set
+    assert len(results_df) == len(test_df), "Number of predictions does not match number of test samples."
+    # b) Check indices match
+    assert all(results_df.index == test_index), "Prediction indices do not match test data indices."
+    # c) Check output column name
+    assert list(results_df.columns) == ['label'], "Output column name does not match requirements."
+    # d) Check output format
+    if test_ext == '.csv':
+        check_df = pd.read_csv(results_path, index_col=0)
+    elif test_ext in ['.parquet', '.pq']:
+        check_df = pd.read_parquet(results_path)
+    elif test_ext in ['.xlsx', '.xls']:
+        check_df = pd.read_excel(results_path, index_col=0)
+    else:
+        check_df = None
+    if check_df is not None:
+        assert len(check_df) == len(test_df), "Saved prediction file row count mismatch."
+        assert list(check_df.columns) == ['label'], "Saved prediction file column mismatch."
+    # e) Check probabilities are in [0, 1]
+    assert np.all((results_df['label'] >= 0) & (results_df['label'] <= 1)), "Predicted probabilities are not in [0, 1]."
+
+    print(f"Model trained and saved to: {model_save_path}")
+    print(f"Predictions saved to: {results_path}")
+
+    # 7. Provide function for new image folder prediction
+    def predict_folder(image_folder_path):
+        """
+        Given a folder path containing images, returns a DataFrame with image file names and
+        malignancy probabilities (float in [0, 1]) for each image.
+        """
+        # List all image files in the folder (common image extensions)
+        image_files = [f for f in os.listdir(image_folder_path)
+                       if f.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff'))]
+        if not image_files:
+            raise ValueError("No image files found in the provided folder.")
+        # Prepare DataFrame for prediction
+        df = pd.DataFrame({'image_name': image_files})
+        df['image_path'] = df['image_name'].apply(lambda x: os.path.join(image_folder_path, x))
+        # Predict probabilities
+        y_proba = predictor.predict_proba(df[['image_path']])
+        if 1 in y_proba.columns:
+            malignancy_prob = y_proba[1]
+        else:
+            malignancy_prob = y_proba['1']
+        result = pd.DataFrame({
+            'image_name': image_files,
+            'malignancy_probability': malignancy_prob.values
+        })
+        return result
+
+    # Save the function for user access (optional: can be imported if this script is used as a module)
+    globals()['predict_folder'] = predict_folder
+
+if __name__ == "__main__":
+    main()
+
+## Execution Results
+### Standard Output (stdout)
+
+Channels:
+ - conda-forge
+Platform: linux-64
+Collecting package metadata (repodata.json): - \ | done
+Solving environment: - \ done
+
+## Package Plan ##
+  environment location: /home/anri21/be-fair/mlzero/28-basic_prompt/node_0/conda_env
+  added / updated specs:
+    - python=3.11
+The following NEW packages will be INSTALLED:
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-20_gnu 
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-hda65f42_9 
+  ca-certificates    conda-forge/noarch::ca-certificates-2026.4.22-hbd8a1cb_0 
+  icu                conda-forge/linux-64::icu-78.3-h33c6efd_0 
+  ld_impl_linux-64   conda-forge/linux-64::ld_impl_linux-64-2.45.1-default_hbd61a6d_102 
+  libexpat           conda-forge/linux-64::libexpat-2.7.5-hecca717_0 
+  libffi             conda-forge/linux-64::libffi-3.5.2-h3435931_0 
+  libgcc             conda-forge/linux-64::libgcc-15.2.0-he0feb66_18 
+  libgcc-ng          conda-forge/linux-64::libgcc-ng-15.2.0-h69a702a_18 
+  libgomp            conda-forge/linux-64::libgomp-15.2.0-he0feb66_18 
+  liblzma            conda-forge/linux-64::liblzma-5.8.3-hb03c661_0 
+  libnsl             conda-forge/linux-64::libnsl-2.0.1-hb9d3cd8_1 
+  libsqlite          conda-forge/linux-64::libsqlite-3.53.0-hf4e2dac_0 
+  libstdcxx          conda-forge/linux-64::libstdcxx-15.2.0-h934c35e_18 
+  libuuid            conda-forge/linux-64::libuuid-2.42-h5347b49_0 
+  libxcrypt          conda-forge/linux-64::libxcrypt-4.4.36-hd590300_1 
+  libzlib            conda-forge/linux-64::libzlib-1.3.2-h25fd6f3_2 
+  ncurses            conda-forge/linux-64::ncurses-6.6-hdb14827_0 
+  openssl            conda-forge/linux-64::openssl-3.6.2-h35e630c_0 
+  packaging          conda-forge/noarch::packaging-26.2-pyhc364b38_0 
+  pip                conda-forge/noarch::pip-26.0.1-pyh8b19718_0 
+  python             conda-forge/linux-64::python-3.11.15-hd63d673_0_cpython 
+  readline           conda-forge/linux-64::readline-8.3-h853b02a_0 
+  setuptools         conda-forge/noarch::setuptools-82.0.1-pyh332efcf_0 
+  tk                 conda-forge/linux-64::tk-8.6.13-noxft_h366c992_103 
+  tzdata             conda-forge/noarch::tzdata-2025c-hc9c84f9_1 
+  wheel              conda-forge/noarch::wheel-0.47.0-pyhd8ed1ab_0 
+  zstd               conda-forge/linux-64::zstd-1.5.7-hb78ec9c_6 
+Downloading and Extracting Packages: ...working... done
+Preparing transaction: / - \ | done
+Verifying transaction: - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | done
+Executing transaction: - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - done
+#
+# To activate this environment, use
+#     $ conda activate /home/anri21/be-fair/mlzero/28-basic_prompt/node_0/conda_env
+# To deactivate an active environment, use
+#     $ conda deactivate
+Collecting uv
+  Using cached uv-0.11.8-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Using cached uv-0.11.8-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (24.8 MB)
+Installing collected packages: uv
+Successfully installed uv-0.11.8
+
+
+### Standard Error (stderr)
+
+
+==> WARNING: A newer version of conda exists. <==
+    current version: 25.11.0
+    latest version: 26.3.2
+Please update conda by running
+    $ conda update -n base -c conda-forge conda
+Using Python 3.11.15 environment at: 28-basic_prompt/node_0/conda_env
+Resolved 237 packages in 978ms
+Uninstalled 1 package in 1.59s
+Installed 235 packages in 41.47s
+ + absl-py==2.4.0
+ + accelerate==1.13.0
+ + adagio==0.2.6
+ + aiohappyeyeballs==2.6.1
+ + aiohttp==3.13.5
+ + aiohttp-cors==0.8.1
+ + aiosignal==1.4.0
+ + alembic==1.18.4
+ + annotated-doc==0.0.4
+ + annotated-types==0.7.0
+ + antlr4-python3-runtime==4.9.3
+ + attrs==26.1.0
+ + autogluon==1.5.1b20260430
+ + autogluon-common==1.5.1b20260430
+ + autogluon-core==1.5.1b20260430
+ + autogluon-features==1.5.1b20260430
+ + autogluon-multimodal==1.5.1b20260430
+ + autogluon-tabular==1.5.1b20260430
+ + autogluon-timeseries==1.5.1b20260430
+ + beartype==0.22.9
+ + beautifulsoup4==4.14.3
+ + blis==1.3.3
+ + boto3==1.43.1
+ + botocore==1.43.1
+ + catalogue==2.0.10
+ + catboost==1.2.10
+ + certifi==2026.4.22
+ + cffi==2.0.0
+ + chardet==7.4.3
+ + charset-normalizer==3.4.7
+ + chronos-forecasting==2.2.2
+ + click==8.3.3
+ + cloudpathlib==0.24.0
+ + cloudpickle==3.1.2
+ + colorama==0.4.6
+ + colorful==0.6.0a1
+ + colorlog==6.10.1
+ + confection==1.3.3
+ + contourpy==1.3.3
+ + coreforecast==0.0.16
+ + cryptography==47.0.0
+ + cycler==0.12.1
+ + cymem==2.0.13
+ + datasets==4.0.0
+ + defusedxml==0.7.1
+ + dill==0.3.8
+ + distlib==0.4.0
+ + einops==0.8.2
+ + einx==0.4.3
+ + evaluate==0.4.6
+ + fastai==2.8.5
+ + fastcore==1.8.18
+ + fastdownload==0.0.7
+ + fastprogress==1.0.5
+ + fasttransform==0.0.2
+ + filelock==3.29.0
+ + fonttools==4.62.1
+ + frozendict==2.4.7
+ + frozenlist==1.8.0
+ + fsspec==2025.3.0
+ + fugue==0.9.7
+ + future==1.0.0
+ + gdown==6.0.0
+ + gluonts==0.16.2
+ + google-api-core==2.30.3
+ + google-auth==2.50.0
+ + googleapis-common-protos==1.74.0
+ + graphviz==0.21
+ + grpcio==1.80.0
+ + hf-xet==1.5.0.dev3
+ + httpx==1.0.dev3
+ + huggingface-hub==0.36.2
+ + hyperopt==0.2.7
+ + idna==3.13
+ + imageio==2.37.3
+ + importlib-metadata==8.7.1
+ + jinja2==3.1.6
+ + jmespath==1.1.0
+ + joblib==1.5.3
+ + jsonschema==4.23.0
+ + jsonschema-specifications==2025.9.1
+ + kiwisolver==1.5.0
+ + lazy-loader==0.5
+ + lightgbm==4.6.0
+ + lightning==2.5.6
+ + lightning-utilities==0.15.3
+ + llvmlite==0.47.0
+ + loguru==0.7.3
+ + mako==1.3.12
+ + markdown==3.10.2
+ + markdown-it-py==4.0.0
+ + markupsafe==3.0.3
+ + matplotlib==3.10.9
+ + mdurl==0.1.2
+ + mlforecast==0.14.0
+ + model-index==0.1.11
+ + mpmath==1.3.0
+ + msgpack==1.1.2
+ + multidict==6.7.1
+ + multiprocess==0.70.16
+ + murmurhash==1.0.15
+ + narwhals==2.20.0
+ + networkx==3.6.1
+ + nlpaug==1.1.11
+ + nltk==3.9.4
+ + numba==0.65.1
+ + numpy==2.1.3
+ + nvidia-cublas-cu12==12.8.4.1
+ + nvidia-cuda-cupti-cu12==12.8.90
+ + nvidia-cuda-nvrtc-cu12==12.8.93
+ + nvidia-cuda-runtime-cu12==12.8.90
+ + nvidia-cudnn-cu12==9.10.2.21
+ + nvidia-cufft-cu12==11.3.3.83
+ + nvidia-cufile-cu12==1.13.1.3
+ + nvidia-curand-cu12==10.3.9.90
+ + nvidia-cusolver-cu12==11.7.3.90
+ + nvidia-cusparse-cu12==12.5.8.93
+ + nvidia-cusparselt-cu12==0.7.1
+ + nvidia-ml-py3==7.352.0
+ + nvidia-nccl-cu12==2.27.5
+ + nvidia-nvjitlink-cu12==12.8.93
+ + nvidia-nvshmem-cu12==3.3.20
+ + nvidia-nvtx-cu12==12.8.90
+ + omegaconf==2.3.0
+ + opencensus==0.11.4
+ + opencensus-context==0.2.dev0
+ + opencv-python==4.13.0.92
+ + opendatalab==0.0.10
+ + openmim==0.3.9
+ + opentelemetry-api==1.41.1
+ + opentelemetry-exporter-prometheus==0.62b1
+ + opentelemetry-proto==1.41.1
+ + opentelemetry-sdk==1.41.1
+ + opentelemetry-semantic-conventions==0.62b1
+ + openxlab==0.0.11
+ + optuna==4.8.0
+ + ordered-set==4.1.0
+ + orjson==3.11.8
+ + pandas==2.3.3
+ + patsy==1.0.2
+ + pbr==7.0.3
+ + pdf2image==1.17.0
+ + peft==0.17.1
+ + pillow==11.3.0
+ + platformdirs==4.9.6
+ + plotly==6.7.0
+ + plum-dispatch==2.9.0
+ + preshed==3.0.13
+ + prometheus-client==0.25.0
+ + propcache==0.4.1
+ + proto-plus==1.27.2
+ + protobuf==6.33.6
+ + psutil==7.1.3
+ + py-spy==0.4.2
+ + py4j==0.10.9.9
+ + pyarrow==20.0.0
+ + pyasn1==0.6.3
+ + pyasn1-modules==0.4.2
+ + pycparser==3.0
+ + pycryptodome==3.23.0
+ + pydantic==2.13.3
+ + pydantic-core==2.46.3
+ + pygments==2.20.0
+ + pyparsing==3.3.2
+ + pysocks==1.7.1
+ + pytesseract==0.3.13
+ + python-calamine==0.6.2
+ + python-dateutil==2.9.0.post0
+ + python-discovery==1.2.2
+ + pytorch-lightning==2.6.1
+ + pytorch-metric-learning==2.8.1
+ + pytz==2026.1.post1
+ + pyyaml==6.0.3
+ + ray==2.53.0
+ + referencing==0.37.0
+ + regex==2026.4.4
+ + requests==2.33.1
+ + rich==15.0.0
+ + rpds-py==0.30.0
+ + s3transfer==0.17.0
+ + safetensors==0.8.0rc0
+ + scikit-image==0.25.2
+ + scikit-learn==1.7.2
+ + scipy==1.16.3
+ + sentencepiece==0.2.1
+ + seqeval==1.2.2
+ - setuptools==82.0.1
+ + setuptools==81.0.0
+ + shellingham==1.5.4
+ + six==1.17.0
+ + smart-open==7.6.0
+ + soupsieve==2.8.3
+ + spacy==3.8.14
+ + spacy-legacy==3.0.12
+ + spacy-loggers==1.0.5
+ + sqlalchemy==2.1.0b2
+ + srsly==2.5.3
+ + statsforecast==2.0.1
+ + statsmodels==0.14.6
+ + stevedore==5.4.1
+ + sympy==1.14.0
+ + tabulate==0.10.0
+ + tensorboard==2.20.0
+ + tensorboard-data-server==0.7.2
+ + tensorboardx==2.6.5
+ + text-unidecode==1.3
+ + thinc==8.3.13
+ + threadpoolctl==3.6.0
+ + tifffile==2026.3.3
+ + timm==1.0.3
+ + tokenizers==0.23.0rc0
+ + toolz==0.12.1
+ + torch==2.9.1
+ + torchaudio==2.11.0
+ + torchmetrics==1.7.4
+ + torchvision==0.24.1
+ + tqdm==4.67.3
+ + transformers==4.57.6
+ + triad==1.0.2
+ + triton==3.5.1
+ + typer==0.25.1
+ + typing-extensions==4.15.0
+ + typing-inspection==0.4.2
+ + tzdata==2026.2
+ + urllib3==2.6.3
+ + utilsforecast==0.2.11
+ + virtualenv==21.3.0
+ + wasabi==1.1.3
+ + weasel==1.0.0
+ + werkzeug==3.1.8
+ + window-ops==0.0.15
+ + wrapt==2.2.0rc11
+ + xgboost==3.1.3
+ + xxhash==3.7.0
+ + yarl==1.23.0
+ + zipp==3.23.1
+/home/anri21/be-fair/mlzero/28-basic_prompt/node_0/conda_env/lib/python3.11/site-packages/autogluon/multimodal/data/templates.py:16: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Traceback (most recent call last):
+  File "/home/anri21/be-fair/mlzero/28-basic_prompt/node_0/generated_code.py", line 206, in <module>
+    main()
+  File "/home/anri21/be-fair/mlzero/28-basic_prompt/node_0/generated_code.py", line 82, in main
+    if not os.path.exists(TEST_CSV):
+                          ^^^^^^^^
+UnboundLocalError: cannot access local variable 'TEST_CSV' where it is not associated with a value
+
+
+Evaluate the execution results and decide on one of the following actions:
+1. SUCCESS - If the execution was completely successful and met all requirements.
+2. FIX - If there were errors, issues, or performance problems that need to be addressed.
+
+Provide your decision in the following format:
+DECISION: [SUCCESS or FIX]
+ERROR_SUMMARY: [Brief summary of errors if any, or "None" if no errors]
+VALIDATION_SCORE: [If there is a validation score for the solution, provide it as a number, otherwise "None"]
+
+The error summary should be brief but informative enough for another agent to understand what needs to be fixed.
+Even if the code executed without throwing errors, it might still have issues with logic or not meet all requirements.
+
+For validation scores:
+- If there is a validation score present in the execution results, extract it (e.g. the last validation score reported in the training process).
+- Convert the score to ensure higher values indicate better performance (multiply "lower is better" metrics like RMSE, MAE, or loss by -1)
+- Return the converted score that follows the "higher is better" convention

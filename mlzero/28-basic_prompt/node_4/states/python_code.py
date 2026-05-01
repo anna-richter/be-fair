@@ -1,0 +1,230 @@
+"""
+Skin Lesion Malignancy Probability Prediction Script
+
+This script trains a binary image classification model to predict the probability that a skin lesion is malignant,
+using classical machine learning on image features extracted from the images referenced in the dataset.
+It performs the following steps:
+
+- Loads and preprocesses the data (removes NA labels, drops index column).
+- Extracts features from images using a pretrained CNN (ResNet18).
+- Trains a logistic regression model to classify lesions as malignant or benign.
+- Saves the trained model and feature extractor.
+- Predicts malignancy probabilities for the test set, preserving original indices and output format.
+- Provides a function to predict malignancy probabilities for a folder of new images.
+- Performs validation checks to ensure output correctness.
+
+Installation requirements (run before executing this script):
+# pip install pandas numpy scikit-learn torch torchvision pillow joblib
+
+Author: AutoML Agent
+"""
+
+# =======================
+# Installation (run in bash before running this script):
+# pip install pandas numpy scikit-learn torch torchvision pillow joblib
+# =======================
+
+import os
+import time
+import random
+import pandas as pd
+import numpy as np
+from PIL import Image
+from sklearn.linear_model import LogisticRegression
+from joblib import dump, load
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+import torchvision.models as models
+
+# Set random seed for reproducibility
+RANDOM_SEED = 42
+
+# Paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/basic_prompt_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/28-basic_prompt/node_4/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+# Assume test file is named 'test.csv' in the same folder (adjust if needed)
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+IMAGE_FOLDER = DATA_DIR  # Images are referenced by image_name in the CSV
+
+RESULTS_BASENAME = "results"
+
+def get_timestamp_folder(base_dir):
+    """Generate a random timestamped folder path under base_dir."""
+    ts = int(time.time() * 1000) + random.randint(0, 9999)
+    folder = os.path.join(base_dir, f"model_{ts}")
+    return folder
+
+def get_image_path(row):
+    """Helper to get absolute image path from image_name."""
+    return os.path.join(IMAGE_FOLDER, row['image_name'])
+
+def prepare_data(df):
+    """Drop NA labels and unnecessary index column from training data."""
+    df = df.dropna(subset=['label'])
+    for idx_col in ['Unnamed: 0', 'index']:
+        if idx_col in df.columns:
+            df = df.drop(columns=[idx_col])
+    return df
+
+def encode_label(df):
+    """Convert 'label' column to binary: 1 for malignant, 0 for non-malignant."""
+    df['label'] = df['label'].str.lower()
+    df['label'] = (df['label'] == 'malignant').astype(int)
+    return df
+
+def extract_features(image_paths, model, device, batch_size=32):
+    """
+    Extract features from images using a pretrained CNN.
+    Returns a numpy array of features.
+    """
+    features = []
+    model.eval()
+    preprocess = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        # Normalization for ImageNet pretrained models
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+    with torch.no_grad():
+        for i in range(0, len(image_paths), batch_size):
+            batch_paths = image_paths[i:i+batch_size]
+            batch_imgs = []
+            for path in batch_paths:
+                try:
+                    img = Image.open(path).convert('RGB')
+                except Exception:
+                    # If image can't be opened, use a zero image
+                    img = Image.fromarray(np.zeros((224, 224, 3), dtype=np.uint8))
+                img = preprocess(img)
+                batch_imgs.append(img)
+            batch_tensor = torch.stack(batch_imgs).to(device)
+            feats = model(batch_tensor)
+            features.append(feats.cpu().numpy())
+    features = np.concatenate(features, axis=0)
+    return features
+
+if __name__ == "__main__":
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    train_df = prepare_data(train_df)
+    train_df = encode_label(train_df)
+    train_df['image_path'] = train_df.apply(get_image_path, axis=1)
+
+    # 2. Prepare test data
+    if not os.path.exists(TEST_CSV):
+        found = False
+        for fname in os.listdir(DATA_DIR):
+            if fname.lower().startswith("test") and fname.lower().endswith(".csv"):
+                TEST_CSV = os.path.join(DATA_DIR, fname)
+                found = True
+                break
+        if not found:
+            raise FileNotFoundError("Test CSV file not found in data directory.")
+    test_df = pd.read_csv(TEST_CSV)
+    test_index = test_df.index.copy()
+    for idx_col in ['Unnamed: 0', 'index']:
+        if idx_col in test_df.columns:
+            test_df = test_df.drop(columns=[idx_col])
+    test_df['image_path'] = test_df.apply(get_image_path, axis=1)
+
+    # 3. Feature extraction using pretrained ResNet18 (remove final fc layer)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    resnet = models.resnet18(pretrained=True)
+    feature_extractor = nn.Sequential(*list(resnet.children())[:-1])  # Remove final FC
+    feature_extractor = feature_extractor.to(device)
+
+    # Helper to flatten output
+    def flatten_features(x):
+        return x.reshape(x.shape[0], -1)
+
+    # Extract features for train and test
+    train_features = extract_features(train_df['image_path'].tolist(), feature_extractor, device)
+    train_features = flatten_features(train_features)
+    test_features = extract_features(test_df['image_path'].tolist(), feature_extractor, device)
+    test_features = flatten_features(test_features)
+
+    # 4. Train classifier (Logistic Regression)
+    model_save_path = get_timestamp_folder(OUTPUT_DIR)
+    os.makedirs(model_save_path, exist_ok=True)
+    clf = LogisticRegression(
+        random_state=RANDOM_SEED,
+        max_iter=1000,
+        solver='lbfgs'
+    )
+    clf.fit(train_features, train_df['label'].values)
+
+    # Save model and feature extractor
+    dump(clf, os.path.join(model_save_path, "classifier.joblib"))
+    torch.save(feature_extractor.state_dict(), os.path.join(model_save_path, "feature_extractor.pth"))
+
+    # 5. Predict on test set (malignancy probability)
+    malignancy_prob = clf.predict_proba(test_features)[:, 1]
+    results_df = pd.DataFrame({'label': malignancy_prob})
+    results_df.index = test_index
+
+    # 6. Save results in the same format/extension as test file
+    test_ext = os.path.splitext(TEST_CSV)[1].lower()
+    results_path = os.path.join(OUTPUT_DIR, RESULTS_BASENAME + test_ext)
+    if test_ext == '.csv':
+        results_df.to_csv(results_path, index=True)
+    elif test_ext in ['.parquet', '.pq']:
+        results_df.to_parquet(results_path, index=True)
+    elif test_ext in ['.xlsx', '.xls']:
+        results_df.to_excel(results_path, index=True)
+    else:
+        raise ValueError(f"Unsupported test file extension: {test_ext}")
+
+    # 7. Validation checks
+    assert len(results_df) == len(test_df), "Number of predictions does not match number of test samples."
+    assert all(results_df.index == test_index), "Prediction indices do not match test data indices."
+    assert list(results_df.columns) == ['label'], "Output column name does not match requirements."
+    if test_ext == '.csv':
+        check_df = pd.read_csv(results_path, index_col=0)
+    elif test_ext in ['.parquet', '.pq']:
+        check_df = pd.read_parquet(results_path)
+    elif test_ext in ['.xlsx', '.xls']:
+        check_df = pd.read_excel(results_path, index_col=0)
+    else:
+        check_df = None
+    if check_df is not None:
+        assert len(check_df) == len(test_df), "Saved prediction file row count mismatch."
+        assert list(check_df.columns) == ['label'], "Saved prediction file column mismatch."
+    assert np.all((results_df['label'] >= 0) & (results_df['label'] <= 1)), "Predicted probabilities are not in [0, 1]."
+
+    print(f"Model trained and saved to: {model_save_path}")
+    print(f"Predictions saved to: {results_path}")
+
+    # 8. Provide function for new image folder prediction
+    def predict_folder(image_folder_path):
+        """
+        Given a folder path containing images, returns a DataFrame with image file names and
+        malignancy probabilities (float in [0, 1]) for each image.
+        """
+        # Load model and feature extractor
+        clf = load(os.path.join(model_save_path, "classifier.joblib"))
+        resnet = models.resnet18(pretrained=False)
+        feature_extractor = nn.Sequential(*list(resnet.children())[:-1])
+        feature_extractor.load_state_dict(torch.load(os.path.join(model_save_path, "feature_extractor.pth"), map_location=device))
+        feature_extractor = feature_extractor.to(device)
+        feature_extractor.eval()
+
+        # List all image files in the folder
+        image_files = [f for f in os.listdir(image_folder_path)
+                       if f.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff'))]
+        if not image_files:
+            raise ValueError("No image files found in the provided folder.")
+        image_paths = [os.path.join(image_folder_path, f) for f in image_files]
+        feats = extract_features(image_paths, feature_extractor, device)
+        feats = feats.reshape(feats.shape[0], -1)
+        malignancy_prob = clf.predict_proba(feats)[:, 1]
+        result = pd.DataFrame({
+            'image_name': image_files,
+            'malignancy_probability': malignancy_prob
+        })
+        return result
+
+    # Save the function for user access (optional: can be imported if this script is used as a module)
+    globals()['predict_folder'] = predict_folder
