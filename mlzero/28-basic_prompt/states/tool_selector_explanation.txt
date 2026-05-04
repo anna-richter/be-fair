@@ -1,0 +1,19 @@
+The task is binary image classification (malignant vs. benign skin lesions) using image files, with the output being a malignancy probability (0–1) per image, and AUROC as the evaluation metric. The dataset consists of image files referenced by name in a CSV, and the requirement is to train a model and provide a prediction function for new images.
+
+Analyzing the available libraries:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for training or inference on image classification problems.
+
+- machine learning: This is described as a general reference for ML or deep learning algorithms, to be used if other tools are not helpful. It is not a specific implementation and should be considered only if no specialized library fits.
+
+- wav2vec2: This is an audio model, pre-trained for audio data and tasks like ASR or audio classification. It is not designed for image data and is not suitable for this task.
+
+- qwen3: This is a text generation model, focused on dialogue and reasoning tasks. It does not support image input or classification.
+
+- autogluon.tabular: This library automates ML for tabular data (numerical/categorical), but explicitly does not support image-based tasks. It is not suitable for this image classification problem.
+
+- autogluon.multimodal: This library is designed for multimodal classification, including image classification tasks. It supports image input and can output class probabilities. It is not for generative or audio tasks, but is well-suited for image classification, which matches the requirements here.
+
+- autogluon.timeseries: This is for time series forecasting, not for image or tabular classification.
+
+Given the above, autogluon.multimodal is the only library specifically designed for image classification and can handle the required input/output formats. If, for some reason, it cannot be used, the next fallback would be the generic "machine learning" reference, as it may allow for custom implementation. As a third option, autogluon.tabular could be considered if the problem were reframed to use only tabular features (excluding images), but this would not meet the core requirement of image-based classification.

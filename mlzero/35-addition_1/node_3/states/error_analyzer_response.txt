@@ -1,0 +1,5 @@
+ERROR_SUMMARY:  
+The error occurs because the hyperparameters dictionary passed to `MultiModalPredictor.fit()` uses the key `"model.image"`, but this key does not exist in the current AutoGluon configuration for your task. As a result, when AutoGluon tries to apply the override, it raises a `KeyError` indicating that `"model.image"` is not found in the config.
+
+SUGGESTED_FIX:  
+Remove the `"model.image"` key from the `hyperparameters` dictionary in your `fit_args`, or update it to use the correct key for specifying the image backbone in your version of AutoGluon. Instead, rely on the `"presets": "best_quality"` argument, which automatically selects a strong image backbone, or consult the [AutoGluon MultiModal documentation](https://auto.gluon.ai/stable/tutorials/multimodal/index.html) for the correct way to specify the image model checkpoint in your version.

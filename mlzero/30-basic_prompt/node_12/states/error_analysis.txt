@@ -1,0 +1,3 @@
+ERROR_SUMMARY: The script failed because it could not find a test CSV file in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data) whose filename starts with "test" and ends with ".csv". The code explicitly searches for such a file and raises a FileNotFoundError if none is found.
+
+SUGGESTED_FIX: Check the /home/anri21/be-fair/mlzero/basic_prompt_data directory and ensure that a test CSV file (e.g., test.csv or test_data.csv) exists with the expected format. If the test file is missing, add it; if it is named differently, rename it so that its filename starts with "test" and ends with ".csv".

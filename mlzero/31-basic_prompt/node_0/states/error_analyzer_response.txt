@@ -1,0 +1,3 @@
+ERROR_SUMMARY: The script failed because it attempted to access image files listed in the CSV dataset that do not exist in the specified data directory. This resulted in a FileNotFoundError when the code checked for the presence of all required image files before training and prediction.
+
+SUGGESTED_FIX: Verify that all image files referenced in the 'image_name' column of the CSV are present in the data directory. If some images are missing, either restore/copy the missing files to the directory or remove the corresponding rows from the CSV before running the script again.

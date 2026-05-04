@@ -1,0 +1,7 @@
+Columns:
+['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+First rows:
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3

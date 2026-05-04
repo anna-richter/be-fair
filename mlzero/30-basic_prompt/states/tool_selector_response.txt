@@ -1,0 +1,19 @@
+---
+EXPLANATION:  
+The task is binary image classification (malignant vs. benign skin lesions) using image files, with the output being a malignancy probability (0–1) per image, and AUROC as the evaluation metric. The dataset consists of image files referenced by name in a CSV file. The ideal library should support image classification, preferably with easy model training, prediction, and probability output.
+
+- FlagEmbedding is specialized for retrieval and reranking, not for image classification, so it is not suitable.
+- machine learning is a generic reference and not an actual library; it should only be considered if no other library is appropriate.
+- wav2vec2 is designed for audio data, not images, so it is not suitable.
+- qwen3 is a text generation model, not designed for image classification.
+- autogluon.tabular is for tabular data only and does not support image-based tasks, so it is not suitable.
+- autogluon.multimodal is designed for multimodal tasks, including image classification, and is explicitly intended for tasks like this (image classification with probability outputs). It is not for generative or audio tasks, but this is not a requirement here.
+- autogluon.timeseries is for time series forecasting, not image classification.
+
+Therefore, autogluon.multimodal is the best fit, as it is designed for multimodal (including image) classification tasks. If it were unavailable, the only fallback would be the generic "machine learning" reference, as none of the other libraries are suitable for image classification. For a third choice, autogluon.tabular could be considered, but only if the task were reformulated to use tabular features instead of images, which is not the case here.
+
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

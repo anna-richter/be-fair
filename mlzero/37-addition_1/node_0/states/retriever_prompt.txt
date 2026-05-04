@@ -1,0 +1,51 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** Images of skin lesions (image files referenced by the 'image_name' column in mydataset.csv).
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+
+### Data Structures
+Absolute path to the folder: /home/anri21/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved   and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+              ...
+----------
+Absolute path: /home/anri21/be-fair/mlzero/addition_1_data/mydataset.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### User Instruction
+
+
+### Previous Error Analysis
+
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

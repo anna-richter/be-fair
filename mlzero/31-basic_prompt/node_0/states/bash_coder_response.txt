@@ -1,0 +1,46 @@
+Here is a **minimal, robust bash script** that creates and configures a conda environment in the specified folder, installs `uv` and all required packages (using only the requirements files, not upgrading autogluon.multimodal if already correct), and then runs your Python script.
+
+```bash
+#!/bin/bash
+set -e
+
+# Paths
+ENV_DIR="/home/anri21/be-fair/mlzero/31-basic_prompt/node_0/conda_env"
+PYTHON_VERSION="3.11"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_MM="/home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt"
+PY_SCRIPT="/home/anri21/be-fair/mlzero/31-basic_prompt/node_0/generated_code.py"
+
+# 1. Create conda environment in the specified folder if not exists
+if [ ! -d "$ENV_DIR" ]; then
+    conda create -y -p "$ENV_DIR" python=$PYTHON_VERSION
+fi
+
+# 2. Activate the environment
+# shellcheck disable=SC1091
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_DIR"
+
+# 3. Install uv (pip alternative)
+pip install uv
+
+# 4. Install required packages using uv, only as specified in requirements
+uv pip install --prerelease=allow -r "$REQ_MM" -r "$REQ_COMMON"
+
+# 5. Run the Python script
+python "$PY_SCRIPT"
+```
+
+**Notes:**
+- This script is minimal and robust: it only creates the environment if needed, always activates it, and uses `uv` to install exactly the packages in the requirements files (with dependencies), without upgrading/reinstalling `autogluon.multimodal` if already present at the correct version.
+- The `--prerelease=allow` flag is included as you specified.
+- No unnecessary upgrades or reinstalls are performed.
+- The script will exit on any error (`set -e`).
+- If you want to re-create the environment from scratch, delete the `conda_env` folder first.
+
+**Usage:**  
+Save as `run_mlzero.sh`, make executable (`chmod +x run_mlzero.sh`), and run:
+```bash
+./run_mlzero.sh
+```
+Let me know if you need a version for `bash -c` or with extra debugging!

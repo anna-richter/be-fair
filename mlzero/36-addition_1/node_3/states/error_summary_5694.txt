@@ -1,0 +1,1 @@
+FileNotFoundError: The code could not find a test CSV file in the data directory (/home/anri21/be-fair/mlzero/addition_1_data). Execution stopped before model training or prediction.

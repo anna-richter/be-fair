@@ -1,0 +1,5 @@
+ERROR_SUMMARY:  
+The script failed with a `FileNotFoundError` because it could not locate a test file (such as `test.csv` or `sample_submission.csv`) in the specified data directory. This caused the script to halt before model training or evaluation could proceed.
+
+SUGGESTED_FIX:  
+Check the `/home/anri21/be-fair/mlzero/basic_prompt_data` directory and ensure that a test file named `test.csv` or `sample_submission.csv` is present. If such a file does not exist, create a test file with the required structure (at minimum, an `image_name` column referencing the test images) and place it in the data directory before rerunning the script.

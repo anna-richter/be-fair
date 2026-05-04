@@ -1,0 +1,101 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** Images of skin lesions (image files referenced by image_name in the CSV file).
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+- **Additional requirement:** The trained model should be saved, and a function must be provided that takes a folder path of new images and returns a malignancy probability for each image.
+
+### Data Structures
+Absolute path to the folder: /home/anri21/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+First lines:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/mydataset.csv
+Content:
+Columns:
+['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+First rows:
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### User Instruction
+
+
+### Previous Error Analysis
+ERROR_SUMMARY: The script failed because it attempted to access image files listed in the CSV dataset that do not exist in the specified data directory. This resulted in a FileNotFoundError when the code checked for the presence of all required image files before training and prediction.
+
+SUGGESTED_FIX: Verify that all image files referenced in the 'image_name' column of the CSV are present in the data directory. If some images are missing, either restore/copy the missing files to the directory or remove the corresponding rows from the CSV before running the script again.
+
+ERROR_SUMMARY: The ValueError occurs because, after filtering out training rows with missing image files, the resulting DataFrame is empty (n_samples=0). This means that all or nearly all image files referenced in the CSV are missing from the data directory, so there are no samples left to split into training and validation sets, causing train_test_split to fail.
+
+SUGGESTED_FIX:  
+Check that the image files listed in the 'image_name' column of your CSV actually exist in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data). Ensure the images are present and named correctly; if not, copy or rename the missing files as needed. If the filtering logic is too strict or the image paths are incorrect, adjust the code or data so that at least some valid image files are available for training.
+
+ERROR_SUMMARY: The error occurred because the script expects a test file (with a filename starting with "test") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file was found. As a result, a FileNotFoundError was raised when attempting to locate and load the test data after model training.
+
+SUGGESTED_FIX: Check that the test file (e.g., test.csv or similar) exists in the data directory and that its filename starts with "test". If the test file is missing, add it to the directory; if it exists but has a different name, rename it to start with "test" so the script can detect and process it.
+
+ERROR_SUMMARY: The error `ValueError: No training samples with valid images found after filtering.` occurs because, after filtering the training DataFrame for rows whose image files actually exist, zero rows remain. This means all referenced image files in the training CSV are missing from the expected directory, so the model cannot be trained.
+
+SUGGESTED_FIX:  
+Check that the image files listed in the `image_name` column of `/home/anri21/be-fair/mlzero/basic_prompt_data/mydataset.csv` actually exist in `/home/anri21/be-fair/mlzero/basic_prompt_data`. If they are missing, ensure the images are correctly placed in that directory with the exact filenames; if necessary, update the CSV or image paths so that the code can find the images and proceed with training.
+
+ERROR_SUMMARY: The error "ValueError: No training samples with valid images found after filtering." occurs because, after removing rows with missing image files, the training DataFrame is empty. This means that none of the image files referenced in the CSV exist at the expected location, so there is no data left to train the model.
+
+SUGGESTED_FIX:  
+Check that the image files listed in the 'image_name' column of your CSV actually exist in the directory /home/anri21/be-fair/mlzero/basic_prompt_data. Ensure the file names and paths are correct and that the images are present; if not, copy or move the required images into this directory so the script can find them.
+
+ERROR_SUMMARY: The error `ValueError: No training samples with valid images found after filtering.` occurs because, after filtering the training DataFrame for rows whose image files actually exist on disk, no valid training samples remain. This means either all image paths in the CSV are missing from the expected directory, or the code is looking in the wrong folder for the images.
+
+SUGGESTED_FIX:  
+Check that all image files referenced in the `image_name` column of your CSV actually exist in `/home/anri21/be-fair/mlzero/basic_prompt_data`. If the images are stored elsewhere, update the `IMAGE_DIR` variable in your script to point to the correct directory. If the images are missing, ensure they are copied or linked into the expected folder before running the script.
+
+ERROR_SUMMARY: The error `ValueError: No training samples with valid images found after filtering.` occurs because, after removing rows with missing image files, the training DataFrame is empty. This means that none of the image files referenced in the CSV exist in the expected directory, so there is no data left to train the model.
+
+SUGGESTED_FIX:  
+Check that the image files listed in the `image_name` column of your CSV actually exist in the `/home/anri21/be-fair/mlzero/basic_prompt_data/` directory. Ensure the filenames and extensions match exactly, and that the images are present and accessible. If the images are stored elsewhere or have different names/extensions, update the CSV or move/copy the images to the correct directory so the script can find them.
+
+ERROR_SUMMARY: The error occurred because the script could not find a test file in the specified data directory (`/home/anri21/be-fair/mlzero/basic_prompt_data`). The function `get_test_file_and_format()` raises a `FileNotFoundError` when no file starting with "test" is present in that directory, which is required for making predictions and saving results.
+
+SUGGESTED_FIX:  
+Check that the test file (e.g., `test.csv` or similar, with a name starting with "test") exists in `/home/anri21/be-fair/mlzero/basic_prompt_data`. If it is missing, add the appropriate test file to this directory before rerunning the script. If the test file has a different name, either rename it to start with "test" or update the script to match the actual filename.
+
+ERROR_SUMMARY: The error `ValueError: No training samples with valid images found after filtering.` occurs because, after filtering the training DataFrame for rows whose image files actually exist on disk, no rows remain. This means all image paths referenced in the CSV are missing from the expected directory, so the model cannot be trained.
+
+SUGGESTED_FIX:  
+Check that the image files listed in the `image_name` column of your CSV actually exist in `/home/anri21/be-fair/mlzero/basic_prompt_data`. If they are missing, copy or move the required image files into this directory, ensuring the filenames match exactly (including case and extension). Then, rerun the script.
+
+ERROR_SUMMARY: The error `ValueError: No training samples with valid images found after filtering.` occurs because, after filtering the training DataFrame for rows whose image files actually exist on disk, no rows remain. This means all image paths referenced in the CSV are missing from the expected directory, so model training cannot proceed.
+
+SUGGESTED_FIX:  
+Check that all image files listed in the `image_name` column of your CSV actually exist in `/home/anri21/be-fair/mlzero/basic_prompt_data`. If they are missing, copy or move the required images into this directory, ensuring the filenames match exactly (including case and extension). Then, rerun the script to allow it to find valid training samples.
+
+### Selected Tool/Library
+machine learning
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

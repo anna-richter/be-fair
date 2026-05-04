@@ -1,0 +1,208 @@
+"""
+Skin Lesion Malignancy Probability Prediction Script
+
+This script trains a machine learning model (ResNet18 + Logistic Regression) to predict the probability that a skin lesion is malignant, using image data referenced in a CSV file. It:
+- Loads and preprocesses the data (removes NA labels, drops index columns).
+- Extracts features from images using a pretrained ResNet18.
+- Trains a logistic regression classifier on these features.
+- Saves the trained model to a timestamped folder in the specified output directory.
+- Predicts malignancy probabilities for the test set, preserving original indices and output format.
+- Saves predictions in the same format as the test file, with correct column names.
+- Performs validation (AUROC) using a 10% holdout from the training data.
+- Includes validation checks to ensure output correctness.
+
+# Installation requirements (run before executing this script):
+# pip install pandas scikit-learn torch torchvision pillow
+
+"""
+
+import os
+import random
+import time
+import pickle
+import pandas as pd
+import numpy as np
+
+from PIL import Image
+
+import torch
+import torch.nn as nn
+from torchvision import models, transforms
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+
+# Paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/basic_prompt_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/28-basic_prompt/node_6/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+# Find test CSV (must not be the training file)
+TEST_CSV = None
+for fname in os.listdir(DATA_DIR):
+    if fname.endswith('.csv') and fname != "mydataset.csv":
+        TEST_CSV = os.path.join(DATA_DIR, fname)
+        break
+if TEST_CSV is None:
+    raise FileNotFoundError("Test CSV file not found in data directory.")
+
+# Helper: find image path
+def find_image_path(image_name):
+    path1 = os.path.join(DATA_DIR, image_name)
+    if os.path.exists(path1):
+        return path1
+    path2 = os.path.join(DATA_DIR, "images", image_name)
+    if os.path.exists(path2):
+        return path2
+    raise FileNotFoundError(f"Image file {image_name} not found in expected locations.")
+
+# Image feature extractor using pretrained ResNet18
+class ResNet18FeatureExtractor(nn.Module):
+    def __init__(self):
+        super().__init__()
+        model = models.resnet18(pretrained=True)
+        # Remove the final classification layer
+        self.features = nn.Sequential(*list(model.children())[:-1])
+        self.eval()
+    def forward(self, x):
+        with torch.no_grad():
+            feats = self.features(x)
+            feats = feats.view(feats.size(0), -1)
+        return feats
+
+def extract_features(image_paths, batch_size=32, device='cpu'):
+    """
+    Extracts features from a list of image paths using ResNet18.
+    Returns a numpy array of shape (n_samples, 512).
+    """
+    extractor = ResNet18FeatureExtractor().to(device)
+    extractor.eval()
+    preprocess = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        # Normalization for ImageNet
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+    features = []
+    n = len(image_paths)
+    for i in range(0, n, batch_size):
+        batch_paths = image_paths[i:i+batch_size]
+        imgs = []
+        for p in batch_paths:
+            img = Image.open(p).convert('RGB')
+            imgs.append(preprocess(img))
+        imgs_tensor = torch.stack(imgs).to(device)
+        feats = extractor(imgs_tensor)
+        features.append(feats.cpu().numpy())
+    features = np.concatenate(features, axis=0)
+    return features
+
+if __name__ == "__main__":
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # 2. Data preprocessing
+    # Remove unnecessary index column if present
+    for col in train_df.columns:
+        if col.lower().startswith("unnamed"):
+            train_df = train_df.drop(columns=[col])
+    for col in test_df.columns:
+        if col.lower().startswith("unnamed"):
+            test_df = test_df.drop(columns=[col])
+
+    # Remove training samples without valid labels (drop NA in 'label')
+    train_df = train_df.dropna(subset=['label'])
+
+    # Map label to binary: malignant=1, all else=0
+    train_df['label'] = (train_df['label'].astype(str).str.lower() == 'malignant').astype(int)
+
+    # Build absolute image paths
+    train_df['image_path'] = train_df['image_name'].apply(find_image_path)
+    test_df['image_path'] = test_df['image_name'].apply(find_image_path)
+
+    # 3. Hold out 10% validation set (stratified)
+    train_data, val_data = train_test_split(
+        train_df,
+        test_size=0.1,
+        random_state=42,
+        stratify=train_df['label']
+    )
+
+    # 4. Feature extraction
+    # Use GPU if available
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f"Extracting features on device: {device}")
+
+    X_train = extract_features(train_data['image_path'].tolist(), device=device)
+    y_train = train_data['label'].values
+
+    X_val = extract_features(val_data['image_path'].tolist(), device=device)
+    y_val = val_data['label'].values
+
+    X_test = extract_features(test_df['image_path'].tolist(), device=device)
+
+    # 5. Model training
+    # Prepare output model directory with random timestamp
+    timestamp = int(time.time()) + random.randint(0, 9999)
+    model_dir = os.path.join(OUTPUT_DIR, f"ml_model_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+
+    # Train logistic regression on extracted features
+    clf = LogisticRegression(max_iter=1000, solver='lbfgs')
+    clf.fit(X_train, y_train)
+
+    # Save model and feature extractor
+    with open(os.path.join(model_dir, "logreg.pkl"), "wb") as f:
+        pickle.dump(clf, f)
+    # Save a note about feature extraction method
+    with open(os.path.join(model_dir, "feature_extractor.txt"), "w") as f:
+        f.write("Features extracted using torchvision.models.resnet18 pretrained on ImageNet, penultimate layer (512-dim).\n")
+
+    # 6. Prediction on test set
+    test_pred_proba = clf.predict_proba(X_test)[:, 1]  # Probability of malignant
+
+    # 7. Save predictions
+    # Output format: same as test file, but with a column for malignancy probability
+    output_df = test_df.copy()
+    output_df['label'] = test_pred_proba
+    # Only keep columns present in test file plus 'label'
+    keep_cols = [col for col in test_df.columns if col != 'label'] + ['label']
+    output_df = output_df[keep_cols]
+
+    # Save with same extension as test file, name "results"
+    test_ext = os.path.splitext(TEST_CSV)[1]
+    results_path = os.path.join(OUTPUT_DIR, f"results{test_ext}")
+    if test_ext == ".csv":
+        output_df.to_csv(results_path, index=False)
+    elif test_ext in [".parquet", ".pq"]:
+        output_df.to_parquet(results_path, index=False)
+    elif test_ext in [".tsv"]:
+        output_df.to_csv(results_path, sep='\t', index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {test_ext}")
+
+    # 8. Validation
+    try:
+        val_pred_proba = clf.predict_proba(X_val)[:, 1]
+        val_auc = roc_auc_score(y_val, val_pred_proba)
+        print(f"Validation AUROC: {val_auc:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # 9. Validation checks
+    # a. Check output file has same number of rows as test set
+    pred_df = pd.read_csv(results_path) if test_ext == ".csv" else (
+        pd.read_parquet(results_path) if test_ext in [".parquet", ".pq"] else pd.read_csv(results_path, sep='\t')
+    )
+    assert len(pred_df) == len(test_df), "Prediction file row count does not match test set."
+    # b. Check column names
+    assert 'label' in pred_df.columns, "Output file missing 'label' column."
+    # c. Check output format
+    assert results_path.startswith(OUTPUT_DIR), "Results file not saved in output directory."
+    # d. Check probabilities are in [0, 1]
+    assert np.all((pred_df['label'] >= 0) & (pred_df['label'] <= 1)), "Predicted probabilities not in [0, 1]."
+
+    print(f"Predictions saved to: {results_path}")
+    print(f"Model saved to: {model_dir}")

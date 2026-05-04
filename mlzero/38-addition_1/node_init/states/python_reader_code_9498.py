@@ -1,0 +1,35 @@
+import os
+
+file_path = "/home/anri21/be-fair/mlzero/addition_1_data/descriptions.txt"
+
+def analyze_file(fp):
+    try:
+        import pandas as pd
+        _, ext = os.path.splitext(fp)
+        if ext.lower() in ['.csv', '.tsv']:
+            df = pd.read_csv(fp, sep=None, engine='python')
+        elif ext.lower() in ['.xls', '.xlsx']:
+            df = pd.read_excel(fp)
+        elif ext.lower() == '.parquet':
+            df = pd.read_parquet(fp)
+        else:
+            raise Exception("Not tabular")
+        cols = list(df.columns)
+        if len(cols) > 20:
+            display_cols = cols[:10] + ['...'] + cols[-10:]
+        else:
+            display_cols = cols
+        print("Columns:", display_cols)
+        pd.set_option('display.max_colwidth', 50)
+        print(df.head(3).to_string(index=False))
+        return
+    except Exception:
+        pass
+    try:
+        with open(fp, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read(768)
+            print("Text preview:\n" + content)
+    except Exception as e:
+        print(f"Could not read file: {e}")
+
+analyze_file(file_path)

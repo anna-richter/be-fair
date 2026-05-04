@@ -1,0 +1,213 @@
+```python
+"""
+Skin Lesion Malignancy Prediction Script (Classical ML + Image Features)
+
+This script trains a binary classifier to predict the probability of malignancy for skin lesion images.
+- Loads and preprocesses the data (removes NA labels, drops index column).
+- Extracts features from images using a pretrained CNN (ResNet18).
+- Trains a LightGBM model on the extracted features, holding out 10% for validation.
+- Saves the trained model to a timestamped folder in the specified output directory.
+- Predicts malignancy probability for each test image, preserving original indices and output format.
+- Provides a function to predict on a new folder of images.
+- Performs validation checks on the output.
+- Prints AUROC on the held-out validation set.
+
+# Installation (if needed):
+# !pip install pandas scikit-learn lightgbm torch torchvision pillow
+
+Author: AutoML Agent
+"""
+
+# =======================
+# Installation (for bash)
+# =======================
+# pip install pandas scikit-learn lightgbm torch torchvision pillow
+
+import os
+import random
+import time
+import shutil
+import dill
+import numpy as np
+import pandas as pd
+
+from PIL import Image
+
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+import torchvision.models as models
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+from lightgbm import LGBMClassifier
+import joblib
+
+# Paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/addition_1_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/38-addition_1/node_1/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+IMAGE_DIR = DATA_DIR  # images are referenced by image_name column, assumed to be in DATA_DIR
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+def get_timestamp_folder(base_dir):
+    """Generate a random timestamped folder path under base_dir."""
+    timestamp = int(time.time()) + random.randint(0, 99999)
+    folder = os.path.join(base_dir, f"model_{timestamp}")
+    return folder
+
+def map_label_to_binary(label):
+    """Map label to binary: malignant=1, else=0."""
+    return 1 if str(label).strip().lower() == "malignant" else 0
+
+def extract_image_features(image_paths, device, batch_size=32):
+    """
+    Extract features from images using pretrained ResNet18 (avgpool output).
+    Returns a numpy array of shape (n_samples, feature_dim).
+    """
+    # Preprocessing pipeline
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        # Normalize as per ImageNet
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+    # Load pretrained model
+    model = models.resnet18(pretrained=True)
+    model = nn.Sequential(*list(model.children())[:-1])  # Remove FC, keep avgpool
+    model.eval()
+    model.to(device)
+
+    features = []
+    n = len(image_paths)
+    with torch.no_grad():
+        for i in range(0, n, batch_size):
+            batch_paths = image_paths[i:i+batch_size]
+            imgs = []
+            for p in batch_paths:
+                img = Image.open(p).convert('RGB')
+                imgs.append(transform(img))
+            imgs = torch.stack(imgs).to(device)
+            feats = model(imgs).squeeze(-1).squeeze(-1)  # (B, 512, 1, 1) -> (B, 512)
+            features.append(feats.cpu().numpy())
+    features = np.concatenate(features, axis=0)
+    return features
+
+def main():
+    # 1. Data Loading and Preprocessing
+    df = pd.read_csv(TRAIN_CSV)
+    # Remove unnecessary index column if present
+    if 'Unnamed: 0' in df.columns:
+        df = df.drop(columns=['Unnamed: 0'])
+    # Remove training samples without valid labels (drop NA in 'label')
+    df = df.dropna(subset=['label'])
+    # Map label to binary (malignant=1, else=0)
+    df['label'] = df['label'].apply(map_label_to_binary)
+    # Add absolute image path column
+    df['image_path'] = df['image_name'].apply(lambda x: os.path.join(IMAGE_DIR, x))
+    # Remove rows with missing image files
+    df = df[df['image_path'].apply(os.path.exists)].reset_index(drop=True)
+
+    # 2. Train/Validation Split (10% holdout)
+    train_df, val_df = train_test_split(df, test_size=0.1, random_state=42, stratify=df['label'])
+
+    # 3. Feature Extraction
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("Extracting image features for training set...")
+    X_train = extract_image_features(train_df['image_path'].tolist(), device)
+    y_train = train_df['label'].values
+    print("Extracting image features for validation set...")
+    X_val = extract_image_features(val_df['image_path'].tolist(), device)
+    y_val = val_df['label'].values
+
+    # 4. Model Training
+    model_dir = get_timestamp_folder(OUTPUT_DIR)
+    os.makedirs(model_dir, exist_ok=True)
+    clf = LGBMClassifier(n_estimators=100, random_state=42)
+    clf.fit(X_train, y_train)
+    # Save model and feature extractor info
+    joblib.dump(clf, os.path.join(model_dir, "lgbm_model.pkl"))
+
+    # 5. Prediction function for new images
+    def predict_on_folder(image_folder):
+        """
+        Predict malignancy probability for each image in the given folder.
+        Returns a DataFrame with columns: ['image_name', 'malignancy_probability']
+        """
+        image_files = sorted([
+            f for f in os.listdir(image_folder)
+            if os.path.isfile(os.path.join(image_folder, f))
+        ])
+        image_paths = [os.path.join(image_folder, f) for f in image_files]
+        # Only keep files that exist and are images
+        valid_files = []
+        valid_paths = []
+        for f, p in zip(image_files, image_paths):
+            try:
+                with Image.open(p) as img:
+                    img.verify()
+                valid_files.append(f)
+                valid_paths.append(p)
+            except Exception:
+                # If not a valid image, still preserve row with probability 0.5 (neutral)
+                valid_files.append(f)
+                valid_paths.append(None)
+        # Extract features for valid images
+        feats = []
+        for p in valid_paths:
+            if p is not None:
+                feat = extract_image_features([p], device)
+                feats.append(feat[0])
+            else:
+                feats.append(np.zeros(512))  # Use zero vector for invalid images
+        feats = np.stack(feats)
+        # Predict probabilities
+        probs = clf.predict_proba(feats)[:, 1]
+        result_df = pd.DataFrame({
+            'image_name': valid_files,
+            'malignancy_probability': probs
+        })
+        return result_df
+
+    # 6. Save predictions on test set (if test set is provided)
+    TEST_IMAGE_FOLDER = os.path.join(DATA_DIR, "test_images")
+    if os.path.isdir(TEST_IMAGE_FOLDER):
+        results_df = predict_on_folder(TEST_IMAGE_FOLDER)
+        results_path = os.path.join(OUTPUT_DIR, "results.csv")
+        results_df.to_csv(results_path, index=False)
+        # Validation checks
+        # 1. Indices preserved (image_name order matches test set)
+        test_files = sorted([
+            f for f in os.listdir(TEST_IMAGE_FOLDER)
+            if os.path.isfile(os.path.join(TEST_IMAGE_FOLDER, f))
+        ])
+        assert list(results_df['image_name']) == test_files, "Image names/order mismatch!"
+        # 2. Correct columns
+        assert list(results_df.columns) == ['image_name', 'malignancy_probability'], "Column names mismatch!"
+        # 3. Output format
+        assert results_path.endswith('.csv'), "Output file format mismatch!"
+        # 4. Number of predictions
+        assert len(results_df) == len(test_files), "Number of predictions does not match number of test samples!"
+        # 5. Sanity check: probabilities in [0,1]
+        assert np.all((results_df['malignancy_probability'] >= 0) & (results_df['malignancy_probability'] <= 1)), "Probabilities out of range!"
+        print(f"Predictions saved to {results_path}")
+
+    # 7. Validation on held-out set
+    try:
+        val_probs = clf.predict_proba(X_val)[:, 1]
+        val_auc = roc_auc_score(y_val, val_probs)
+        print(f"Validation AUROC: {val_auc:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # 8. Save the prediction function for new images
+    func_path = os.path.join(OUTPUT_DIR, "predict_on_folder.dill")
+    with open(func_path, "wb") as f:
+        dill.dump(predict_on_folder, f)
+    print(f"Prediction function saved to {func_path}")
+
+if __name__ == "__main__":
+    main()
+```

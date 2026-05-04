@@ -1,0 +1,152 @@
+Channels:
+ - conda-forge
+Platform: linux-64
+Collecting package metadata (repodata.json): - \ | done
+Solving environment: - \ done
+
+## Package Plan ##
+  environment location: /home/anri21/be-fair/mlzero/32-basic_prompt/node_15/conda_env
+  added / updated specs:
+    - python=3.11
+The following NEW packages will be INSTALLED:
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-20_gnu 
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-hda65f42_9 
+  ca-certificates    conda-forge/noarch::ca-certificates-2026.4.22-hbd8a1cb_0 
+  icu                conda-forge/linux-64::icu-78.3-h33c6efd_0 
+  ld_impl_linux-64   conda-forge/linux-64::ld_impl_linux-64-2.45.1-default_hbd61a6d_102 
+  libexpat           conda-forge/linux-64::libexpat-2.7.5-hecca717_0 
+  libffi             conda-forge/linux-64::libffi-3.5.2-h3435931_0 
+  libgcc             conda-forge/linux-64::libgcc-15.2.0-he0feb66_18 
+  libgcc-ng          conda-forge/linux-64::libgcc-ng-15.2.0-h69a702a_18 
+  libgomp            conda-forge/linux-64::libgomp-15.2.0-he0feb66_18 
+  liblzma            conda-forge/linux-64::liblzma-5.8.3-hb03c661_0 
+  libnsl             conda-forge/linux-64::libnsl-2.0.1-hb9d3cd8_1 
+  libsqlite          conda-forge/linux-64::libsqlite-3.53.0-hf4e2dac_0 
+  libstdcxx          conda-forge/linux-64::libstdcxx-15.2.0-h934c35e_18 
+  libuuid            conda-forge/linux-64::libuuid-2.42-h5347b49_0 
+  libxcrypt          conda-forge/linux-64::libxcrypt-4.4.36-hd590300_1 
+  libzlib            conda-forge/linux-64::libzlib-1.3.2-h25fd6f3_2 
+  ncurses            conda-forge/linux-64::ncurses-6.6-hdb14827_0 
+  openssl            conda-forge/linux-64::openssl-3.6.2-h35e630c_0 
+  packaging          conda-forge/noarch::packaging-26.2-pyhc364b38_0 
+  pip                conda-forge/noarch::pip-26.0.1-pyh8b19718_0 
+  python             conda-forge/linux-64::python-3.11.15-hd63d673_0_cpython 
+  readline           conda-forge/linux-64::readline-8.3-h853b02a_0 
+  setuptools         conda-forge/noarch::setuptools-82.0.1-pyh332efcf_0 
+  tk                 conda-forge/linux-64::tk-8.6.13-noxft_h366c992_103 
+  tzdata             conda-forge/noarch::tzdata-2025c-hc9c84f9_1 
+  wheel              conda-forge/noarch::wheel-0.47.0-pyhd8ed1ab_0 
+  zstd               conda-forge/linux-64::zstd-1.5.7-hb78ec9c_6 
+Downloading and Extracting Packages: ...working... done
+Preparing transaction: / - \ | done
+Verifying transaction: - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - done
+Executing transaction: | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ done
+#
+# To activate this environment, use
+#     $ conda activate /home/anri21/be-fair/mlzero/32-basic_prompt/node_15/conda_env
+# To deactivate an active environment, use
+#     $ conda deactivate
+Collecting uv
+  Using cached uv-0.11.8-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Using cached uv-0.11.8-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (24.8 MB)
+Installing collected packages: uv
+Successfully installed uv-0.11.8
+Collecting autogluon.tabular
+  Downloading autogluon_tabular-1.5.0-py3-none-any.whl.metadata (16 kB)
+Requirement already satisfied: pandas in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (3.0.2)
+Collecting scikit-learn
+  Using cached scikit_learn-1.8.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (11 kB)
+Collecting numpy<2.4.0,>=1.25.0 (from autogluon.tabular)
+  Using cached numpy-2.3.5-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting scipy<1.17,>=1.5.4 (from autogluon.tabular)
+  Using cached scipy-1.16.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (62 kB)
+Collecting pandas
+  Using cached pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+  Using cached scikit_learn-1.7.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (11 kB)
+Requirement already satisfied: networkx<4,>=3.0 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from autogluon.tabular) (3.6.1)
+Collecting autogluon.core==1.5.0 (from autogluon.tabular)
+  Using cached autogluon_core-1.5.0-py3-none-any.whl.metadata (13 kB)
+Collecting autogluon.features==1.5.0 (from autogluon.tabular)
+  Using cached autogluon_features-1.5.0-py3-none-any.whl.metadata (12 kB)
+Requirement already satisfied: tqdm<5,>=4.38 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from autogluon.core==1.5.0->autogluon.tabular) (4.67.3)
+Requirement already satisfied: requests in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from autogluon.core==1.5.0->autogluon.tabular) (2.33.1)
+Collecting matplotlib<3.11,>=3.7.0 (from autogluon.core==1.5.0->autogluon.tabular)
+  Using cached matplotlib-3.10.9-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (52 kB)
+Collecting boto3<2,>=1.10 (from autogluon.core==1.5.0->autogluon.tabular)
+  Using cached boto3-1.43.1-py3-none-any.whl.metadata (6.5 kB)
+Collecting autogluon.common==1.5.0 (from autogluon.core==1.5.0->autogluon.tabular)
+  Using cached autogluon_common-1.5.0-py3-none-any.whl.metadata (12 kB)
+Collecting pyarrow<21.0.0,>=7.0.0 (from autogluon.common==1.5.0->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached pyarrow-20.0.0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (3.3 kB)
+Collecting psutil<7.2.0,>=5.7.3 (from autogluon.common==1.5.0->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached psutil-7.1.3-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (23 kB)
+Collecting joblib<1.7,>=1.2 (from autogluon.common==1.5.0->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached joblib-1.5.3-py3-none-any.whl.metadata (5.5 kB)
+Requirement already satisfied: pyyaml>=5.0 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from autogluon.common==1.5.0->autogluon.core==1.5.0->autogluon.tabular) (6.0.3)
+Requirement already satisfied: python-dateutil>=2.8.2 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
+Requirement already satisfied: pytz>=2020.1 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from pandas) (2026.1.post1)
+Collecting tzdata>=2022.7 (from pandas)
+  Using cached tzdata-2026.2-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting threadpoolctl>=3.1.0 (from scikit-learn)
+  Using cached threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+Collecting botocore<1.44.0,>=1.43.1 (from boto3<2,>=1.10->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached botocore-1.43.1-py3-none-any.whl.metadata (5.5 kB)
+Collecting jmespath<2.0.0,>=0.7.1 (from boto3<2,>=1.10->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached jmespath-1.1.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting s3transfer<0.18.0,>=0.17.0 (from boto3<2,>=1.10->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached s3transfer-0.17.0-py3-none-any.whl.metadata (1.7 kB)
+Requirement already satisfied: urllib3!=2.2.0,<3,>=1.25.4 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from botocore<1.44.0,>=1.43.1->boto3<2,>=1.10->autogluon.core==1.5.0->autogluon.tabular) (2.6.3)
+Collecting contourpy>=1.0.1 (from matplotlib<3.11,>=3.7.0->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached contourpy-1.3.3-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (5.5 kB)
+Collecting cycler>=0.10 (from matplotlib<3.11,>=3.7.0->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+Collecting fonttools>=4.22.0 (from matplotlib<3.11,>=3.7.0->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached fonttools-4.62.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (117 kB)
+Collecting kiwisolver>=1.3.1 (from matplotlib<3.11,>=3.7.0->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached kiwisolver-1.5.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (5.1 kB)
+Requirement already satisfied: packaging>=20.0 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from matplotlib<3.11,>=3.7.0->autogluon.core==1.5.0->autogluon.tabular) (26.2)
+Requirement already satisfied: pillow>=8 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from matplotlib<3.11,>=3.7.0->autogluon.core==1.5.0->autogluon.tabular) (12.2.0)
+Collecting pyparsing>=3 (from matplotlib<3.11,>=3.7.0->autogluon.core==1.5.0->autogluon.tabular)
+  Using cached pyparsing-3.3.2-py3-none-any.whl.metadata (5.8 kB)
+Requirement already satisfied: six>=1.5 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from python-dateutil>=2.8.2->pandas) (1.17.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from requests->autogluon.core==1.5.0->autogluon.tabular) (3.4.7)
+Requirement already satisfied: idna<4,>=2.5 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from requests->autogluon.core==1.5.0->autogluon.tabular) (3.13)
+Requirement already satisfied: certifi>=2023.5.7 in ./32-basic_prompt/node_15/conda_env/lib/python3.11/site-packages (from requests->autogluon.core==1.5.0->autogluon.tabular) (2026.4.22)
+Downloading autogluon_tabular-1.5.0-py3-none-any.whl (515 kB)
+Using cached autogluon_core-1.5.0-py3-none-any.whl (227 kB)
+Using cached autogluon_common-1.5.0-py3-none-any.whl (74 kB)
+Using cached autogluon_features-1.5.0-py3-none-any.whl (98 kB)
+Using cached pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.8 MB)
+Using cached scikit_learn-1.7.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (9.7 MB)
+Using cached boto3-1.43.1-py3-none-any.whl (140 kB)
+Using cached botocore-1.43.1-py3-none-any.whl (15.0 MB)
+Using cached jmespath-1.1.0-py3-none-any.whl (20 kB)
+Using cached joblib-1.5.3-py3-none-any.whl (309 kB)
+Using cached matplotlib-3.10.9-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (8.8 MB)
+Using cached numpy-2.3.5-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.9 MB)
+Using cached psutil-7.1.3-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (263 kB)
+Using cached pyarrow-20.0.0-cp311-cp311-manylinux_2_28_x86_64.whl (42.3 MB)
+Using cached s3transfer-0.17.0-py3-none-any.whl (86 kB)
+Using cached scipy-1.16.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (35.9 MB)
+Using cached contourpy-1.3.3-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (355 kB)
+Using cached cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Using cached fonttools-4.62.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.1 MB)
+Using cached kiwisolver-1.5.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.4 MB)
+Using cached pyparsing-3.3.2-py3-none-any.whl (122 kB)
+Using cached threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
+Using cached tzdata-2026.2-py2.py3-none-any.whl (349 kB)
+Installing collected packages: tzdata, threadpoolctl, pyparsing, pyarrow, psutil, numpy, kiwisolver, joblib, jmespath, fonttools, cycler, scipy, pandas, contourpy, botocore, scikit-learn, s3transfer, matplotlib, boto3, autogluon.common, autogluon.features, autogluon.core, autogluon.tabular
+  Attempting uninstall: pyarrow
+    Found existing installation: pyarrow 24.0.0
+    Uninstalling pyarrow-24.0.0:
+      Successfully uninstalled pyarrow-24.0.0
+  Attempting uninstall: numpy
+    Found existing installation: numpy 2.4.4
+    Uninstalling numpy-2.4.4:
+      Successfully uninstalled numpy-2.4.4
+  Attempting uninstall: pandas
+    Found existing installation: pandas 3.0.2
+    Uninstalling pandas-3.0.2:
+      Successfully uninstalled pandas-3.0.2
+
+Successfully installed autogluon.common-1.5.0 autogluon.core-1.5.0 autogluon.features-1.5.0 autogluon.tabular-1.5.0 boto3-1.43.1 botocore-1.43.1 contourpy-1.3.3 cycler-0.12.1 fonttools-4.62.1 jmespath-1.1.0 joblib-1.5.3 kiwisolver-1.5.0 matplotlib-3.10.9 numpy-2.3.5 pandas-2.3.3 psutil-7.1.3 pyarrow-20.0.0 pyparsing-3.3.2 s3transfer-0.17.0 scikit-learn-1.7.2 scipy-1.16.3 threadpoolctl-3.6.0 tzdata-2026.2

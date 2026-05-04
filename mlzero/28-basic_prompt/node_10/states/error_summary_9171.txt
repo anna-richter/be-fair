@@ -1,0 +1,1 @@
+ModuleNotFoundError: No module named 'autogluon'. The required package autogluon.multimodal is not installed, so the script fails at import and does not execute any model training or prediction.

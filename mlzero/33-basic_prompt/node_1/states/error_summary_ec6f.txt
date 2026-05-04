@@ -1,0 +1,1 @@
+The code failed with a FileNotFoundError: "Test file not found in data directory." This indicates that the required test file (e.g., test.csv or sample_submission.csv) was missing from the data directory, so the script could not proceed to training, validation, or prediction.

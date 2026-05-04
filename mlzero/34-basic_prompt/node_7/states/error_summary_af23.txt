@@ -1,0 +1,1 @@
+FileNotFoundError: Test CSV file not found in data directory. The code expects a test CSV file (whose name starts with "test" and ends with ".csv") in /home/anri21/be-fair/mlzero/basic_prompt_data, but none was found.

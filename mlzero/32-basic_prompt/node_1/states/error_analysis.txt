@@ -1,0 +1,3 @@
+ERROR_SUMMARY: The error occurs because the input feature matrix X_train contains NaN values, which LogisticRegression from scikit-learn does not support. This is likely due to missing or unreadable images during feature extraction, resulting in rows of all-NaN features that are not fully removed by the current fillna(X_train.mean()) step.
+
+SUGGESTED_FIX: Before fitting the model, explicitly drop any rows in X_train (and corresponding y_train) that still contain NaN values after imputation. Alternatively, use a more robust imputation strategy (e.g., sklearn's SimpleImputer) to ensure no NaNs remain, or switch to a classifier that natively handles missing values.

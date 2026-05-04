@@ -1,0 +1,66 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Type:** Image classification (binary classification)
+
+**Input Format:**  
+- Input images of skin lesions (image files; image file names are referenced in the dataset as `image_name`).
+- For prediction, a folder path containing new images.
+
+**Prediction Output Format:**  
+- For each input image, output a malignancy probability (a float between 0 and 1).
+
+**Additional Details:**  
+- The model should classify each lesion as malignant or benign.
+- The evaluation metric is Area Under the Receiver Operator Curve (AUROC).
+- The trained model should be saved.
+- A function must be provided that takes a folder path of new images and returns a malignancy probability for each image.
+
+### Data Structures
+Absolute path to the folder: /home/anri21/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+Text preview:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Absolute path: /home/anri21/be-fair/mlzero/addition_1_data/mydataset.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### User Instruction
+
+
+### Previous Error Analysis
+ERROR_SUMMARY: The script failed because it could not find one or more image files referenced in the dataset CSV. Specifically, the code checks for the existence of each image file (using the image_name column) in the specified data directory, and raises a FileNotFoundError if any are missing, which halts model training and prediction.
+
+SUGGESTED_FIX: Verify that all image files listed in the 'image_name' column of mydataset.csv are present in the /home/anri21/be-fair/mlzero/addition_1_data directory. If any files are missing, restore or copy them to this directory, or remove their corresponding rows from the CSV if they cannot be recovered, then rerun the script.
+
+ERROR_SUMMARY: The error occurs because after preprocessing, the DataFrame `df` is empty—specifically, all rows are dropped when checking for the existence of image files referenced in the `image_name` column. As a result, when `train_test_split` is called, there are zero samples, causing scikit-learn to raise a ValueError about an empty train set.
+
+SUGGESTED_FIX: Check that the image files listed in the `image_name` column of your CSV actually exist in the specified directory (`/home/anri21/be-fair/mlzero/addition_1_data`). If the images are missing, ensure they are placed in the correct folder or update the CSV to reference the correct image paths. If the images are present but under a different directory or with different names/extensions, adjust the code or CSV accordingly so that `os.path.exists` returns True for each image.
+
+### Selected Tool/Library
+autogluon.tabular
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

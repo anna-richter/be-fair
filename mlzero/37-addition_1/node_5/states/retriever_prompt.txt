@@ -1,0 +1,72 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** Images of skin lesions (image files referenced by the 'image_name' column in mydataset.csv).
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+
+### Data Structures
+Absolute path to the folder: /home/anri21/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved   and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+              ...
+----------
+Absolute path: /home/anri21/be-fair/mlzero/addition_1_data/mydataset.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### User Instruction
+
+
+### Previous Error Analysis
+ERROR_SUMMARY: The script failed with a FileNotFoundError because it expects a test CSV file (e.g., test.csv) in the data directory (/home/anri21/be-fair/mlzero/addition_1_data), but no such file was found. The function get_test_csv_path() searches for a file starting with "test" and ending with ".csv" but raises an error if none is present, halting execution before model training or prediction.
+
+SUGGESTED_FIX: Ensure that a test CSV file (such as test.csv) is present in the data directory (/home/anri21/be-fair/mlzero/addition_1_data) before running the script. If the test set is not yet available, create a placeholder test.csv with the required columns (e.g., image_name) to allow the script to proceed, or modify the code to skip test prediction if the file is missing.
+
+ERROR_SUMMARY: The error occurred because the function get_test_csv_path() could not find any file in the data directory whose name starts with "test" and ends with ".csv". As a result, it raised a FileNotFoundError, which halted the script before any model training or prediction could take place.
+
+SUGGESTED_FIX: Check the /home/anri21/be-fair/mlzero/addition_1_data directory to ensure that a test CSV file (e.g., test.csv or similar) exists and is named appropriately (starting with "test" and ending with ".csv"). If the test file is missing, add it; if it exists but is named differently, rename it to match the expected pattern.
+
+ERROR_SUMMARY: The error occurs because the code expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/addition_1_data), but no such file is present. As a result, the function get_test_csv_path() raises a FileNotFoundError, halting execution.
+
+SUGGESTED_FIX:  
+Check the /home/anri21/be-fair/mlzero/addition_1_data directory and ensure that a test CSV file (e.g., test.csv or test_data.csv) exists and is named appropriately. If the test file is missing, obtain or generate it; if it is present but named differently, rename it to match the expected pattern (starts with "test" and ends with ".csv").
+
+ERROR_SUMMARY: The script raises a `FileNotFoundError` because it expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (`/home/anri21/be-fair/mlzero/addition_1_data`), but no such file is present. As a result, the script cannot proceed to prediction or evaluation steps.
+
+SUGGESTED_FIX:  
+Check the data directory to ensure that a test CSV file (e.g., `test.csv`) exists and is named correctly (starts with "test" and ends with ".csv"). If the file is missing, generate or copy the appropriate test CSV file into the data directory, ensuring it matches the expected format (including an `image_name` column referencing available images).
+
+ERROR_SUMMARY: The error occurs because the code expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/addition_1_data), but no such file exists. As a result, the function `get_test_csv_path()` raises a FileNotFoundError and halts execution before any model training or prediction.
+
+SUGGESTED_FIX:  
+Check the data directory to ensure that a test CSV file (e.g., test.csv or test_data.csv) is present and named correctly. If the test file is missing, obtain or generate it according to the expected format; if it exists but is named differently, rename it so that it starts with "test" and ends with ".csv" to match the code's requirements.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

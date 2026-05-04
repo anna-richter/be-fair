@@ -1,0 +1,245 @@
+"""
+Skin Lesion Malignancy Probability Prediction Script using AutoGluon Tabular
+
+This script trains an AutoGluon Tabular model to predict the probability that a skin lesion is malignant,
+using the provided tabular dataset. It preprocesses the data, removes invalid labels and unnecessary index columns,
+trains the model, saves it, and generates malignancy probability predictions for the test set.
+Predictions are saved with the same indices and format as the test file.
+
+Additionally, a function is provided that takes a folder path of new images and returns a malignancy probability for each image,
+using only tabular features (no image content is used).
+
+Installation requirements (run before executing this script):
+------------------------------------------------------------
+# pip install autogluon.tabular pandas scikit-learn
+
+Usage:
+------
+- Place this script in your working directory.
+- Ensure the data folder and files are present as described.
+- Run the script.
+
+Output:
+-------
+- Trained model saved in a timestamped folder under /home/anri21/be-fair/mlzero/33-basic_prompt/node_7/output
+- Prediction results saved as "results.csv" (or matching test file extension) in the output directory.
+- Validation AUROC printed to stdout.
+
+"""
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+from autogluon.tabular import TabularPredictor
+
+# Set output directory
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/33-basic_prompt/node_7/output"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# Set data directory
+DATA_DIR = "/home/anri21/be-fair/mlzero/basic_prompt_data"
+
+def get_timestamp_folder(base_dir):
+    """Generate a random timestamped folder name for model saving."""
+    timestamp = int(time.time())
+    rand = random.randint(1000, 9999)
+    folder = os.path.join(base_dir, f"model_{timestamp}_{rand}")
+    os.makedirs(folder, exist_ok=True)
+    return folder
+
+def get_label_column(train_df):
+    """Infer the label column for binary classification."""
+    if 'label' in train_df.columns:
+        return 'label'
+    for col in train_df.columns:
+        if train_df[col].nunique() == 2:
+            return col
+    raise ValueError("Could not infer label column for binary classification.")
+
+def map_label_to_binary(train_df, label_col):
+    """Map string labels to binary 0/1 for malignant/benign."""
+    unique_labels = train_df[label_col].dropna().unique()
+    mapping = {}
+    for val in unique_labels:
+        if str(val).lower().strip() == 'malignant':
+            mapping[val] = 1
+        else:
+            mapping[val] = 0
+    train_df[label_col] = train_df[label_col].map(mapping)
+    return mapping
+
+def main():
+    # 1. Load training data
+    train_csv = os.path.join(DATA_DIR, "mydataset.csv")
+    train_df = pd.read_csv(train_csv)
+
+    # 2. Remove unnecessary index column if present
+    index_cols = [col for col in train_df.columns if col.lower() in ['unnamed: 0', 'index']]
+    if index_cols:
+        train_df = train_df.drop(columns=index_cols)
+
+    # 3. Remove training samples without valid labels (drop NA in label column)
+    label_col = get_label_column(train_df)
+    train_df = train_df.dropna(subset=[label_col])
+
+    # 4. Map string labels to binary (malignant=1, others=0)
+    label_mapping = map_label_to_binary(train_df, label_col)
+
+    # 5. Prepare test data
+    test_csv = None
+    for fname in os.listdir(DATA_DIR):
+        if fname.lower().startswith('test'):
+            test_csv = os.path.join(DATA_DIR, fname)
+            break
+        if fname.lower().startswith('sample_submission'):
+            test_csv = os.path.join(DATA_DIR, fname)
+            break
+    if test_csv is None:
+        raise FileNotFoundError("Test file not found in data directory.")
+
+    test_df = pd.read_csv(test_csv)
+    test_index = test_df.index.copy()  # Save original indices
+
+    # Remove unnecessary index column from test set if present
+    index_cols_test = [col for col in test_df.columns if col.lower() in ['unnamed: 0', 'index']]
+    if index_cols_test:
+        test_df = test_df.drop(columns=index_cols_test)
+
+    # 6. Select features for training and prediction
+    # Remove label and image_name from features
+    feature_cols = [col for col in train_df.columns if col not in [label_col, 'image_name']]
+
+    # 7. Train AutoGluon TabularPredictor
+    model_dir = get_timestamp_folder(OUTPUT_DIR)
+    predictor = TabularPredictor(
+        label=label_col,
+        problem_type="binary",
+        eval_metric="roc_auc",
+        path=model_dir
+    )
+    # Use presets="extreme" as requested
+    predictor.fit(
+        train_df[feature_cols + [label_col]],
+        presets="extreme"
+    )
+
+    # 8. Save the trained model (already saved by predictor.fit)
+
+    # 9. Make predictions on the entire test set (probability for class 1)
+    # If test set is missing any feature columns, add them as NA
+    for col in feature_cols:
+        if col not in test_df.columns:
+            test_df[col] = np.nan
+    test_features = test_df[feature_cols]
+    proba_df = predictor.predict_proba(test_features)
+    # Get probability for class 1 (malignant)
+    if 1 in proba_df.columns:
+        malignancy_proba = proba_df[1].values
+    elif 'malignant' in proba_df.columns:
+        malignancy_proba = proba_df['malignant'].values
+    else:
+        malignancy_proba = proba_df.iloc[:, 1].values
+
+    # 10. Prepare results DataFrame
+    # Output column name should match the label column in train or sample_submission
+    sample_sub = None
+    for fname in os.listdir(DATA_DIR):
+        if fname.lower().startswith('sample_submission'):
+            sample_sub = pd.read_csv(os.path.join(DATA_DIR, fname))
+            break
+    if sample_sub is not None:
+        output_cols = [col for col in sample_sub.columns if col != 'image_name']
+        if len(output_cols) == 1:
+            output_col = output_cols[0]
+        else:
+            output_col = label_col
+    else:
+        output_col = label_col
+
+    results_df = test_df.copy()
+    results_df[output_col] = malignancy_proba
+    if 'image_name' in results_df.columns:
+        results_df = results_df[['image_name', output_col]]
+    else:
+        results_df = results_df[[output_col]]
+    results_df.index = test_index
+
+    # 11. Save results file in output directory, matching test file extension
+    test_ext = os.path.splitext(test_csv)[1]
+    results_path = os.path.join(OUTPUT_DIR, f"results{test_ext}")
+    if test_ext == ".csv":
+        results_df.to_csv(results_path, index=False)
+    elif test_ext in [".tsv", ".txt"]:
+        results_df.to_csv(results_path, sep='\t', index=False)
+    else:
+        results_df.to_csv(results_path, index=False)
+
+    # 12. Validation: compute AUROC on internal validation set (AutoGluon reports this)
+    try:
+        leaderboard = predictor.leaderboard(silent=True)
+        best_val_score = leaderboard.iloc[0]['score_val']
+        print(f"AutoGluon reported best validation AUROC: {best_val_score:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # 13. Validation checks
+    assert len(results_df) == len(test_df), "Number of predictions does not match number of test samples."
+    if sample_sub is not None:
+        assert list(results_df.columns) == list(sample_sub.columns), \
+            f"Output columns {results_df.columns} do not match sample submission {sample_sub.columns}"
+    else:
+        assert output_col in results_df.columns, "Output column missing in results."
+    assert all(results_df.index == test_index), "Test indices not preserved in output."
+    if test_ext == ".csv":
+        check_df = pd.read_csv(results_path)
+    elif test_ext in [".tsv", ".txt"]:
+        check_df = pd.read_csv(results_path, sep='\t')
+    else:
+        check_df = pd.read_csv(results_path)
+    assert len(check_df) == len(test_df), "Saved results file row count mismatch."
+    assert np.all((results_df[output_col] >= 0) & (results_df[output_col] <= 1)), \
+        "Predicted probabilities are not in [0, 1] range."
+
+    print(f"Predictions saved to: {results_path}")
+
+    # 14. Provide function for new image folder prediction (tabular only)
+    def predict_folder(image_folder, model_path=model_dir):
+        """
+        Predict malignancy probability for each image in a folder using tabular features only.
+
+        Args:
+            image_folder (str): Path to folder containing images.
+            model_path (str): Path to trained model directory.
+
+        Returns:
+            pd.DataFrame: DataFrame with columns ['image_name', 'malignancy_probability']
+        """
+        predictor = TabularPredictor.load(model_path)
+        image_files = [f for f in os.listdir(image_folder)
+                       if os.path.isfile(os.path.join(image_folder, f))]
+        # No tabular features for new images, so fill with NAs
+        df = pd.DataFrame({'image_name': image_files})
+        for col in feature_cols:
+            df[col] = np.nan
+        proba_df = predictor.predict_proba(df[feature_cols])
+        if 1 in proba_df.columns:
+            malignancy_proba = proba_df[1].values
+        elif 'malignant' in proba_df.columns:
+            malignancy_proba = proba_df['malignant'].values
+        else:
+            malignancy_proba = proba_df.iloc[:, 1].values
+        result = pd.DataFrame({
+            'image_name': df['image_name'],
+            'malignancy_probability': malignancy_proba
+        })
+        return result
+
+    # Example usage (commented out):
+    # new_images_folder = "/path/to/new/images"
+    # preds = predict_folder(new_images_folder)
+    # print(preds.head())
+
+if __name__ == "__main__":
+    main()

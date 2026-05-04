@@ -1,0 +1,4 @@
+ERROR_SUMMARY: The error occurs because the script expects a test file (with a filename starting with "test") to be present in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file exists. As a result, the function get_test_file_and_format() raises a FileNotFoundError, causing the script to terminate before making predictions or saving outputs.
+
+SUGGESTED_FIX:  
+Check the data directory to ensure that a test file (e.g., test.csv or similar) is present and correctly named (filename should start with "test"). If the test file is missing, obtain or generate it as required by the workflow; if it exists but is named differently, rename it to start with "test" so the script can detect and process it.

@@ -1,0 +1,14 @@
+**Task Type:** Image classification (binary classification)
+
+**Input Format:**  
+- Training data:  
+  - Images referenced by the 'image_name' column in mydataset.csv  
+  - Labels provided in the 'label' column of mydataset.csv, with possible values including 'malignant' and 'non-neoplastic' (benign)
+- Prediction:  
+  - A function that takes a folder path containing new images
+
+**Prediction Output Format:**  
+- For each input image, output a malignancy probability (a float between 0 and 1)
+
+**Evaluation Metric:**  
+- Area under the receiver operator curve (AUROC)

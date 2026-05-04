@@ -1,0 +1,3 @@
+DECISION: FIX  
+ERROR_SUMMARY: Conda environment setup failed due to "[Errno 28] No space left on device" during package installation (ncurses). The code did not execute, so no model was trained or evaluated.  
+VALIDATION_SCORE: None

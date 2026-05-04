@@ -1,0 +1,5 @@
+ERROR_SUMMARY:  
+The error occurs because the Python script expects a test file (with a name starting with "test" or "sample_submission") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file is present. As a result, the script raises a FileNotFoundError and halts before model training or evaluation can proceed.
+
+SUGGESTED_FIX:  
+Check the /home/anri21/be-fair/mlzero/basic_prompt_data directory and ensure that a test file (e.g., test.csv or sample_submission.csv) exists and is named appropriately. If you have a test set, copy or rename it to match the expected naming convention; otherwise, create a placeholder test file with the required columns to allow the script to run.

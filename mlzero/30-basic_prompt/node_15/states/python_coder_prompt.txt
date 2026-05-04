@@ -1,0 +1,344 @@
+
+As an AutoML Agent, you will be given a folder containing data and description files. Please generate Python code using machine learning to train a predictor and make predictions on test data. Follow these specifications:
+
+ONLY save files to the working directory: /home/anri21/be-fair/mlzero/30-basic_prompt/node_15/output.
+
+1. Data preprocessing:
+   - Remove training data samples without valid labels (drop NA values from training dataset ONLY, NOT from test dataset) unless explicitly instructed otherwise.
+   - Remove the unneccesary index column (if applicable)
+
+2. Model training:
+   - Use machine learning with appropriate parameters for the task
+   - If a model is trained, save it in a folder with random timestamp within /home/anri21/be-fair/mlzero/30-basic_prompt/node_15/output
+
+3. Prediction:
+   - Make predictions on the ENTIRE test set, preserving ORIGINAL INDICES to maintain exact row correspondence. NEVER drop any test rows for any reason (including missing values), and ensure the output has the exact same number of rows as the test set.
+   - Save the predicted results to /home/anri21/be-fair/mlzero/30-basic_prompt/node_15/output, result file name should be "results", the format and extension should be same as the test data file
+   - Output column names must exactly match those in the training or sample submission files without adding "predicted_" prefixes or creating any new columns.
+   - IMPORTANT: At the end, implement validation checks that assert the prediction file maintains exact test data indices, verify correct column names match requirements, confirm proper output format, verify the number of predictions equals the number of test samples, and if applicable, sanity check output predictions are valid and correct.
+
+4. Documentation:
+   - Add a brief docstring at the beginning of the script explaining its purpose
+   - Include additional installation steps with comments at the beginning of the script
+   - Include comments explaining any complex operations or design decisions
+
+5. Others:
+   - To avoid DDP errors, wrap the code in: if __name__ == "__main__":
+   - Ensure errors are propagated up and not silently caught - do not use try/except blocks unless you explicitly re-raise the exception.
+
+6. Validation (only when there is labeled training data):
+   - If there is training and but no validation data is given, hold out a validation dataset (10 percent of the data) at the start, train only on the remaining data.
+   - At the end compute and print the final evaluation metric score on the validation set.
+   - Use a try-except block for the validation step - if validation fails, it's acceptable to continue.
+
+
+In the bash script, install all necessary packages.
+
+### Previous Code to Debug
+```python
+"""
+Skin Lesion Malignancy Probability Prediction Script
+
+This script trains a machine learning model (ResNet18 via PyTorch and scikit-learn) to predict the probability
+that a skin lesion is malignant, based on images referenced in the dataset. It:
+- Loads and preprocesses the data (removes NA labels, drops index columns).
+- Extracts features from images using a pretrained ResNet18 CNN.
+- Trains a logistic regression classifier on these features.
+- Saves the trained model to a timestamped folder in the output directory.
+- Predicts malignancy probabilities for the test set, preserving original indices and output format.
+- Saves predictions to the output directory, matching the test file's format and column names.
+- Performs validation using a 10% holdout from the training data and prints AUROC.
+- Includes validation checks to ensure output correctness.
+
+# Installation (uncomment and run in bash if needed):
+# pip install pandas scikit-learn torch torchvision pillow
+
+Author: AutoML Agent
+"""
+
+import os
+import random
+import time
+import pickle
+import pandas as pd
+import numpy as np
+
+from PIL import Image
+
+import torch
+import torch.nn as nn
+from torchvision import models, transforms
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+
+# Paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/basic_prompt_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/30-basic_prompt/node_4/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+
+# Find test CSV file (must exist)
+TEST_CSV = None
+for fname in os.listdir(DATA_DIR):
+    if fname.lower().startswith("test") and fname.lower().endswith(".csv"):
+        TEST_CSV = os.path.join(DATA_DIR, fname)
+        break
+if TEST_CSV is None:
+    raise FileNotFoundError("Test CSV file not found in data directory.")
+
+IMAGE_ROOT = DATA_DIR  # Images are referenced by image_name column, and are in the same folder
+
+def get_timestamp_folder(base_dir):
+    """Generate a random timestamped folder path under base_dir."""
+    ts = int(time.time())
+    rand = random.randint(1000, 9999)
+    folder = os.path.join(base_dir, f"model_{ts}_{rand}")
+    return folder
+
+def get_image_path(image_name):
+    """Find the image file with supported extensions."""
+    base = os.path.join(IMAGE_ROOT, image_name)
+    for ext in ['.jpg', '.jpeg', '.png', '.bmp']:
+        candidate = base + ext
+        if os.path.exists(candidate):
+            return candidate
+    # Try as-is (maybe image_name already has extension)
+    if os.path.exists(base):
+        return base
+    raise FileNotFoundError(f"Image file not found for {image_name}")
+
+def extract_features(image_paths, model, device, batch_size=32):
+    """
+    Extract features from images using a pretrained CNN.
+    Returns a numpy array of features.
+    """
+    preprocess = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        # Normalization for ImageNet
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+    features = []
+    model.eval()
+    with torch.no_grad():
+        for i in range(0, len(image_paths), batch_size):
+            batch_paths = image_paths[i:i+batch_size]
+            imgs = []
+            for path in batch_paths:
+                img = Image.open(path).convert('RGB')
+                imgs.append(preprocess(img))
+            imgs = torch.stack(imgs).to(device)
+            feats = model(imgs)
+            features.append(feats.cpu().numpy())
+    features = np.concatenate(features, axis=0)
+    return features
+
+if __name__ == "__main__":
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # 2. Data preprocessing
+    # Remove index column if present
+    index_cols = [col for col in train_df.columns if col.lower() in ['unnamed: 0', 'index']]
+    if index_cols:
+        train_df = train_df.drop(columns=index_cols)
+    index_cols_test = [col for col in test_df.columns if col.lower() in ['unnamed: 0', 'index']]
+    if index_cols_test:
+        test_df = test_df.drop(columns=index_cols_test)
+
+    # Remove training samples without valid labels (drop NA in 'label')
+    train_df = train_df.dropna(subset=['label'])
+
+    # Map label to binary: malignant=1, else 0
+    train_df['label'] = (train_df['label'].str.lower() == 'malignant').astype(int)
+
+    # For test set, keep all rows, do not drop any rows
+
+    # 3. Prepare image paths
+    train_df['image_path'] = train_df['image_name'].apply(get_image_path)
+    test_df['image_path'] = test_df['image_name'].apply(get_image_path)
+
+    # 4. Hold out 10% validation set from training data
+    train_data, val_data = train_test_split(
+        train_df, test_size=0.1, random_state=42, stratify=train_df['label']
+    )
+
+    # 5. Feature extraction using pretrained ResNet18 (remove final layer)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    resnet = models.resnet18(pretrained=True)
+    # Remove final classification layer
+    feature_extractor = nn.Sequential(*list(resnet.children())[:-1])
+    feature_extractor = feature_extractor.to(device)
+
+    def get_feats(df):
+        paths = df['image_path'].tolist()
+        feats = extract_features(paths, feature_extractor, device)
+        # ResNet18 outputs (N, 512, 1, 1), squeeze to (N, 512)
+        feats = feats.reshape(feats.shape[0], -1)
+        return feats
+
+    X_train = get_feats(train_data)
+    y_train = train_data['label'].values
+    X_val = get_feats(val_data)
+    y_val = val_data['label'].values
+    X_test = get_feats(test_df)
+
+    # 6. Model training (Logistic Regression)
+    model = LogisticRegression(max_iter=1000, solver='lbfgs')
+    model.fit(X_train, y_train)
+
+    # 7. Save model and feature extractor
+    model_dir = get_timestamp_folder(OUTPUT_DIR)
+    os.makedirs(model_dir, exist_ok=True)
+    with open(os.path.join(model_dir, "logreg.pkl"), "wb") as f:
+        pickle.dump(model, f)
+    # Save feature extractor state_dict (not the full model to avoid device issues)
+    torch.save(feature_extractor.state_dict(), os.path.join(model_dir, "resnet18_feat.pth"))
+
+    # 8. Prediction on test set
+    test_probs = model.predict_proba(X_test)[:, 1]  # Probability of class 1 (malignant)
+
+    # 9. Prepare output DataFrame
+    # Output format: same as test file, but with the required prediction column(s)
+    # We'll output a DataFrame with the same index as test_df, and a single column 'label' (probability)
+    output_df = test_df.copy()
+    output_df['label'] = test_probs
+    output_df = output_df[['label']]
+    # Save with the same format and extension as test file
+    test_ext = os.path.splitext(TEST_CSV)[1]
+    result_path = os.path.join(OUTPUT_DIR, f"results{test_ext}")
+    output_df.to_csv(result_path, index=True if test_df.index.name is not None else False)
+
+    # 10. Validation step: compute AUROC on held-out validation set
+    try:
+        val_probs = model.predict_proba(X_val)[:, 1]
+        val_score = roc_auc_score(y_val, val_probs)
+        print(f"Validation AUROC: {val_score:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # 11. Validation checks
+    # a) Prediction file maintains exact test data indices
+    pred_df = pd.read_csv(result_path, index_col=0 if test_df.index.name is not None else None)
+    assert len(pred_df) == len(test_df), "Number of predictions does not match number of test samples."
+    # b) Output column names match requirements
+    assert list(pred_df.columns) == ['label'], f"Output columns {list(pred_df.columns)} do not match required ['label']."
+    # c) Output format matches test file extension
+    assert os.path.splitext(result_path)[1] == test_ext, "Output file extension does not match test file."
+    # d) Sanity check: predictions are between 0 and 1
+    assert ((pred_df['label'] >= 0) & (pred_df['label'] <= 1)).all(), "Predicted probabilities are not in [0, 1]."
+    print("All validation checks passed. Results saved to:", result_path)
+```
+Please fix the errors in the code above. Make minimal changes necessary to fix the issues.
+
+
+Please provide the complete Python script that accomplishes these tasks, ensuring it's ready to run given the appropriate data inputs.
+
+### Task Description
+**Task Description (based only on provided files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** Images of skin lesions (image files referenced by image_name in the dataset).
+- **Prediction output format:** For each input image, output a malignancy probability (a value between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+
+### Data Structure
+Absolute path to the folder: /home/anri21/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+First lines:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/mydataset.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### User Instruction
+
+
+### Previous Errors
+These errors were encountered across different implementation approaches and may not be directly related to your current implementation. Use them as reference material to identify potential pitfalls and avoid similar mistakes in your implementation.
+ERROR_SUMMARY: The script failed with a FileNotFoundError because it could not locate a test CSV file (e.g., test.csv) in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data). The code expects a test CSV for making predictions, but none was found, causing execution to halt before any model training or validation.
+
+SUGGESTED_FIX: Check the data directory to ensure a test CSV file (such as test.csv) is present and named correctly. If the test file is missing, obtain or generate it according to the expected format; if it exists under a different name, rename it to match the expected pattern (e.g., test.csv) so the script can detect and use it.
+
+ERROR_SUMMARY: The error occurs because the Python script expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file is present. As a result, the script raises a FileNotFoundError and halts execution.
+
+SUGGESTED_FIX: Check the /home/anri21/be-fair/mlzero/basic_prompt_data directory and ensure that a test CSV file (e.g., test.csv or test_data.csv) exists and is named appropriately. If the test file is missing, create or copy the required test CSV file into this directory with a filename that matches the expected pattern.
+
+ERROR_SUMMARY: The error occurred because the code expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file was found. As a result, a FileNotFoundError was raised and the script terminated before making any predictions or performing validation.
+
+SUGGESTED_FIX: Check the /home/anri21/be-fair/mlzero/basic_prompt_data directory and ensure that a test CSV file (e.g., test.csv) exists and is named correctly (starts with "test" and ends with ".csv"). If the test file is missing, create or copy the appropriate test CSV file into this directory and rerun the script.
+
+ERROR_SUMMARY: The script raises a FileNotFoundError because it expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file is present. As a result, the script cannot proceed to load or predict on the test data.
+
+SUGGESTED_FIX:  
+Check the /home/anri21/be-fair/mlzero/basic_prompt_data directory and ensure that a test CSV file (e.g., test.csv or test_data.csv) exists and follows the expected naming convention. If the test file is missing, create or copy the appropriate test CSV file into this directory before rerunning the script.
+
+ERROR_SUMMARY: The error occurs because the Python script expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file exists. As a result, the script raises a FileNotFoundError and halts execution before any model training or prediction can proceed.
+
+SUGGESTED_FIX: Check the /home/anri21/be-fair/mlzero/basic_prompt_data directory and ensure that a test CSV file (e.g., test.csv) is present and named correctly (filename must start with "test" and end with ".csv"). If the test file is missing, create or copy the appropriate test CSV file into this directory before rerunning the script.
+
+ERROR_SUMMARY: The script failed with a `FileNotFoundError` because it expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (`/home/anri21/be-fair/mlzero/basic_prompt_data`), but no such file was found. The code explicitly searches for this file and raises an error if it does not exist.
+
+SUGGESTED_FIX:  
+Check the data directory to ensure that a test CSV file (e.g., `test.csv` or similar) is present and correctly named. If the test file is missing, add or generate the required test CSV file in the data directory, making sure its filename starts with "test" and ends with ".csv" so the script can detect and use it.
+
+ERROR_SUMMARY: The error occurs because the Python script expects a test CSV file (with a name starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file is present. As a result, the script raises a FileNotFoundError and halts execution before any model training or prediction can occur.
+
+SUGGESTED_FIX:  
+Check the /home/anri21/be-fair/mlzero/basic_prompt_data directory and ensure that a test CSV file (e.g., test.csv) exists and is named correctly (starts with "test" and ends with ".csv"). If the test file is missing, create or copy the appropriate test CSV file into this directory before rerunning the script.
+
+ERROR_SUMMARY: The Python script failed because it could not find a test CSV file in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data) whose filename starts with "test" and ends with ".csv". The code explicitly raises a FileNotFoundError if such a file is not present, which halted execution.
+
+SUGGESTED_FIX: Check the data directory to ensure that a test CSV file (e.g., test.csv or test_set.csv) exists and is named correctly (filename must start with "test" and end with ".csv"). If the test file is missing, add or generate it; if it exists but is named differently, rename it to match the expected pattern.
+
+ERROR_SUMMARY: The script failed with a `FileNotFoundError` because it expects a test CSV file (whose name starts with "test" and ends with ".csv") in the data directory (`/home/anri21/be-fair/mlzero/basic_prompt_data`), but no such file was found. As a result, the script could not proceed to load or process test data for prediction.
+
+SUGGESTED_FIX:  
+Check the data directory to ensure that a test CSV file (e.g., `test.csv` or similar) exists and is named appropriately (starts with "test" and ends with ".csv"). If the file is missing, obtain or generate the required test CSV file and place it in the data directory; if the file exists but is named differently, rename it to match the expected pattern.
+
+ERROR_SUMMARY: The error occurred because the script expects a test CSV file (whose name starts with "test" and ends with ".csv") in the data directory, but no such file was found. As a result, a FileNotFoundError was raised before any model training or prediction could occur.
+
+SUGGESTED_FIX: Ensure that a test CSV file (e.g., "test.csv") is present in the directory /home/anri21/be-fair/mlzero/basic_prompt_data. The file should be named so that it starts with "test" and ends with ".csv" (case-insensitive), and should contain the necessary columns (including image_name) for prediction. If you do not have a test file, create a placeholder or copy the format from the training CSV, removing the label column if needed.
+
+ERROR_SUMMARY: The error occurs because the Python environment does not have the autogluon package installed, resulting in ModuleNotFoundError: No module named 'autogluon' when attempting to import MultiModalPredictor. The requirements file referenced in your setup does not specify autogluon as a dependency, so it is not installed during environment setup.
+
+SUGGESTED_FIX: Manually install the autogluon package in your conda environment before running the script by executing pip install autogluon.multimodal. Additionally, ensure that your requirements files explicitly include autogluon.multimodal to avoid this issue in future automated setups.
+
+ERROR_SUMMARY: The error occurs because the code expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file is present. As a result, the script raises a FileNotFoundError and halts before any model training or prediction.
+
+SUGGESTED_FIX: Check the /home/anri21/be-fair/mlzero/basic_prompt_data directory and ensure that a test CSV file (e.g., test.csv) exists with the appropriate structure. If the test file is missing, create or copy it into the directory, making sure its filename starts with "test" and ends with ".csv" so the script can detect and use it.
+
+ERROR_SUMMARY: The script failed because it could not find a test CSV file in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data) whose filename starts with "test" and ends with ".csv". The code explicitly searches for such a file and raises a FileNotFoundError if none is found.
+
+SUGGESTED_FIX: Check the /home/anri21/be-fair/mlzero/basic_prompt_data directory and ensure that a test CSV file (e.g., test.csv or test_data.csv) exists with the expected format. If the test file is missing, add it; if it is named differently, rename it so that its filename starts with "test" and ends with ".csv".
+
+ERROR_SUMMARY: The Python script failed with a FileNotFoundError because it expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file was found. The script searches for this file to generate predictions, and raises an error if it is missing.
+
+SUGGESTED_FIX: Check the data directory to ensure that a test CSV file (e.g., test.csv or test_set.csv) exists and is named appropriately. If the file is missing, create or copy the required test CSV file into the data directory, making sure its filename starts with "test" and ends with ".csv" so the script can detect it.
+
+ERROR_SUMMARY: The error occurs because the Python script expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file is present. As a result, the script raises a FileNotFoundError and halts execution before any model training or prediction.
+
+SUGGESTED_FIX:  
+Add a test CSV file to the data directory with a filename that starts with "test" and ends with ".csv" (e.g., "test.csv"), ensuring it has the same structure as the training CSV (at least the columns needed for prediction). If you do not have a test set, create a dummy test CSV with the required columns to allow the script to proceed.
+
+### Tutorials for Reference
+

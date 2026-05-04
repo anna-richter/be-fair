@@ -1,0 +1,3 @@
+ERROR_SUMMARY: The error occurs because the training feature matrix X_train is empty (shape=(0, 12)), meaning there are zero valid training samples after preprocessing. This is likely due to all training images being missing, unreadable, or all rows being dropped due to NaN values in the extracted features, resulting in no data for model fitting.
+
+SUGGESTED_FIX: Check that all image files referenced in the training CSV exist and are readable in the specified directory. Add logging or print statements after feature extraction to verify how many valid (non-NaN) samples remain, and ensure that the feature extraction function is not returning all-NaN rows; if images are missing, update the dataset or image paths accordingly.

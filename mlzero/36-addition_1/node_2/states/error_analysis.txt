@@ -1,0 +1,4 @@
+ERROR_SUMMARY: The error occurs because the Python script expects a test CSV file (with a name starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/addition_1_data), but no such file is present. As a result, the script raises a FileNotFoundError and stops execution.
+
+SUGGESTED_FIX:  
+Check the /home/anri21/be-fair/mlzero/addition_1_data directory and ensure that a test CSV file (e.g., test.csv) exists. If you have a test dataset, rename or copy it so that its filename starts with "test" and ends with ".csv", then rerun the script.

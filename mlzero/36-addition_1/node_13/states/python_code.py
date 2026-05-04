@@ -1,0 +1,196 @@
+"""
+Skin Lesion Malignancy Prediction Script
+
+This script trains an image classification model using AutoGluon MultiModal to predict the probability
+that a skin lesion is malignant, based on a curated dataset of skin lesion images. It performs the following:
+
+- Loads and preprocesses the data (removes NA labels, drops index column).
+- Trains a binary image classifier (malignant vs. benign).
+- Saves the trained model to a timestamped folder in the specified output directory.
+- Predicts malignancy probabilities for the test set, preserving original indices and output format.
+- Saves predictions in the same format as the test file, with correct column names.
+- Validates output integrity (row count, indices, column names, value ranges).
+- Holds out 10% of training data for validation and prints AUROC if possible.
+- Provides a function to predict malignancy probabilities for a folder of new images.
+
+# Installation requirements (run if needed):
+# pip install autogluon.multimodal
+# pip install pandas scikit-learn
+
+"""
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+
+from autogluon.multimodal import MultiModalPredictor
+from sklearn.metrics import roc_auc_score
+
+# Set paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/addition_1_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/36-addition_1/node_12/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+# Find test set CSV (must exist)
+TEST_CSV = None
+for fname in os.listdir(DATA_DIR):
+    if fname.lower().startswith("test") and fname.lower().endswith(".csv"):
+        TEST_CSV = os.path.join(DATA_DIR, fname)
+        break
+if TEST_CSV is None:
+    raise FileNotFoundError("Test CSV file not found in data directory.")
+
+IMAGE_DIR = DATA_DIR  # Images are in the same directory as CSVs
+
+# Output file name and format
+RESULTS_BASENAME = "results"
+MODEL_SAVE_DIR = os.path.join(
+    OUTPUT_DIR, f"autogluon_model_{int(time.time())}_{random.randint(1000,9999)}"
+)
+
+def get_image_path(row):
+    # Helper to get absolute image path from image_name
+    return os.path.join(IMAGE_DIR, row["image_name"])
+
+def main():
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # 2. Data preprocessing
+    # Remove unnecessary index column if present
+    for idx_col in ["Unnamed: 0", "index"]:
+        if idx_col in train_df.columns:
+            train_df = train_df.drop(columns=[idx_col])
+        if idx_col in test_df.columns:
+            test_df = test_df.drop(columns=[idx_col])
+
+    # Remove training samples without valid labels (dropna on 'label')
+    train_df = train_df.dropna(subset=["label"])
+
+    # Map label to binary: malignant=1, others=0
+    train_df["label"] = train_df["label"].map(lambda x: 1 if str(x).strip().lower() == "malignant" else 0)
+
+    # For test set, preserve all rows and indices
+    test_indices = test_df.index.copy()
+
+    # Prepare image paths
+    train_df["image_path"] = train_df.apply(get_image_path, axis=1)
+    test_df["image_path"] = test_df.apply(get_image_path, axis=1)
+
+    # 3. Validation split (10% holdout)
+    from sklearn.model_selection import train_test_split
+    train_data, val_data = train_test_split(
+        train_df, test_size=0.1, random_state=42, stratify=train_df["label"]
+    )
+
+    # 4. Model training
+    predictor = MultiModalPredictor(
+        label="label",
+        problem_type="binary",
+        eval_metric="roc_auc",
+        path=MODEL_SAVE_DIR
+    )
+    # Only use image_path and label for training
+    predictor.fit(
+        train_data[["image_path", "label"]],
+        time_limit=None,  # No time limit
+        presets="best_quality",
+    )
+    # Save model (not strictly necessary, but for explicitness)
+    predictor.save(MODEL_SAVE_DIR)
+
+    # 5. Prediction on test set
+    # Predict_proba returns probability for both classes; we want probability of class 1 (malignant)
+    test_pred_proba = predictor.predict_proba(test_df[["image_path"]])
+    # If output is DataFrame, get column '1'; if ndarray, get column 1
+    if isinstance(test_pred_proba, pd.DataFrame):
+        if 1 in test_pred_proba.columns:
+            malignancy_probs = test_pred_proba[1].values
+        elif "1" in test_pred_proba.columns:
+            malignancy_probs = test_pred_proba["1"].values
+        else:
+            # fallback: take second column
+            malignancy_probs = test_pred_proba.iloc[:, 1].values
+    else:
+        malignancy_probs = test_pred_proba[:, 1]
+
+    # 6. Prepare output DataFrame
+    output_df = test_df.copy()
+    output_df["label"] = malignancy_probs
+    # Only keep columns present in test file, plus 'label' if not present
+    if "label" not in test_df.columns:
+        output_df = output_df.assign(label=malignancy_probs)
+    else:
+        output_df["label"] = malignancy_probs
+
+    # Ensure original indices are preserved
+    output_df.index = test_indices
+
+    # 7. Save predictions
+    # Use same extension as test file
+    test_ext = os.path.splitext(TEST_CSV)[1]
+    results_path = os.path.join(OUTPUT_DIR, RESULTS_BASENAME + test_ext)
+    output_df.to_csv(results_path, index=False)
+
+    # 8. Validation checks
+    # a) Row count
+    assert len(output_df) == len(test_df), "Prediction row count does not match test set."
+    # b) Indices
+    assert all(output_df.index == test_indices), "Prediction indices do not match test set."
+    # c) Column names
+    assert "label" in output_df.columns, "Output missing required 'label' column."
+    # d) Output format
+    assert results_path.endswith(test_ext), "Output file extension does not match test file."
+    # e) Value range
+    assert np.all((output_df["label"] >= 0) & (output_df["label"] <= 1)), "Predicted probabilities out of [0,1] range."
+
+    # 9. Validation metric (AUROC on holdout set)
+    try:
+        val_pred_proba = predictor.predict_proba(val_data[["image_path"]])
+        if isinstance(val_pred_proba, pd.DataFrame):
+            if 1 in val_pred_proba.columns:
+                val_probs = val_pred_proba[1].values
+            elif "1" in val_pred_proba.columns:
+                val_probs = val_pred_proba["1"].values
+            else:
+                val_probs = val_pred_proba.iloc[:, 1].values
+        else:
+            val_probs = val_pred_proba[:, 1]
+        val_auc = roc_auc_score(val_data["label"], val_probs)
+        print(f"Validation AUROC: {val_auc:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # 10. Provide function for new image folder prediction
+    def predict_folder(image_folder):
+        """
+        Given a folder path containing images, returns a DataFrame with image_name and malignancy probability.
+        """
+        image_files = [
+            f for f in os.listdir(image_folder)
+            if os.path.isfile(os.path.join(image_folder, f)) and not f.startswith(".")
+        ]
+        df = pd.DataFrame({"image_name": image_files})
+        df["image_path"] = df["image_name"].apply(lambda x: os.path.join(image_folder, x))
+        pred_proba = predictor.predict_proba(df[["image_path"]])
+        if isinstance(pred_proba, pd.DataFrame):
+            if 1 in pred_proba.columns:
+                probs = pred_proba[1].values
+            elif "1" in pred_proba.columns:
+                probs = pred_proba["1"].values
+            else:
+                probs = pred_proba.iloc[:, 1].values
+        else:
+            probs = pred_proba[:, 1]
+        result = pd.DataFrame({
+            "image_name": df["image_name"],
+            "malignancy_probability": probs
+        })
+        return result
+
+    print("Prediction function 'predict_folder' is ready for use.")
+
+if __name__ == "__main__":
+    main()

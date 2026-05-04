@@ -1,0 +1,4 @@
+ERROR_SUMMARY: The error "ValueError: No model is available for this dataset." occurs because the training dataset is too small and lacks sufficient class diversity—specifically, there are only 3 samples and only one positive class ("malignant"). AutoGluon MultiModal requires at least two classes with multiple samples to select and train a model.
+
+SUGGESTED_FIX:  
+Increase the size and diversity of your training dataset so that it contains at least two classes (e.g., both "malignant" and "benign"/"non-neoplastic") with multiple samples per class. Ensure that after preprocessing, your training data includes enough examples from each class for the model to learn and validate; otherwise, AutoGluon will not proceed with model selection or training.

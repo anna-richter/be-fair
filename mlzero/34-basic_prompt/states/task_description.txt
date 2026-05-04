@@ -1,0 +1,6 @@
+**Task Description (condensed and precise):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** Images of skin lesions (image files referenced by 'image_name' in the dataset)
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1)
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)

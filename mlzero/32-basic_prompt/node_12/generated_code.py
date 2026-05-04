@@ -1,0 +1,191 @@
+"""
+Skin Lesion Malignancy Prediction Script
+
+This script trains an image classification model using AutoGluon MultiModal to predict the probability
+that a skin lesion is malignant, based on a curated dataset of skin lesion images. It preprocesses the
+data, trains the model, saves it, predicts malignancy probabilities for a test set of images, and
+validates output integrity. The script is designed to be run as a standalone module.
+
+Installation requirements (run before executing this script):
+    pip install autogluon.multimodal
+    pip install pandas scikit-learn
+
+Assumptions:
+- Training data CSV: /home/anri21/be-fair/mlzero/basic_prompt_data/mydataset.csv
+- Images are referenced by 'image_name' column and are located in the same folder as the CSV or a known images folder.
+- Test data CSV: /home/anri21/be-fair/mlzero/32-basic_prompt/node_12/input/test.csv
+- Test images are referenced by 'image_name' column and are located in a folder provided in the test CSV or a known images folder.
+- Output directory: /home/anri21/be-fair/mlzero/32-basic_prompt/node_12/output
+
+The script:
+- Drops NA labels from training data only.
+- Removes index column if present.
+- Trains an AutoGluon MultiModal predictor for binary image classification.
+- Saves the trained model in a timestamped folder under the output directory.
+- Predicts malignancy probabilities for the test set, preserving original indices and output format.
+- Validates output integrity and prints AUROC on a held-out validation set.
+
+Author: AutoML Agent
+"""
+
+# Installation instructions (uncomment if running in a fresh environment)
+# !pip install autogluon.multimodal
+# !pip install pandas scikit-learn
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+
+from autogluon.multimodal import MultiModalPredictor
+from sklearn.metrics import roc_auc_score
+
+if __name__ == "__main__":
+    # Paths
+    DATA_DIR = "/home/anri21/be-fair/mlzero/basic_prompt_data"
+    OUTPUT_DIR = "/home/anri21/be-fair/mlzero/32-basic_prompt/node_12/output"
+    TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+    TEST_CSV = "/home/anri21/be-fair/mlzero/32-basic_prompt/node_12/input/test.csv"
+    IMAGE_FOLDER = DATA_DIR  # adjust if images are in a subfolder
+
+    # 1. Data Loading and Preprocessing
+    train_df = pd.read_csv(TRAIN_CSV)
+    # Remove index column if present
+    if 'Unnamed: 0' in train_df.columns:
+        train_df = train_df.drop(columns=['Unnamed: 0'])
+    # Remove training samples without valid labels (drop NA from 'label' column)
+    train_df = train_df.dropna(subset=['label'])
+    # Map 'image_name' to absolute path for AutoGluon
+    train_df['image_path'] = train_df['image_name'].apply(lambda x: os.path.join(IMAGE_FOLDER, x) if not os.path.isabs(x) else x)
+    # For binary classification, ensure label is 0/1
+    # Map 'malignant' -> 1, everything else -> 0
+    train_df['label'] = (train_df['label'].str.lower() == 'malignant').astype(int)
+
+    # Check that there are at least 2 classes and enough samples for training
+    if train_df['label'].nunique() < 2 or len(train_df) < 4:
+        raise ValueError(
+            "Not enough samples or class diversity for training. "
+            "AutoGluon MultiModal requires at least 2 classes and more samples."
+        )
+
+    # 2. Validation Split (10% holdout)
+    from sklearn.model_selection import train_test_split
+    # Only split if there are enough samples for stratification
+    if len(train_df) > 1 and train_df['label'].nunique() > 1:
+        train_data, val_data = train_test_split(
+            train_df,
+            test_size=0.1 if len(train_df) > 9 else 1,  # If very small, just use 1 sample for validation
+            random_state=42,
+            stratify=train_df['label'] if train_df['label'].nunique() > 1 else None
+        )
+    else:
+        train_data = train_df
+        val_data = pd.DataFrame(columns=train_df.columns)
+
+    # 3. Model Training
+    # Prepare output model folder with random timestamp
+    timestamp = int(time.time()) + random.randint(0, 9999)
+    model_dir = os.path.join(OUTPUT_DIR, f"autogluon_model_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+
+    # Train AutoGluon MultiModalPredictor for image classification
+    predictor = MultiModalPredictor(
+        label='label',
+        problem_type='binary',
+        eval_metric='roc_auc',
+        path=model_dir
+    )
+    # Only use image_path and label columns for training
+    predictor.fit(
+        train_data[['image_path', 'label']],
+        time_limit=None,  # No time limit
+        presets='best_quality',  # Use best quality preset
+    )
+
+    # 4. Load Test Data
+    test_df = pd.read_csv(TEST_CSV)
+    test_index = test_df.index.copy()
+    # Remove index column if present
+    if 'Unnamed: 0' in test_df.columns:
+        test_df = test_df.drop(columns=['Unnamed: 0'])
+    # Map 'image_name' to absolute path
+    test_df['image_path'] = test_df['image_name'].apply(lambda x: os.path.join(IMAGE_FOLDER, x) if not os.path.isabs(x) else x)
+
+    # 5. Prediction
+    # Predict_proba returns probability for each class; we want probability of 'malignant' (label==1)
+    proba_df = predictor.predict_proba(test_df[['image_path']])
+    # The column for class 1 (malignant) is '1'
+    if 1 in proba_df.columns:
+        malignancy_proba = proba_df[1]
+    elif 'malignant' in proba_df.columns:
+        malignancy_proba = proba_df['malignant']
+    else:
+        # Fallback: take the last column (should be class 1)
+        malignancy_proba = proba_df.iloc[:, -1]
+
+    # Prepare output DataFrame
+    # Output format: same as test_df, but with a column for malignancy probability (0-1)
+    # We'll use the same column name as in training: 'label'
+    results_df = test_df.copy()
+    results_df['label'] = malignancy_proba.values
+    # Only keep columns required in the output (match sample submission or test format)
+    output_columns = []
+    if 'image_name' in test_df.columns:
+        output_columns.append('image_name')
+    output_columns.append('label')
+    results_df = results_df[output_columns]
+    # Ensure order matches test_df
+    results_df.index = test_index
+
+    # 6. Save Results
+    # Save in the same format and extension as test.csv
+    test_ext = os.path.splitext(TEST_CSV)[-1].lower()
+    result_path = os.path.join(OUTPUT_DIR, f"results{test_ext}")
+    if test_ext == '.csv':
+        results_df.to_csv(result_path, index=False)
+    elif test_ext in ['.tsv', '.txt']:
+        results_df.to_csv(result_path, sep='\t', index=False)
+    else:
+        # Default to CSV
+        results_df.to_csv(result_path, index=False)
+
+    # 7. Validation Checks
+    # 7.1 Check number of rows matches test set
+    assert len(results_df) == len(test_df), "Number of predictions does not match number of test samples."
+    # 7.2 Check indices match
+    assert all(results_df.index == test_index), "Prediction indices do not match test data indices."
+    # 7.3 Check column names match requirements
+    assert results_df.columns.tolist() == output_columns, f"Output columns {results_df.columns.tolist()} do not match required columns {output_columns}."
+    # 7.4 Check output format
+    if test_ext == '.csv':
+        check_df = pd.read_csv(result_path)
+    elif test_ext in ['.tsv', '.txt']:
+        check_df = pd.read_csv(result_path, sep='\t')
+    else:
+        check_df = pd.read_csv(result_path)
+    assert check_df.shape[0] == test_df.shape[0], "Saved prediction file row count mismatch."
+    assert check_df.columns.tolist() == output_columns, "Saved prediction file columns mismatch."
+    # 7.5 Sanity check: probabilities between 0 and 1
+    assert np.all((results_df['label'] >= 0) & (results_df['label'] <= 1)), "Predicted probabilities are not in [0, 1]."
+
+    # 8. Validation Metric on Holdout Set
+    try:
+        if not val_data.empty and val_data['label'].nunique() > 1:
+            val_pred_proba = predictor.predict_proba(val_data[['image_path']])
+            # Get probability for class 1 (malignant)
+            if 1 in val_pred_proba.columns:
+                val_malignancy_proba = val_pred_proba[1]
+            elif 'malignant' in val_pred_proba.columns:
+                val_malignancy_proba = val_pred_proba['malignant']
+            else:
+                val_malignancy_proba = val_pred_proba.iloc[:, -1]
+            val_auc = roc_auc_score(val_data['label'], val_malignancy_proba)
+            print(f"Validation AUROC: {val_auc:.4f}")
+        else:
+            print("Validation set too small or only one class present; skipping AUROC computation.")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    print(f"Model saved to: {model_dir}")
+    print(f"Predictions saved to: {result_path}")

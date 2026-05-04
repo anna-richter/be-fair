@@ -1,0 +1,1 @@
+The execution failed with ValueError: "No model is available for this dataset." This occurred during the call to predictor.fit() in AutoGluon MultiModal. The likely cause is that the training dataset is too small (only 3 samples, with only one positive class), which is insufficient for AutoGluon to select or train a model.

@@ -1,0 +1,1 @@
+FileNotFoundError: Test CSV file not found in data directory. The code expects a test CSV file (with a name starting with "test" and ending with ".csv") in the data directory, but none was found. As a result, the script did not proceed to model training or prediction.

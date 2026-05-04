@@ -1,0 +1,49 @@
+import os
+
+file_path = "/home/anri21/be-fair/mlzero/basic_prompt_data/descriptions.txt"
+
+def print_truncated(s, limit=50):
+    s = str(s)
+    return s if len(s) <= limit else s[:limit] + "..."
+
+def analyze_text_file(path):
+    with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+        content = f.read(768)
+    print("First lines:\n" + content)
+
+def analyze_tabular_file(path, ext):
+    import pandas as pd
+    try:
+        if ext == '.csv':
+            df = pd.read_csv(path)
+        elif ext in ['.xls', '.xlsx']:
+            df = pd.read_excel(path)
+        elif ext == '.parquet':
+            df = pd.read_parquet(path)
+        else:
+            raise Exception
+        cols = list(df.columns)
+        n = len(cols)
+        if n > 20:
+            display_cols = cols[:10] + ["..."] + cols[-10:]
+        else:
+            display_cols = cols
+        print("Columns:", display_cols)
+        rows = df.head(3)
+        print("Rows:")
+        for _, row in rows.iterrows():
+            print([print_truncated(row[c]) for c in cols])
+    except Exception:
+        analyze_text_file(path)
+
+def main():
+    if not os.path.isfile(file_path):
+        print("File not found.")
+        return
+    ext = os.path.splitext(file_path)[1].lower()
+    if ext in ['.csv', '.xls', '.xlsx', '.parquet']:
+        analyze_tabular_file(file_path, ext)
+    else:
+        analyze_text_file(file_path)
+
+main()

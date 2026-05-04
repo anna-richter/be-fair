@@ -1,0 +1,27 @@
+---
+EXPLANATION:  
+The task is binary image classification (malignant vs. non-neoplastic) using a dataset of skin lesion images, with the requirement to output malignancy probabilities for new images. The evaluation metric is AUROC, which is standard for medical classification tasks. The input data consists of image files referenced in a CSV, and the output must be a function that takes a folder of images and returns probabilities.
+
+Let's evaluate each available library:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for training or inference of image classifiers.
+
+- machine learning: This is a generic reference to machine learning or deep learning algorithms. It is only recommended if no other specialized library is available, as it lacks specific tools or optimizations for image data.
+
+- wav2vec2: This library is designed for audio data, specifically for speech recognition and audio classification. It is not applicable to image data.
+
+- qwen3: This is a text generation model, not designed for image classification or processing.
+
+- autogluon.tabular: This library is optimized for tabular data (numerical/categorical), not for image or multimodal data. It cannot process images directly.
+
+- autogluon.multimodal: This library is specifically designed for multimodal tasks, including image classification. It supports image inputs, can handle CSVs referencing images, and is capable of outputting probabilities for binary classification. It is well-suited for this task and can automate much of the model selection and training process, making it the best fit.
+
+- autogluon.timeseries: This library is for time series forecasting and is not applicable to image classification.
+
+Based on the above, autogluon.multimodal is the most appropriate library for this task. The generic "machine learning" library is a fallback if no specialized library is available. autogluon.tabular, while not suitable for images, is more relevant than the other libraries (which are for audio, text, or retrieval tasks).
+
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

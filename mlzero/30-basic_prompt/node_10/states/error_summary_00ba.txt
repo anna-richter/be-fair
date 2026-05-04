@@ -1,0 +1,1 @@
+ModuleNotFoundError: No module named 'autogluon'. The required package autogluon.multimodal is not installed in the environment, causing the script to fail at import.

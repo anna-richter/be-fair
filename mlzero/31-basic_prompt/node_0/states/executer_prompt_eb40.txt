@@ -1,0 +1,379 @@
+You are an expert code evaluator. Analyze the execution results of the following Python code and determine if the execution was successful or if issues need to be fixed.
+
+### Task Descriptions
+**Task Description (based only on provided files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** Images of skin lesions (image files referenced by image_name in the CSV file).
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+- **Additional requirement:** The trained model should be saved, and a function must be provided that takes a folder path of new images and returns a malignancy probability for each image.
+
+### Data Structure
+Absolute path to the folder: /home/anri21/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+First lines:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/mydataset.csv
+Content:
+Columns:
+['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+First rows:
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### Python Code
+"""
+Skin Lesion Malignancy Prediction Script
+
+This script trains an AutoGluon MultiModal image classification model to predict the probability
+that a skin lesion is malignant, based on a curated dataset of lesion images and metadata.
+It performs the following steps:
+
+1. Data preprocessing:
+   - Loads the dataset and removes samples from the training set with missing labels.
+   - Removes unnecessary index columns.
+   - Splits the data into training and validation sets (if no explicit validation set is provided).
+2. Model training:
+   - Trains an AutoGluon MultiModal predictor for binary image classification.
+   - Saves the trained model to a timestamped folder in the specified output directory.
+3. Prediction:
+   - Makes malignancy probability predictions for the entire test set, preserving original indices.
+   - Saves the results in the same format and extension as the test data, with correct column names.
+4. Validation:
+   - Computes and prints the AUROC score on the held-out validation set.
+5. Utility:
+   - Provides a function to predict malignancy probabilities for a folder of new images.
+
+Installation requirements (run before executing this script):
+------------------------------------------------------------
+# pip install autogluon.multimodal
+# pip install pandas scikit-learn
+
+Usage:
+------
+Ensure the data folder and image files are accessible at the specified paths.
+Run this script as a standalone program.
+
+Author: AutoML Agent
+"""
+
+import os
+import shutil
+import random
+import time
+import pandas as pd
+import numpy as np
+
+from autogluon.multimodal import MultiModalPredictor
+from sklearn.metrics import roc_auc_score
+
+# Set random seed for reproducibility
+SEED = 42
+
+# Paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/basic_prompt_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/31-basic_prompt/node_0/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+# Assume test set is named 'test.csv' in the same folder, or infer from context
+# If not present, user must provide test set path
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")  # Placeholder; update if needed
+IMAGE_DIR = DATA_DIR  # Images are referenced by 'image_name' column, and are in DATA_DIR
+
+# Output file name (format and extension must match test file)
+RESULTS_FILENAME = "results"
+
+def get_test_file_and_format():
+    """
+    Find the test file in the data directory and determine its extension.
+    Returns (test_file_path, extension)
+    """
+    for fname in os.listdir(DATA_DIR):
+        if fname.lower().startswith("test"):
+            ext = os.path.splitext(fname)[1]
+            return os.path.join(DATA_DIR, fname), ext
+    raise FileNotFoundError("Test file not found in data directory.")
+
+def get_sample_submission_file_and_format():
+    """
+    Find the sample submission file in the data directory and determine its extension.
+    Returns (sample_submission_path, extension)
+    """
+    for fname in os.listdir(DATA_DIR):
+        if "sample" in fname.lower() and "submission" in fname.lower():
+            ext = os.path.splitext(fname)[1]
+            return os.path.join(DATA_DIR, fname), ext
+    return None, None
+
+def get_image_path(row):
+    """Helper to get absolute image path from image_name column."""
+    return os.path.join(IMAGE_DIR, row['image_name'])
+
+def make_timestamped_model_dir(base_dir):
+    """Create a timestamped directory for saving the model."""
+    ts = int(time.time() * 1000) + random.randint(0, 999)
+    model_dir = os.path.join(base_dir, f"model_{ts}")
+    os.makedirs(model_dir, exist_ok=True)
+    return model_dir
+
+def infer_label_column(df):
+    """Infer the label column for binary classification."""
+    # Prefer 'label' if present and is binary
+    if 'label' in df.columns:
+        unique = df['label'].dropna().unique()
+        if set(unique) <= set(['malignant', 'benign', 'non-neoplastic']):
+            return 'label'
+    # Fallback: look for a column with only two unique values
+    for col in df.columns:
+        if df[col].nunique() == 2:
+            return col
+    raise ValueError("Could not infer label column.")
+
+def map_label_to_binary(label):
+    """Map string labels to binary: malignant=1, others=0."""
+    return 1 if str(label).strip().lower() == "malignant" else 0
+
+def main():
+    # 1. Data Loading and Preprocessing
+    # ---------------------------------
+    # Load training data
+    df = pd.read_csv(TRAIN_CSV)
+    # Remove unnecessary index column if present
+    for idx_col in ['Unnamed: 0', 'index']:
+        if idx_col in df.columns:
+            df = df.drop(columns=[idx_col])
+    # Remove training samples with missing labels
+    label_col = infer_label_column(df)
+    df = df.dropna(subset=[label_col]).reset_index(drop=True)
+    # Map label to binary (malignant=1, others=0)
+    df['label_binary'] = df[label_col].apply(map_label_to_binary)
+    # Add absolute image path column for AutoGluon
+    df['image_path'] = df['image_name'].apply(lambda x: os.path.join(IMAGE_DIR, x))
+    # Check that all image files exist
+    missing_images = df[~df['image_path'].apply(os.path.exists)]
+    if not missing_images.empty:
+        raise FileNotFoundError(f"Missing image files: {missing_images['image_path'].tolist()}")
+
+    # 2. Train/Validation Split
+    # ------------------------
+    # If no explicit validation set, hold out 10% for validation
+    from sklearn.model_selection import train_test_split
+    train_df, val_df = train_test_split(
+        df, test_size=0.1, random_state=SEED, stratify=df['label_binary']
+    )
+    train_df = train_df.reset_index(drop=True)
+    val_df = val_df.reset_index(drop=True)
+
+    # 3. Model Training
+    # -----------------
+    model_dir = make_timestamped_model_dir(OUTPUT_DIR)
+    predictor = MultiModalPredictor(
+        label='label_binary',
+        problem_type='binary',
+        eval_metric='roc_auc',
+        path=model_dir,
+        seed=SEED,
+    )
+    # Only use image_path and label_binary for training
+    predictor.fit(
+        train_data=train_df[['image_path', 'label_binary']],
+        time_limit=None,  # No time limit
+        presets='best_quality',
+    )
+    # Save the model (already saved by predictor.fit, but ensure it's in the right place)
+    predictor.save(model_dir)
+
+    # 4. Prediction on Test Set
+    # -------------------------
+    # Find test file and its extension
+    test_csv, test_ext = get_test_file_and_format()
+    test_df = pd.read_csv(test_csv)
+    # Remove unnecessary index column if present
+    for idx_col in ['Unnamed: 0', 'index']:
+        if idx_col in test_df.columns:
+            test_df = test_df.drop(columns=[idx_col])
+    # Add absolute image path column
+    test_df['image_path'] = test_df['image_name'].apply(lambda x: os.path.join(IMAGE_DIR, x))
+    # Ensure all test images exist
+    missing_test_images = test_df[~test_df['image_path'].apply(os.path.exists)]
+    if not missing_test_images.empty:
+        raise FileNotFoundError(f"Missing test image files: {missing_test_images['image_path'].tolist()}")
+
+    # Predict probabilities for the positive class (malignant)
+    y_pred_proba = predictor.predict_proba(test_df[['image_path']])[:, 1]  # Probability for class 1
+
+    # Prepare output DataFrame
+    # Determine output column name: use label column from training or sample submission
+    sample_sub_path, _ = get_sample_submission_file_and_format()
+    if sample_sub_path:
+        sample_sub = pd.read_csv(sample_sub_path)
+        output_cols = sample_sub.columns.tolist()
+    else:
+        # Use label column from training
+        output_cols = [label_col]
+    # Prepare output DataFrame with original indices
+    results_df = test_df.copy()
+    # If output column is not present, add it
+    results_df[output_cols[0]] = y_pred_proba
+    # Only keep columns required in output
+    results_df = results_df[[col for col in output_cols if col in results_df.columns] + [output_cols[0]]].copy()
+    # Ensure output has same number of rows and same indices as test_df
+    results_df = results_df.set_index(test_df.index)
+
+    # Save results in the same format and extension as test file
+    results_path = os.path.join(OUTPUT_DIR, f"{RESULTS_FILENAME}{test_ext}")
+    if test_ext == ".csv":
+        results_df.to_csv(results_path, index=False)
+    elif test_ext in [".tsv", ".txt"]:
+        results_df.to_csv(results_path, sep='\t', index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {test_ext}")
+
+    # 5. Validation
+    # -------------
+    try:
+        # Predict on validation set
+        val_pred_proba = predictor.predict_proba(val_df[['image_path']])[:, 1]
+        val_auc = roc_auc_score(val_df['label_binary'], val_pred_proba)
+        print(f"Validation AUROC: {val_auc:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # 6. Validation Checks
+    # -------------------
+    # a) Check output file exists
+    assert os.path.exists(results_path), "Prediction file was not saved."
+    # b) Check number of predictions matches test set
+    pred_df = pd.read_csv(results_path)
+    assert len(pred_df) == len(test_df), "Number of predictions does not match test set."
+    # c) Check output columns match requirements
+    assert output_cols[0] in pred_df.columns, f"Output column '{output_cols[0]}' missing in results."
+    # d) Check indices preserved
+    assert all(pred_df.index == test_df.index), "Test data indices not preserved in output."
+    # e) Check predictions are floats in [0, 1]
+    assert np.all((pred_df[output_cols[0]] >= 0) & (pred_df[output_cols[0]] <= 1)), "Predictions not in [0, 1]."
+
+    print(f"Predictions saved to: {results_path}")
+
+    # 7. Utility: Function to predict on new images
+    # ---------------------------------------------
+    def predict_folder(folder_path):
+        """
+        Given a folder path containing images, returns a DataFrame with image names and
+        predicted malignancy probabilities (float in [0, 1]) for each image.
+        """
+        image_files = [
+            f for f in os.listdir(folder_path)
+            if os.path.isfile(os.path.join(folder_path, f)) and f.lower().endswith(('.jpg', '.jpeg', '.png'))
+        ]
+        if not image_files:
+            raise ValueError("No image files found in the provided folder.")
+        df_new = pd.DataFrame({'image_name': image_files})
+        df_new['image_path'] = df_new['image_name'].apply(lambda x: os.path.join(folder_path, x))
+        # Predict probabilities
+        proba = predictor.predict_proba(df_new[['image_path']])[:, 1]
+        df_new['malignancy_probability'] = proba
+        return df_new[['image_name', 'malignancy_probability']]
+
+    # Example usage:
+    # new_results = predict_folder("/path/to/new/images")
+    # print(new_results.head())
+
+if __name__ == "__main__":
+    main()
+
+## Execution Results
+### Standard Output (stdout)
+
+Channels:
+ - conda-forge
+Platform: linux-64
+Collecting package metadata (repodata.json): - \ | / - \ done
+Solving environment: / - done
+
+## Package Plan ##
+  environment location: /home/anri21/be-fair/mlzero/31-basic_prompt/node_0/conda_env
+  added / updated specs:
+    - python=3.11
+The following NEW packages will be INSTALLED:
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-20_gnu 
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-hda65f42_9 
+  ca-certificates    conda-forge/noarch::ca-certificates-2026.4.22-hbd8a1cb_0 
+  icu                conda-forge/linux-64::icu-78.3-h33c6efd_0 
+  ld_impl_linux-64   conda-forge/linux-64::ld_impl_linux-64-2.45.1-default_hbd61a6d_102 
+  libexpat           conda-forge/linux-64::libexpat-2.7.5-hecca717_0 
+  libffi             conda-forge/linux-64::libffi-3.5.2-h3435931_0 
+  libgcc             conda-forge/linux-64::libgcc-15.2.0-he0feb66_18 
+  libgcc-ng          conda-forge/linux-64::libgcc-ng-15.2.0-h69a702a_18 
+  libgomp            conda-forge/linux-64::libgomp-15.2.0-he0feb66_18 
+  liblzma            conda-forge/linux-64::liblzma-5.8.3-hb03c661_0 
+  libnsl             conda-forge/linux-64::libnsl-2.0.1-hb9d3cd8_1 
+  libsqlite          conda-forge/linux-64::libsqlite-3.53.0-hf4e2dac_0 
+  libstdcxx          conda-forge/linux-64::libstdcxx-15.2.0-h934c35e_18 
+  libuuid            conda-forge/linux-64::libuuid-2.42-h5347b49_0 
+  libxcrypt          conda-forge/linux-64::libxcrypt-4.4.36-hd590300_1 
+  libzlib            conda-forge/linux-64::libzlib-1.3.2-h25fd6f3_2 
+  ncurses            conda-forge/linux-64::ncurses-6.6-hdb14827_0 
+  openssl            conda-forge/linux-64::openssl-3.6.2-h35e630c_0 
+  packaging          conda-forge/noarch::packaging-26.2-pyhc364b38_0 
+  pip                conda-forge/noarch::pip-26.0.1-pyh8b19718_0 
+  python             conda-forge/linux-64::python-3.11.15-hd63d673_0_cpython 
+  readline           conda-forge/linux-64::readline-8.3-h853b02a_0 
+  setuptools         conda-forge/noarch::setuptools-82.0.1-pyh332efcf_0 
+  tk                 conda-forge/linux-64::tk-8.6.13-noxft_h366c992_103 
+  tzdata             conda-forge/noarch::tzdata-2025c-hc9c84f9_1 
+  wheel              conda-forge/noarch::wheel-0.47.0-pyhd8ed1ab_0 
+  zstd               conda-forge/linux-64::zstd-1.5.7-hb78ec9c_6 
+Downloading and Extracting Packages: ...working... done
+Preparing transaction: | / - \ done
+Verifying transaction: / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / done
+Executing transaction: \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ done
+#
+# To activate this environment, use
+#     $ conda activate /home/anri21/be-fair/mlzero/31-basic_prompt/node_0/conda_env
+# To deactivate an active environment, use
+#     $ conda deactivate
+Collecting uv
+  Using cached uv-0.11.8-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Using cached uv-0.11.8-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (24.8 MB)
+Installing collected packages: uv
+Successfully installed uv-0.11.8
+
+
+### Standard Error (stderr)
+
+
+[...TRUNCATED (998307 characters)...]
+ata/image_16443', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16444', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16445', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16446', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16447', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16448', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16449', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16450', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16451', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16452', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16453', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16454', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16455', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16456', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16457', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16458', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16459', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16460', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16461', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16462', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16463', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16464', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16465', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16466', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16467', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16468', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16469', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16470', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16471', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16472', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16473', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16474', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16475', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16476', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16477', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16478', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16479', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16480', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16481', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16482', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16483', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16484', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16485', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16486', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16487', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16488', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16489', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16490', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16491', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16492', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16493', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16494', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16495', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16496', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16497', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16498', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16499', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16500', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16501', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16502', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16503', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16504', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16505', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16506', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16507', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16508', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16509', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16510', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16511', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16512', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16513', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16514', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16515', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16516', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16517', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16518', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16519', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16520', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16521', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16522', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16523', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16524', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16525', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16526', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16527', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16528', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16529', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16530', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16531', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16532', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16533', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16534', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16535', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16536', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16537', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16538', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16539', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16540', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16541', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16542', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16543', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16544', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16545', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16546', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16547', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16548', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16549', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16550', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16551', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16552', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16553', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16554', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16555', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16556', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16557', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16558', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16559', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16560', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16561', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16562', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16563', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16564', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16565', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16566', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16567', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16568', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16569', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16570', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16571', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16572', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16573', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16574', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16575', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16576', '/home/anri21/be-fair/mlzero/basic_prompt_data/image_16577']
+
+
+Evaluate the execution results and decide on one of the following actions:
+1. SUCCESS - If the execution was completely successful and met all requirements.
+2. FIX - If there were errors, issues, or performance problems that need to be addressed.
+
+Provide your decision in the following format:
+DECISION: [SUCCESS or FIX]
+ERROR_SUMMARY: [Brief summary of errors if any, or "None" if no errors]
+VALIDATION_SCORE: [If there is a validation score for the solution, provide it as a number, otherwise "None"]
+
+The error summary should be brief but informative enough for another agent to understand what needs to be fixed.
+Even if the code executed without throwing errors, it might still have issues with logic or not meet all requirements.
+
+For validation scores:
+- If there is a validation score present in the execution results, extract it (e.g. the last validation score reported in the training process).
+- Convert the score to ensure higher values indicate better performance (multiply "lower is better" metrics like RMSE, MAE, or loss by -1)
+- Return the converted score that follows the "higher is better" convention

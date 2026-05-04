@@ -1,0 +1,28 @@
+```bash
+#!/bin/bash
+set -e
+
+ENV_DIR="/home/anri21/be-fair/mlzero/35-addition_1/node_3/conda_env"
+PYTHON_VERSION="3.11"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_MM="/home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt"
+PY_SCRIPT="/home/anri21/be-fair/mlzero/35-addition_1/node_3/generated_code.py"
+
+conda create --yes --prefix "$ENV_DIR" python=$PYTHON_VERSION
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_DIR"
+
+pip install uv
+
+uv pip install --prerelease=allow -r "$REQ_MM" -r "$REQ_COMMON"
+
+python "$PY_SCRIPT"
+```
+
+**Instructions:**  
+Save as `run.sh`, then run:
+```bash
+chmod +x run.sh
+./run.sh
+```
+This script is minimal and follows your requirements exactly.

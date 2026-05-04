@@ -1,0 +1,98 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** Images of skin lesions (image files referenced by image_name in the dataset)
+- **Prediction output format:** For each input image, output a malignancy probability (a value between 0 and 1)
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)
+
+### Data Structures
+Absolute path to the folder: /home/anri21/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/mydataset.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### User Instruction
+
+
+### Previous Error Analysis
+ERROR_SUMMARY: The script failed with a FileNotFoundError because it expects a test CSV file in the data directory ("/home/anri21/be-fair/mlzero/basic_prompt_data") that is not named "mydataset.csv", but no such file was found. The code attempts to locate any CSV file other than "mydataset.csv" to use as the test set, and raises an error if none is present.
+
+SUGGESTED_FIX: Add a test CSV file (with the same structure as "mydataset.csv" but without labels) to the data directory, ensuring its filename is different from "mydataset.csv". If you do not have a test file, either create a dummy test CSV for development or modify the script to skip test prediction steps when no test file is present.
+
+ERROR_SUMMARY: The error occurs because the Python script expects a test CSV file (other than mydataset.csv) to be present in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file exists. As a result, the script raises a FileNotFoundError and halts execution before any model training or prediction can occur.
+
+SUGGESTED_FIX: Add a test CSV file (with the same structure as mydataset.csv, but without labels) to the data directory so the script can find and process it. If you do not have a test file, create a placeholder test CSV with the required columns (including image_name) and place it in /home/anri21/be-fair/mlzero/basic_prompt_data, ensuring its filename is different from mydataset.csv.
+
+ERROR_SUMMARY: The script failed with a `FileNotFoundError` because it expects a separate test CSV file (other than `mydataset.csv`) in the data directory (`/home/anri21/be-fair/mlzero/basic_prompt_data`), but no such file was found. The code is designed to raise this error if it cannot locate a test file for prediction and output generation.
+
+SUGGESTED_FIX:  
+Add a test CSV file (with the same structure as `mydataset.csv`, but without the label column or with labels hidden) to the data directory `/home/anri21/be-fair/mlzero/basic_prompt_data`. Ensure the test file has a `.csv` extension and a different name than `mydataset.csv` so the script can detect and use it for predictions.
+
+ERROR_SUMMARY: The script failed with a FileNotFoundError because it expects a test CSV file in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data) that is different from the training file (mydataset.csv), but no such test file was found. As a result, the script could not proceed to model training, prediction, or validation.
+
+SUGGESTED_FIX:  
+Add a test CSV file (with the same structure as the training file, but without labels) to the data directory, ensuring its filename is different from "mydataset.csv". If you do not have a separate test set, you can create a copy of "mydataset.csv" (removing or masking the label column if needed) and rename it (e.g., "test.csv") so the script can detect and use it.
+
+ERROR_SUMMARY: The error occurs because the script expects a test CSV file (with a `.csv` extension and a different name than `mydataset.csv`) to be present in the data directory (`/home/anri21/be-fair/mlzero/basic_prompt_data`). Since no such file exists, the script raises a `FileNotFoundError` and halts execution before any model training or prediction can occur.
+
+SUGGESTED_FIX:  
+Add a test CSV file (with a name other than `mydataset.csv`) to the `/home/anri21/be-fair/mlzero/basic_prompt_data` directory. Ensure this file contains the necessary columns (including `image_name`) so the script can locate and process the test images for prediction.
+
+ERROR_SUMMARY: The script raised a FileNotFoundError because it expects a test CSV file (other than "mydataset.csv") to be present in the data directory, but no such file was found. As a result, the script halted before any model training or prediction could occur.
+
+SUGGESTED_FIX: Place a test CSV file (with the same structure as "mydataset.csv" or as required for inference) into the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), ensuring its filename is different from "mydataset.csv". Then, rerun the script so it can detect and use this file for prediction.
+
+ERROR_SUMMARY: The error occurs because the Python script expects a test CSV file (other than mydataset.csv) to be present in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file exists. As a result, the script raises a FileNotFoundError and halts execution before any model training or prediction can occur.
+
+SUGGESTED_FIX:  
+Add a test CSV file (with the same structure as mydataset.csv, but containing the test image names) to the data directory so the script can locate and use it for prediction. If you do not have a separate test set, you can create a dummy test CSV (e.g., copy mydataset.csv and rename it) to allow the script to proceed, but ensure that in production you provide a proper test set for evaluation.
+
+ERROR_SUMMARY: The script failed with a FileNotFoundError because it expects a test CSV file (other than "mydataset.csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file was found. The code is designed to raise this error if it cannot locate a separate test file for prediction.
+
+SUGGESTED_FIX:  
+Add a test CSV file (with the same structure as "mydataset.csv", but without the label column or with labels hidden) to the data directory. Ensure the test file has a ".csv" extension and a different name than "mydataset.csv" so the script can detect and use it for prediction.
+
+ERROR_SUMMARY: The script failed with a FileNotFoundError because it expects a test CSV file (other than mydataset.csv) to be present in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file was found. The code attempts to locate any CSV file besides the training file for test predictions, and raises an error if none is found.
+
+SUGGESTED_FIX: Place a test CSV file (with the same structure as mydataset.csv, but without labels) in the data directory, ensuring its filename is different from "mydataset.csv". If you do not have a test file, either create a dummy test CSV for development or modify the script to skip test prediction when no test file is present.
+
+ERROR_SUMMARY: The script failed with a FileNotFoundError because it expects a test CSV file (other than "mydataset.csv") in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data), but no such file was found. The code halts before any model training or prediction since it cannot proceed without a test set for inference.
+
+SUGGESTED_FIX: Add a test CSV file (with at least an "image_name" column) to the data directory, ensuring its filename is different from "mydataset.csv". If you do not have a separate test set, you can create a dummy test CSV for development, or modify the script to skip test prediction if no test file is present.
+
+ERROR_SUMMARY: The error occurs because the Python environment does not have the required package `autogluon` installed, resulting in a `ModuleNotFoundError` when attempting to import `autogluon.multimodal`. The requirements file used during environment setup is empty or missing the necessary dependency, so the installation step does not provide `autogluon`.
+
+SUGGESTED_FIX: Update your environment setup to explicitly install `autogluon.multimodal` (e.g., by adding `pip install autogluon.multimodal` after the requirements installation step). Ensure that the requirements file used for installation includes `autogluon.multimodal`, or manually install it in the environment before running your script.
+
+### Selected Tool/Library
+autogluon.tabular
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

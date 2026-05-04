@@ -1,0 +1,4 @@
+ERROR_SUMMARY: The error occurs because the code expects a test CSV file (with a filename starting with "test" and ending with ".csv") in the data directory (/home/anri21/be-fair/mlzero/addition_1_data), but no such file is present. As a result, the function get_test_csv_path() raises a FileNotFoundError and the script terminates.
+
+SUGGESTED_FIX:  
+Check the /home/anri21/be-fair/mlzero/addition_1_data directory and ensure that a test CSV file (e.g., test.csv or test_data.csv) exists there. If the test file is missing, obtain or generate the appropriate test CSV file and place it in the data directory so the script can locate and process it.

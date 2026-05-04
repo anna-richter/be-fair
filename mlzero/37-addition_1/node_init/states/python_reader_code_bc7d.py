@@ -1,0 +1,30 @@
+import os
+import pandas as pd
+
+file_path = "/home/anri21/be-fair/mlzero/addition_1_data/mydataset.csv"
+
+def display_columns(cols):
+    n = len(cols)
+    if n > 20:
+        shown = list(cols[:10]) + ["..."] + list(cols[-10:])
+    else:
+        shown = list(cols)
+    print("Columns:", shown)
+
+def display_rows(df):
+    pd.set_option('display.max_colwidth', 50)
+    rows = df.head(3)
+    print(rows.to_string(index=False))
+
+try:
+    df = pd.read_csv(file_path)
+    display_columns(df.columns)
+    display_rows(df)
+except Exception:
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read(768)
+            print("Text preview:\n", content)
+    except Exception as e:
+        size = os.path.getsize(file_path)
+        print(f"File could not be read. Size: {size} bytes.")

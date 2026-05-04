@@ -1,0 +1,1 @@
+The code failed with a FileNotFoundError: "Test CSV file not found in data directory." This means the required test set for prediction and evaluation was missing, so the script could not proceed past the initial data loading step.

@@ -1,0 +1,93 @@
+
+You are a data science expert tasked with selecting and ranking the most appropriate ML libraries for a specific task.
+
+### Task Description:
+**Task Description (based only on provided files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** Images of skin lesions (image files referenced by image_name in the dataset)
+- **Prediction output format:** For each input image, output a malignancy probability (a value between 0 and 1)
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)
+
+### Data Information:
+Absolute path to the folder: /home/anri21/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/mydataset.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### Available ML Libraries:
+Library Name: FlagEmbedding
+Version: v1.3.4
+Description: FlagEmbedding specializes in retrieval and reranking tasks.
+
+
+Library Name: machine learning
+Version: v0.1.0
+Description: You should select this as a general reference of machine learning or deep learning algorithms in case other tools are not helpful.
+
+
+Library Name: wav2vec2
+Version: v0.0.0
+Description: This model was pre-trained on 4.5M hours of unlabeled audio data covering more than 143 languages. It requires finetuning to be used for downstream tasks such as Automatic Speech Recognition (ASR), or Audio Classification.
+
+
+Library Name: qwen3
+Version: v0.0.0
+Description: Qwen3-0.6B is a compact 0.6 billion parameter text generation model that uniquely switches between thinking and non-thinking modes for both efficient dialogue and complex reasoning tasks.
+
+
+Library Name: autogluon.tabular
+Version: v1.4.0.dev
+Description: AutoGluon Tabular automates ML model training for tabular data, excelling at numerical and categorical data processing. It doesn't support NLP or image-based tasks.
+
+
+Library Name: autogluon.multimodal
+Version: v1.4.0.dev
+Description: AutoGluon Multimodal excels at multimodal classification, regression, document classification, and semantic segmentation tasks. The framework is not optimized for pure tabular data processing and DOES NOT support generative tasks (image generation, text generation, etc.) or audio-related tasks. It also doesn't handle object detection.
+
+
+Library Name: autogluon.timeseries
+Version: v1.4.0.dev
+Description: AutoGluon TimeSeries automates forecasting model training for time series data, supporting both univariate and multivariate predictions.
+
+
+
+
+IMPORTANT: Your response MUST follow this exact format:
+---
+EXPLANATION: <provide your detailed reasoning process for evaluating the libraries>
+
+RANKED_LIBRARIES:
+1. <first choice library name>
+2. <second choice library name>
+3. <third choice library name>
+...
+---
+
+Requirements for your response:
+1. First provide a detailed explanation of your reasoning process using the "EXPLANATION:" header
+2. Then provide a ranking of libraries using the "RANKED_LIBRARIES:" header
+3. The library names must be exactly as shown in the available libraries list
+4. Provide a ranking of at least 3 libraries (if available)
+5. In your explanation, analyze each library's strengths and weaknesses for this specific task
+6. Consider the task requirements, data characteristics, and library features
+
+Do not include any other formatting or additional sections in your response.

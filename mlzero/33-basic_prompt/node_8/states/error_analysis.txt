@@ -1,0 +1,4 @@
+ERROR_SUMMARY: The script raises a `FileNotFoundError` because it expects a test file (such as `test.csv` or `sample_submission.csv`) to be present in the data directory (`/home/anri21/be-fair/mlzero/basic_prompt_data`), but no such file exists. As a result, the script halts before model training or evaluation can proceed.
+
+SUGGESTED_FIX:  
+Add a test file (e.g., `test.csv` or `sample_submission.csv`) containing at least the `image_name` column to the data directory. If you do not have a test set, create a placeholder CSV with the required structure, or modify the script to skip test prediction steps when no test file is present.

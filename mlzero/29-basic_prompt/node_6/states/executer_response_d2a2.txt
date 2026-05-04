@@ -1,0 +1,3 @@
+DECISION: FIX  
+ERROR_SUMMARY: FileNotFoundError: Test CSV file not found in data directory. The script expects a test CSV file for prediction, but none was found in /home/anri21/be-fair/mlzero/basic_prompt_data.  
+VALIDATION_SCORE: None

@@ -1,0 +1,39 @@
+```python
+import os
+
+file_path = "/home/anri21/be-fair/mlzero/basic_prompt_data/descriptions.txt"
+
+def analyze_file(fp):
+    try:
+        size = os.path.getsize(fp)
+        if size == 0:
+            print("File is empty.")
+            return
+        # Try tabular formats
+        try:
+            import pandas as pd
+            df = pd.read_csv(fp, sep=None, engine='python')
+            cols = list(df.columns)
+            ncols = len(cols)
+            if ncols > 20:
+                display_cols = cols[:10] + ["..."] + cols[-10:]
+            else:
+                display_cols = cols
+            print("Columns:", display_cols)
+            pd.set_option('display.max_colwidth', 50)
+            print(df.head(3).to_string(index=False))
+            return
+        except Exception:
+            pass
+        # Treat as text file
+        with open(fp, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read(768)
+            lines = content.splitlines()
+            print("First lines:")
+            for line in lines:
+                print(line)
+    except Exception as e:
+        print(f"Could not analyze file: {e}")
+
+analyze_file(file_path)
+```

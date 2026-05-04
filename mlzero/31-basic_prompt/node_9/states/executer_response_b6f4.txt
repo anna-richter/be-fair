@@ -1,0 +1,3 @@
+DECISION: FIX  
+ERROR_SUMMARY: The code failed with ValueError: "No training samples with valid images found after filtering." This occurred because all training rows were removed due to missing image files, leaving no data for model training.  
+VALIDATION_SCORE: None

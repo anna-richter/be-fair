@@ -1,0 +1,1 @@
+The code failed with a FileNotFoundError because it could not find a test CSV file in the data directory. The script expects a test CSV (other than "mydataset.csv") to be present, but none was found, causing execution to halt before any model training or prediction.

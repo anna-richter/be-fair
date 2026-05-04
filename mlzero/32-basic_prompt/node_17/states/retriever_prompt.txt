@@ -1,0 +1,125 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** Images of skin lesions (image files referenced by image_name in the dataset; new images are provided as a folder path)
+- **Prediction output format:** For each input image, output a malignancy probability (a value between 0 and 1)
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)
+
+### Data Structures
+Absolute path to the folder: /home/anri21/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Absolute path: /home/anri21/be-fair/mlzero/basic_prompt_data/mydataset.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### User Instruction
+
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error "ValueError: No model is available for this dataset." occurs during the call to predictor.fit() in AutoGluon MultiModal because, after preprocessing, the training dataset contains only 3 rows, which is too small for AutoGluon to select or train any model. AutoGluon requires a minimum number of samples per class to proceed with model selection and training.
+
+SUGGESTED_FIX: Increase the size of your training dataset by adding more labeled image samples, ensuring that both classes (malignant and non-malignant) are sufficiently represented. If you cannot obtain more data, consider using a different modeling approach that can handle extremely small datasets, or switch to a simpler model outside of AutoGluon MultiModal.
+
+ERROR_SUMMARY: The error occurs because the input feature matrix X_train contains NaN values, which LogisticRegression from scikit-learn does not support. This is likely due to missing or unreadable images during feature extraction, resulting in rows of all-NaN features that are not fully removed by the current fillna(X_train.mean()) step.
+
+SUGGESTED_FIX: Before fitting the model, explicitly drop any rows in X_train (and corresponding y_train) that still contain NaN values after imputation. Alternatively, use a more robust imputation strategy (e.g., sklearn's SimpleImputer) to ensure no NaNs remain, or switch to a classifier that natively handles missing values.
+
+ERROR_SUMMARY: The script fails with a FileNotFoundError because it attempts to load the test data from '/home/anri21/be-fair/mlzero/32-basic_prompt/node_2/input/test.csv', but this file does not exist at the specified location. As a result, pandas cannot read the test data, and the script terminates during the test data loading step.
+
+SUGGESTED_FIX:  
+Verify that the test data file ('test.csv') is present at '/home/anri21/be-fair/mlzero/32-basic_prompt/node_2/input/'. If it is missing, ensure the file is generated or copied to this directory before running the script. Double-check the path and filename for typos or misplacement, and update the script or data location as needed to match.
+
+ERROR_SUMMARY: The error "ValueError: No model is available for this dataset." occurs because AutoGluon MultiModal cannot select or train a model when the training dataset is too small or lacks sufficient class diversity. In your case, the dataset has only 3 samples, with just one labeled as 'malignant', which is insufficient for binary image classification.
+
+SUGGESTED_FIX:  
+Increase the size of your training dataset to include more samples and ensure that both classes ('malignant' and 'non-malignant') are adequately represented. AutoGluon MultiModal typically requires at least several samples per class (ideally 10+ per class) to train a model; collect or label more data before rerunning the script.
+
+ERROR_SUMMARY: The error occurs because, after preprocessing and feature extraction, the training set (`X_train`) is empty (shape=(0, 12)), which means there are no valid samples left to train the LogisticRegression model. This is likely due to all training images being missing, unreadable, or all rows being dropped due to NaN values in the extracted features.
+
+SUGGESTED_FIX: Check that all image files referenced in the training CSV actually exist and are readable in the specified directory. Add logging or print statements to identify which images fail to load, and ensure that the feature extraction step does not result in all-NaN rows; if necessary, adjust the data cleaning logic to avoid dropping all samples, or provide fallback features for missing images.
+
+ERROR_SUMMARY: The error "ValueError: No model is available for this dataset." occurs because AutoGluon MultiModal requires a minimum number of samples and at least two classes in the training data, but your dataset only contains 3 samples (with only one labeled as 'malignant'), which is insufficient for model selection and training. This leads AutoGluon to abort the training process as it cannot select or fit a model with such limited data.
+
+SUGGESTED_FIX:  
+Increase the size and class diversity of your training dataset—ensure you have at least several samples for each class (malignant and non-malignant). If you cannot obtain more data, consider using a simpler model or a different library that can handle very small datasets, or augment your dataset with additional labeled images before retrying AutoGluon MultiModal.
+
+ERROR_SUMMARY: The error occurs because the training feature matrix X_train is empty (shape=(0, 12)), meaning there are zero valid training samples after preprocessing. This is likely due to all training images being missing, unreadable, or all rows being dropped due to NaN values in the extracted features, resulting in no data for model fitting.
+
+SUGGESTED_FIX: Check that all image files referenced in the training CSV exist and are readable in the specified directory. Add logging or print statements after feature extraction to verify how many valid (non-NaN) samples remain, and ensure that the feature extraction function is not returning all-NaN rows; if images are missing, update the dataset or image paths accordingly.
+
+ERROR_SUMMARY: The script fails with a FileNotFoundError because it attempts to load the test data from '/home/anri21/be-fair/mlzero/32-basic_prompt/node_7/input/test.csv', but this file does not exist at the specified path, causing the pandas read_csv function to raise an error.
+
+SUGGESTED_FIX: Verify that the test.csv file is present at '/home/anri21/be-fair/mlzero/32-basic_prompt/node_7/input/'. If it is missing, ensure the test data is generated or copied to this location before running the script; alternatively, update the TEST_CSV path in the script to point to the correct location of your test data file.
+
+ERROR_SUMMARY: The error "ValueError: No model is available for this dataset." occurs because the training dataset is too small and lacks sufficient class diversity—specifically, there are only 3 samples and only one positive class ("malignant"). AutoGluon MultiModal requires at least two classes with multiple samples to select and train a model.
+
+SUGGESTED_FIX:  
+Increase the size and diversity of your training dataset so that it contains at least two classes (e.g., both "malignant" and "benign"/"non-neoplastic") with multiple samples per class. Ensure that after preprocessing, your training data includes enough examples from each class for the model to learn and validate; otherwise, AutoGluon will not proceed with model selection or training.
+
+ERROR_SUMMARY: AutoGluon MultiModal failed to train because the training dataset is too small and lacks sufficient class diversity. Specifically, there are only 3 samples in the training data, with just one labeled as "malignant" and the others as "non-neoplastic" (mapped to 0), resulting in an imbalanced dataset with only one positive class. AutoGluon requires at least two classes with multiple samples per class to select and train a model.
+
+SUGGESTED_FIX:  
+Increase the size and diversity of your training dataset by adding more labeled samples, ensuring that both classes ("malignant" and "benign"/"non-neoplastic") are represented with at least a few samples each. Once you have at least two classes with multiple examples per class, rerun the training script to allow AutoGluon to select an appropriate model.
+
+ERROR_SUMMARY: The error occurred because the Python environment where the script was executed does not have the 'autogluon' package installed. Specifically, the import statement from autogluon.multimodal failed, resulting in a ModuleNotFoundError, likely because the requirements file used for installation was empty and did not specify autogluon as a dependency.
+
+SUGGESTED_FIX: Manually install the required package by running pip install autogluon.multimodal inside the conda environment before executing the script. Ensure that your requirements files include autogluon.multimodal, or add an explicit pip install autogluon.multimodal step in your setup process to guarantee the package is available.
+
+ERROR_SUMMARY: The script fails with a `FileNotFoundError` because it attempts to load the test data from `/home/anri21/be-fair/mlzero/32-basic_prompt/node_11/input/test.csv`, but this file does not exist at the specified path. As a result, the script cannot proceed with predictions or output generation.
+
+SUGGESTED_FIX:  
+Verify that the test data file (`test.csv`) is present at `/home/anri21/be-fair/mlzero/32-basic_prompt/node_11/input/`. If it is missing, ensure the test data is generated or copied to this location before running the script. Double-check the file path and permissions to confirm the script can access the file.
+
+ERROR_SUMMARY: The error "ValueError: No model is available for this dataset." occurs because the training dataset is too small (only 3 samples, with only one positive class), which prevents AutoGluon MultiModal from selecting or training a model. AutoGluon requires a minimum number of samples and at least two classes to proceed with model selection and training.
+
+SUGGESTED_FIX:  
+Increase the size and diversity of your training dataset to include more samples and ensure that both classes (malignant and non-malignant) are represented. If you cannot obtain more data, consider using a different modeling approach that can handle extremely small datasets, or implement manual checks to prevent training when the dataset is insufficient.
+
+ERROR_SUMMARY: The error "ValueError: No model is available for this dataset." occurs because AutoGluon MultiModal requires a minimum number of samples and at least two classes in the training data, but your dataset contains only 3 samples with only one positive class ("malignant"). This is insufficient for model selection and training, causing the fit process to fail.
+
+SUGGESTED_FIX:  
+Increase the size and diversity of your training dataset so that it contains at least several samples for each class (both "malignant" and "non-malignant"). Ensure that after preprocessing, the training data has at least two unique classes and enough samples (ideally >10 per class) before calling predictor.fit().
+
+ERROR_SUMMARY: The script fails with a FileNotFoundError because it attempts to load the test data from '/home/anri21/be-fair/mlzero/32-basic_prompt/node_14/input/test.csv', but this file does not exist at the specified location.
+
+SUGGESTED_FIX: Verify that the test.csv file is present in the '/home/anri21/be-fair/mlzero/32-basic_prompt/node_14/input/' directory. If it is missing, ensure the test data is generated or copied to this path before running the script, or update the TEST_CSV variable in the code to point to the correct location of your test data file.
+
+ERROR_SUMMARY: The script fails with a FileNotFoundError because it attempts to load the test data from '/home/anri21/be-fair/mlzero/32-basic_prompt/node_14/input/test.csv', but this file does not exist at the specified location. As a result, pandas cannot read the test data, and the script cannot proceed with prediction or output generation.
+
+SUGGESTED_FIX: Verify that the test.csv file exists at '/home/anri21/be-fair/mlzero/32-basic_prompt/node_14/input/'. If it is missing, ensure the test data is generated or copied to this path before running the script; alternatively, update the TEST_CSV variable in the script to point to the correct location of your test data file.
+
+ERROR_SUMMARY: The script fails with a FileNotFoundError because it attempts to load the test data from '/home/anri21/be-fair/mlzero/32-basic_prompt/node_16/input/test.csv', but this file does not exist at the specified location. As a result, pandas cannot read the test set, and the script terminates during the test data loading step.
+
+SUGGESTED_FIX: Verify that the test.csv file is present at '/home/anri21/be-fair/mlzero/32-basic_prompt/node_16/input/'. If it is missing, ensure the test data is generated, copied, or linked to this path before running the script. Double-check any data preparation or download steps to confirm the test file is available at runtime.
+
+### Selected Tool/Library
+autogluon.tabular
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

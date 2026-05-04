@@ -1,0 +1,154 @@
+"""
+Skin Lesion Malignancy Probability Prediction using AutoGluon Tabular
+
+This script trains a tabular machine learning model using AutoGluon Tabular to predict the probability
+that a skin lesion is malignant (vs. benign) using structured metadata (not image pixels).
+It performs the following steps:
+
+- Loads and preprocesses the training data (removes NA labels, drops index column).
+- Trains an AutoGluon Tabular predictor for binary classification using metadata features.
+- Saves the trained model to a timestamped folder in the specified output directory.
+- Predicts malignancy probabilities for the test set, preserving original indices and output format.
+- Saves predictions in the same format as the test file, with correct column names and order.
+- Performs validation using AutoGluon's built-in validation and prints the best validation score.
+- Includes validation checks to ensure output integrity.
+
+# Installation requirements (run before using this script):
+# !pip install autogluon.tabular pandas scikit-learn
+
+# Note: This script assumes that image files are referenced by 'image_name', but only tabular features are used.
+"""
+
+import os
+import random
+from datetime import datetime
+
+import pandas as pd
+import numpy as np
+
+from autogluon.tabular import TabularPredictor
+
+# Paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/basic_prompt_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/29-basic_prompt/node_17/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+
+def find_test_csv(data_dir):
+    # Try to find a test csv file in the data directory
+    for fname in os.listdir(data_dir):
+        if fname.lower().startswith("test") and fname.lower().endswith(".csv"):
+            return os.path.join(data_dir, fname)
+        if "test" in fname.lower() and fname.lower().endswith(".csv"):
+            return os.path.join(data_dir, fname)
+        if fname.lower().startswith("mydataset_test") and fname.lower().endswith(".csv"):
+            return os.path.join(data_dir, fname)
+    # Fallback: if only two csvs, use the one that's not the train csv
+    csvs = [f for f in os.listdir(data_dir) if f.endswith('.csv')]
+    if len(csvs) == 2:
+        for f in csvs:
+            if f != os.path.basename(TRAIN_CSV):
+                return os.path.join(data_dir, f)
+    raise FileNotFoundError("Test CSV file not found in data directory.")
+
+if __name__ == "__main__":
+    # Ensure output directory exists
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    # Load training data
+    train_df = pd.read_csv(TRAIN_CSV)
+    if 'Unnamed: 0' in train_df.columns:
+        train_df = train_df.drop(columns=['Unnamed: 0'])
+    train_df = train_df.dropna(subset=['label'])
+    train_df = train_df.reset_index(drop=True)
+
+    # Map label to binary: malignant=1, others=0
+    train_df['label'] = train_df['label'].map(lambda x: 1 if str(x).strip().lower() == 'malignant' else 0)
+
+    # Find test CSV
+    test_csv_path = find_test_csv(DATA_DIR)
+    test_df = pd.read_csv(test_csv_path)
+    test_index = test_df.index.copy()
+    if 'Unnamed: 0' in test_df.columns:
+        test_df = test_df.drop(columns=['Unnamed: 0'])
+
+    # Use only tabular features (exclude 'label' and 'image_name')
+    feature_cols = [col for col in train_df.columns if col not in ['label', 'image_name']]
+    # If there are no features left, use only 'image_name' as a categorical feature
+    if not feature_cols:
+        feature_cols = ['image_name']
+
+    # Model save path: random timestamped folder
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + str(random.randint(1000, 9999))
+    model_dir = os.path.join(OUTPUT_DIR, f"autogluon_tabular_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+
+    # Train AutoGluon TabularPredictor for binary classification
+    predictor = TabularPredictor(
+        label='label',
+        problem_type='binary',
+        eval_metric='roc_auc',
+        path=model_dir
+    )
+    predictor.fit(
+        train_data=train_df[feature_cols + ['label']],
+        presets="extreme"
+    )
+
+    # Save model (already saved by AutoGluon in model_dir)
+
+    # Predict on test set (malignancy probability)
+    # Use predictor.predict_proba to get probability for class 1 (malignant)
+    test_features = test_df[feature_cols].copy()
+    test_probs = predictor.predict_proba(test_features)
+    # For binary, columns are [0, 1], get probability for class 1
+    if 1 in test_probs.columns:
+        malignancy_probs = test_probs[1].values
+    elif '1' in test_probs.columns:
+        malignancy_probs = test_probs['1'].values
+    else:
+        # fallback: use last column
+        malignancy_probs = test_probs.iloc[:, -1].values
+
+    # Prepare output DataFrame
+    output_df = test_df.copy()
+    output_label_col = 'label'
+    output_df[output_label_col] = malignancy_probs
+    output_df.index = test_index
+
+    # Save results in same format/extension as test file
+    test_ext = os.path.splitext(test_csv_path)[1]
+    result_path = os.path.join(OUTPUT_DIR, f"results{test_ext}")
+    output_df.to_csv(result_path, index=False)
+
+    # --------- VALIDATION ---------
+    # Print best validation score from AutoGluon
+    try:
+        leaderboard = predictor.leaderboard(silent=True)
+        best_score = leaderboard['score_val'].iloc[0]
+        print(f"AutoGluon best validation AUROC: {best_score:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # --------- VALIDATION CHECKS ---------
+    # 1. Check output file exists
+    assert os.path.exists(result_path), "Prediction file was not saved."
+
+    # 2. Check number of rows matches test set
+    pred_df = pd.read_csv(result_path)
+    assert len(pred_df) == len(test_df), "Number of predictions does not match number of test samples."
+
+    # 3. Check indices preserved (row order)
+    assert all(pred_df['image_name'] == test_df['image_name']), "Image names/order do not match test set."
+
+    # 4. Check output column names match test file (except label column, which must be present)
+    test_cols = list(test_df.columns)
+    if output_label_col not in test_cols:
+        test_cols.append(output_label_col)
+    assert all([col in pred_df.columns for col in test_cols]), "Output columns do not match requirements."
+
+    # 5. Check malignancy probabilities are floats in [0, 1]
+    assert np.all((pred_df[output_label_col] >= 0) & (pred_df[output_label_col] <= 1)), \
+        "Predicted probabilities are not all in [0, 1]."
+
+    print(f"Predictions saved to: {result_path}")
+    print(f"Trained model saved to: {model_dir}")

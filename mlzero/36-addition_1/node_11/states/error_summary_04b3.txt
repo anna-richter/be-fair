@@ -1,0 +1,1 @@
+FileNotFoundError: Test CSV file not found in data directory. The code expects a test CSV file (whose name starts with "test" and ends with ".csv") in /home/anri21/be-fair/mlzero/addition_1_data, but none was found. As a result, the main pipeline did not execute, no model was trained, and no predictions or validation scores were produced.

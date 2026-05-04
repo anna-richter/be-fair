@@ -1,0 +1,1 @@
+FileNotFoundError: Test file not found in data directory. The code failed after model training because it could not find a test file (expected to start with "test") in /home/anri21/be-fair/mlzero/basic_prompt_data. As a result, no predictions were made or saved, and the output requirements were not fulfilled.

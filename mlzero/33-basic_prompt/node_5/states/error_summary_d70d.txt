@@ -1,0 +1,1 @@
+FileNotFoundError: The script could not find a test file (e.g., test.csv or sample_submission.csv) in the data directory (/home/anri21/be-fair/mlzero/basic_prompt_data). As a result, execution stopped before model training or prediction could complete.

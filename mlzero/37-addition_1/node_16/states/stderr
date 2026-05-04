@@ -1,0 +1,9 @@
+
+==> WARNING: A newer version of conda exists. <==
+    current version: 25.11.0
+    latest version: 26.3.2
+Please update conda by running
+    $ conda update -n base -c conda-forge conda
+ERROR conda.core.link:_execute(1031): An error occurred while installing package 'conda-forge::ncurses-6.6-hdb14827_0'.
+[Errno 28] No space left on device
+()

@@ -1,0 +1,19 @@
+The task is binary image classification (malignant vs. benign skin lesions) using image files, with the requirement to output malignancy probabilities (0–1) and optimize for AUROC. The data consists of images referenced in a CSV file, and fairness towards skin tone is a consideration.
+
+Analyzing the available libraries:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not in image classification or supervised learning. It is not suitable for training or inference on image classification tasks.
+
+- machine learning: This is described as a general reference for machine learning or deep learning algorithms, to be used if other tools are not helpful. It is not a specific implementation or framework, so it is a fallback option.
+
+- wav2vec2: This library is designed for audio data, specifically for speech recognition and audio classification. It is not applicable to image data.
+
+- qwen3: This is a text generation model, focused on dialogue and reasoning tasks. It is not designed for image classification.
+
+- autogluon.tabular: This library automates ML for tabular data (numerical/categorical), but explicitly does not support image-based tasks. It is not suitable for this image classification problem.
+
+- autogluon.multimodal: This library is designed for multimodal classification, including image classification tasks. It supports image inputs and can handle tasks like the one described (binary image classification with probability outputs). It is not for generative or audio tasks, but is well-suited for image classification. It also allows for the inclusion of tabular metadata (e.g., skin tone) if desired, which could help address fairness.
+
+- autogluon.timeseries: This is for time series forecasting, not image classification.
+
+Given these considerations, autogluon.multimodal is the most appropriate and specialized library for this task. The next best option is the general "machine learning" reference, as a fallback if autogluon.multimodal is unavailable. The third choice, by process of elimination, would be autogluon.tabular, though it is not designed for images, but could potentially be used if images are somehow featurized into tabular form (not ideal).

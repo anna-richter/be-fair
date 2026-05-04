@@ -1,0 +1,4 @@
+ERROR_SUMMARY: AutoGluon MultiModal failed to train because the training dataset is too small and lacks sufficient class diversity. Specifically, there are only 3 samples in the training data, with just one labeled as "malignant" and the others as "non-neoplastic" (mapped to 0), resulting in an imbalanced dataset with only one positive class. AutoGluon requires at least two classes with multiple samples per class to select and train a model.
+
+SUGGESTED_FIX:  
+Increase the size and diversity of your training dataset by adding more labeled samples, ensuring that both classes ("malignant" and "benign"/"non-neoplastic") are represented with at least a few samples each. Once you have at least two classes with multiple examples per class, rerun the training script to allow AutoGluon to select an appropriate model.

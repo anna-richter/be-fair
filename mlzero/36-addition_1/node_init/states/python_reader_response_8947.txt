@@ -1,0 +1,48 @@
+```python
+import os
+
+file_path = "/home/anri21/be-fair/mlzero/addition_1_data/descriptions.txt"
+
+def print_truncated(s, length=50):
+    s = str(s)
+    return s if len(s) <= length else s[:length-3] + "..."
+
+def analyze_text_file(path):
+    with open(path, 'r', encoding='utf-8', errors='replace') as f:
+        content = f.read(768)
+    print("First lines (up to 768 chars):\n" + content)
+
+def analyze_tabular_file(path, ext):
+    import pandas as pd
+    try:
+        if ext == '.csv':
+            df = pd.read_csv(path)
+        elif ext in ['.xls', '.xlsx']:
+            df = pd.read_excel(path)
+        elif ext == '.parquet':
+            df = pd.read_parquet(path)
+        else:
+            raise Exception()
+        cols = list(df.columns)
+        n = len(cols)
+        if n > 20:
+            shown = cols[:10] + ["..."] + cols[-10:]
+        else:
+            shown = cols
+        print("Columns:", shown)
+        rows = df.head(3)
+        print("First rows:")
+        for _, row in rows.iterrows():
+            print([print_truncated(row[c]) for c in cols])
+    except Exception:
+        analyze_text_file(path)
+
+def main():
+    ext = os.path.splitext(file_path)[1].lower()
+    if ext in ['.csv', '.xls', '.xlsx', '.parquet']:
+        analyze_tabular_file(file_path, ext)
+    else:
+        analyze_text_file(file_path)
+
+main()
+```

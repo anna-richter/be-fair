@@ -1,0 +1,3 @@
+ERROR_SUMMARY: The error "[Errno 28] No space left on device" occurred during the installation of the 'ncurses' package via conda, which caused the conda environment setup to fail. This is a system-level issue indicating that the disk or partition where conda is trying to write files has run out of available storage space.
+
+SUGGESTED_FIX: Free up disk space on the device by deleting unnecessary files, clearing conda/pip caches, or expanding the storage allocation for the relevant partition. After ensuring sufficient free space, re-run the environment setup and package installation steps before executing your Python script.

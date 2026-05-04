@@ -1,0 +1,201 @@
+"""
+Skin Lesion Malignancy Probability Prediction Script
+
+This script trains a machine learning model to predict the probability that a skin lesion is malignant
+from image data. It uses a simple image feature extraction approach (ResNet50 bottleneck features)
+and a logistic regression classifier. The script:
+
+- Loads and preprocesses the data (removes NA labels, drops index column).
+- Extracts features from images using a pretrained ResNet50 (no fine-tuning).
+- Trains a logistic regression model on these features.
+- Saves the trained model to a timestamped folder in the output directory.
+- Predicts malignancy probabilities for the test set, preserving original indices and columns.
+- Saves predictions in the same format as the test file, with correct column names and order.
+- Performs validation (10% holdout) if labeled data is available, printing AUROC.
+- Includes validation checks to ensure output integrity.
+
+# Installation requirements (run before using this script):
+# !pip install pandas scikit-learn numpy pillow tqdm
+# !pip install torch torchvision
+
+"""
+
+import os
+import random
+from datetime import datetime
+import pickle
+
+import pandas as pd
+import numpy as np
+from tqdm import tqdm
+
+from PIL import Image
+
+import torch
+import torch.nn as nn
+from torchvision import models, transforms
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+
+# Paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/basic_prompt_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/29-basic_prompt/node_14/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+
+def find_test_csv(data_dir):
+    # Try to find a test csv file in the data directory
+    for fname in os.listdir(data_dir):
+        if fname.lower().startswith("test") and fname.lower().endswith(".csv"):
+            return os.path.join(data_dir, fname)
+        if "test" in fname.lower() and fname.lower().endswith(".csv"):
+            return os.path.join(data_dir, fname)
+        if fname.lower().startswith("mydataset_test") and fname.lower().endswith(".csv"):
+            return os.path.join(data_dir, fname)
+    # Fallback: if only two csvs, use the one that's not the train csv
+    csvs = [f for f in os.listdir(data_dir) if f.endswith('.csv')]
+    if len(csvs) == 2:
+        for f in csvs:
+            if f != os.path.basename(TRAIN_CSV):
+                return os.path.join(data_dir, f)
+    raise FileNotFoundError("Test CSV file not found in data directory.")
+
+def get_image_path(row, image_col, image_dir):
+    img_name = row[image_col]
+    if os.path.isabs(str(img_name)):
+        return img_name
+    else:
+        return os.path.join(image_dir, str(img_name))
+
+def extract_features(image_paths, device, batch_size=32):
+    """
+    Extracts bottleneck features from images using pretrained ResNet50.
+    Returns a numpy array of shape (num_images, feature_dim).
+    """
+    preprocess = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        # Normalization for ImageNet
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+    # Load pretrained ResNet50, remove final classification layer
+    resnet = models.resnet50(pretrained=True)
+    modules = list(resnet.children())[:-1]  # Remove last FC
+    backbone = nn.Sequential(*modules).to(device)
+    backbone.eval()
+
+    features = []
+    n = len(image_paths)
+    with torch.no_grad():
+        for i in tqdm(range(0, n, batch_size), desc="Extracting features"):
+            batch_paths = image_paths[i:i+batch_size]
+            batch_imgs = []
+            for p in batch_paths:
+                try:
+                    img = Image.open(p).convert('RGB')
+                except Exception:
+                    # If image is missing or unreadable, use zeros
+                    img = Image.fromarray(np.zeros((224,224,3), dtype=np.uint8))
+                img = preprocess(img)
+                batch_imgs.append(img)
+            batch_tensor = torch.stack(batch_imgs).to(device)
+            feats = backbone(batch_tensor).squeeze(-1).squeeze(-1)  # (B, 2048, 1, 1) -> (B, 2048)
+            features.append(feats.cpu().numpy())
+    features = np.concatenate(features, axis=0)
+    return features
+
+if __name__ == "__main__":
+    # Ensure output directory exists
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    # Load training data
+    train_df = pd.read_csv(TRAIN_CSV)
+    if 'Unnamed: 0' in train_df.columns:
+        train_df = train_df.drop(columns=['Unnamed: 0'])
+    train_df = train_df.dropna(subset=['label'])
+    train_df = train_df.reset_index(drop=True)
+
+    # Map label to binary: malignant=1, others=0
+    train_df['label'] = train_df['label'].map(lambda x: 1 if str(x).strip().lower() == 'malignant' else 0)
+
+    # Find test CSV
+    test_csv_path = find_test_csv(DATA_DIR)
+    test_df = pd.read_csv(test_csv_path)
+    test_index = test_df.index.copy()
+    if 'Unnamed: 0' in test_df.columns:
+        test_df = test_df.drop(columns=['Unnamed: 0'])
+
+    # Add absolute image paths
+    train_df['image_path'] = train_df.apply(lambda row: get_image_path(row, 'image_name', DATA_DIR), axis=1)
+    test_df['image_path'] = test_df.apply(lambda row: get_image_path(row, 'image_name', DATA_DIR), axis=1)
+
+    # Validation split (10% holdout)
+    train_data, val_data = train_test_split(
+        train_df, test_size=0.1, random_state=42, stratify=train_df['label']
+    )
+
+    # Extract features
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    train_features = extract_features(list(train_data['image_path']), device)
+    val_features = extract_features(list(val_data['image_path']), device)
+    test_features = extract_features(list(test_df['image_path']), device)
+
+    # Train classifier
+    clf = LogisticRegression(max_iter=1000, solver='lbfgs')
+    clf.fit(train_features, train_data['label'].values)
+
+    # Save model and feature extractor info
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + str(random.randint(1000, 9999))
+    model_dir = os.path.join(OUTPUT_DIR, f"ml_model_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+    with open(os.path.join(model_dir, "logreg.pkl"), "wb") as f:
+        pickle.dump(clf, f)
+
+    # Predict probabilities for test set
+    test_probs = clf.predict_proba(test_features)[:, 1]  # Probability of malignant
+
+    # Prepare output DataFrame
+    output_df = test_df.copy()
+    output_label_col = 'label'
+    output_df[output_label_col] = test_probs
+    output_df.index = test_index
+
+    # Save results in same format/extension as test file
+    test_ext = os.path.splitext(test_csv_path)[1]
+    result_path = os.path.join(OUTPUT_DIR, f"results{test_ext}")
+    output_df.to_csv(result_path, index=False)
+
+    # --------- VALIDATION ---------
+    try:
+        val_probs = clf.predict_proba(val_features)[:, 1]
+        val_true = val_data['label'].values
+        val_auc = roc_auc_score(val_true, val_probs)
+        print(f"Validation AUROC: {val_auc:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # --------- VALIDATION CHECKS ---------
+    # 1. Check output file exists
+    assert os.path.exists(result_path), "Prediction file was not saved."
+
+    # 2. Check number of rows matches test set
+    pred_df = pd.read_csv(result_path)
+    assert len(pred_df) == len(test_df), "Number of predictions does not match number of test samples."
+
+    # 3. Check indices preserved (row order)
+    assert all(pred_df['image_name'] == test_df['image_name']), "Image names/order do not match test set."
+
+    # 4. Check output column names match test file (except label column, which must be present)
+    test_cols = list(test_df.columns)
+    if output_label_col not in test_cols:
+        test_cols.append(output_label_col)
+    assert all([col in pred_df.columns for col in test_cols]), "Output columns do not match requirements."
+
+    # 5. Check malignancy probabilities are floats in [0, 1]
+    assert np.all((pred_df[output_label_col] >= 0) & (pred_df[output_label_col] <= 1)), \
+        "Predicted probabilities are not all in [0, 1]."
+
+    print(f"Predictions saved to: {result_path}")
+    print(f"Trained model saved to: {model_dir}")

@@ -1,0 +1,3 @@
+DECISION: FIX  
+ERROR_SUMMARY: The code failed during model training with AutoGluon MultiModal due to the error: "ValueError: No model is available for this dataset." This typically occurs when the dataset is too small or lacks sufficient class diversity. In this case, the training data only contains 3 samples, which is insufficient for AutoGluon MultiModal to select or train a model.  
+VALIDATION_SCORE: None

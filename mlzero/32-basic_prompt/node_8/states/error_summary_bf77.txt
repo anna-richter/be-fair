@@ -1,0 +1,1 @@
+Training failed with ValueError: "No model is available for this dataset." This is likely due to the extremely small training dataset (only 3 samples, with only one positive class), which is insufficient for AutoGluon MultiModal to select or train a model.

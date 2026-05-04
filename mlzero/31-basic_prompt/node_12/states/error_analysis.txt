@@ -1,0 +1,4 @@
+ERROR_SUMMARY: The error "ValueError: No training samples with valid images found after filtering." occurs because, after filtering the training DataFrame for rows whose image files actually exist on disk, no rows remain. This means either all image paths in the CSV are missing from the expected directory, or the code is looking in the wrong folder for the images.
+
+SUGGESTED_FIX:  
+Double-check that all image files referenced in the 'image_name' column of your CSV actually exist in the directory specified by IMAGE_DIR (currently set to /home/anri21/be-fair/mlzero/basic_prompt_data). If the images are stored elsewhere, update IMAGE_DIR accordingly, or move/copy the images into the expected folder so the script can find them.

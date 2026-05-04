@@ -1,0 +1,351 @@
+
+As an AutoML Agent, you will be given a folder containing data and description files. Please generate Python code using autogluon.multimodal to train a predictor and make predictions on test data. Follow these specifications:
+
+ONLY save files to the working directory: /home/anri21/be-fair/mlzero/35-addition_1/node_4/output.
+
+1. Data preprocessing:
+   - Remove training data samples without valid labels (drop NA values from training dataset ONLY, NOT from test dataset) unless explicitly instructed otherwise.
+   - Remove the unneccesary index column (if applicable)
+
+2. Model training:
+   - Use autogluon.multimodal with appropriate parameters for the task
+   - If a model is trained, save it in a folder with random timestamp within /home/anri21/be-fair/mlzero/35-addition_1/node_4/output
+
+3. Prediction:
+   - Make predictions on the ENTIRE test set, preserving ORIGINAL INDICES to maintain exact row correspondence. NEVER drop any test rows for any reason (including missing values), and ensure the output has the exact same number of rows as the test set.
+   - Save the predicted results to /home/anri21/be-fair/mlzero/35-addition_1/node_4/output, result file name should be "results", the format and extension should be same as the test data file
+   - Output column names must exactly match those in the training or sample submission files without adding "predicted_" prefixes or creating any new columns.
+   - IMPORTANT: At the end, implement validation checks that assert the prediction file maintains exact test data indices, verify correct column names match requirements, confirm proper output format, verify the number of predictions equals the number of test samples, and if applicable, sanity check output predictions are valid and correct.
+
+4. Documentation:
+   - Add a brief docstring at the beginning of the script explaining its purpose
+   - Include additional installation steps with comments at the beginning of the script
+   - Include comments explaining any complex operations or design decisions
+
+5. Others:
+   - To avoid DDP errors, wrap the code in: if __name__ == "__main__":
+   - Ensure errors are propagated up and not silently caught - do not use try/except blocks unless you explicitly re-raise the exception.
+
+6. Validation (only when there is labeled training data):
+   - If there is training and but no validation data is given, hold out a validation dataset (10 percent of the data) at the start, train only on the remaining data.
+   - At the end compute and print the final evaluation metric score on the validation set.
+   - Use a try-except block for the validation step - if validation fails, it's acceptable to continue.
+
+
+Hyperparameter tuning is unnecessary because the presets is already configured.
+The usage of document prediction is different from image prediction.
+Check data path carefully when encounter ValueError: No model is available for this dataset.
+No need to specify model.names, and do not increase default per gpu batch size to avoid OOM errors.
+For semantic segmentation, use single GPU by setting CUDA_VISIBLE_DEVICES=0
+For semantic segmentation, the predicted mask should be saved as greyscale JPG image (squeeze then cv2.imwrite) in \"predicted_mask\" folder under output folder and save its absolute path in label column.
+AutoGluon MultiModal requires converting multiple label columns into either a single combined label for mutually exclusive cases or training separate predictors for each label in non-exclusive scenarios.
+
+### Previous Code to Improve
+```python
+"""
+Skin Lesion Image Binary Classification with AutoGluon MultiModal
+=================================================================
+This script trains an image classification model using AutoGluon MultiModal on a dermatology dataset to predict malignancy of skin lesions.
+It:
+- Loads and preprocesses the data (removes NA labels, drops index column)
+- Trains a binary classifier (malignant vs. non-neoplastic)
+- Saves the trained model to a timestamped folder in the output directory
+- Provides a function to predict malignancy probability (0–1) for new images in a folder
+- Makes predictions on the test set, preserving original indices and output format
+- Validates output file for correct format, column names, and row count
+- If possible, evaluates AUROC on a held-out validation set
+
+Installation requirements (run if needed):
+# pip install autogluon.multimodal
+# pip install scikit-learn pandas
+
+Author: AutoML Agent
+"""
+
+import os
+import sys
+import time
+import shutil
+import random
+import pandas as pd
+import numpy as np
+
+from autogluon.multimodal import MultiModalPredictor
+
+# For validation metric
+from sklearn.metrics import roc_auc_score
+
+# Set paths
+DATA_DIR = "/home/anri21/be-fair/mlzero/addition_1_data"
+OUTPUT_DIR = "/home/anri21/be-fair/mlzero/35-addition_1/node_0/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "mydataset.csv")
+IMAGE_ROOT = DATA_DIR  # images are referenced by 'image_name' column, and are in DATA_DIR
+
+# Output file name (will match test file extension)
+RESULTS_FILENAME = "results"
+
+def get_timestamp():
+    """Generate a random timestamp for model folder naming."""
+    return str(int(time.time())) + str(random.randint(1000, 9999))
+
+def preprocess_train(df):
+    """Preprocess training data: drop NA labels, drop index column if present."""
+    # Drop rows with NA in 'label'
+    df = df.dropna(subset=['label'])
+    # Drop index column if present
+    for idx_col in ['Unnamed: 0', 'index']:
+        if idx_col in df.columns:
+            df = df.drop(columns=[idx_col])
+    return df
+
+def preprocess_test(df):
+    """Preprocess test data: drop index column if present, but DO NOT drop any rows."""
+    for idx_col in ['Unnamed: 0', 'index']:
+        if idx_col in df.columns:
+            df = df.drop(columns=[idx_col])
+    return df
+
+def map_labels(df):
+    """
+    Map string labels to binary: 'malignant'->1, 'non-neoplastic'->0.
+    If other labels exist, treat them as 0 (benign).
+    """
+    df = df.copy()
+    df['label'] = df['label'].map(lambda x: 1 if str(x).strip().lower() == 'malignant' else 0)
+    return df
+
+def inverse_map_labels(arr):
+    """Map binary predictions back to 'malignant'/'non-neoplastic' if needed."""
+    return np.where(arr >= 0.5, 'malignant', 'non-neoplastic')
+
+def get_image_path(row):
+    """Get absolute image path from image_name."""
+    return os.path.join(IMAGE_ROOT, row['image_name'])
+
+def get_image_path_from_name(image_name):
+    return os.path.join(IMAGE_ROOT, image_name)
+
+def save_results(df, test_file, output_dir, filename="results"):
+    """Save results in the same format and extension as test_file."""
+    ext = os.path.splitext(test_file)[-1]
+    out_path = os.path.join(output_dir, filename + ext)
+    if ext == ".csv":
+        df.to_csv(out_path, index=False)
+    elif ext in [".parquet", ".pq"]:
+        df.to_parquet(out_path, index=False)
+    elif ext in [".tsv"]:
+        df.to_csv(out_path, sep="\t", index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {ext}")
+    return out_path
+
+def validate_output(pred_path, test_df, label_col):
+    """Validation checks for output predictions."""
+    # 1. Check row count
+    pred_df = pd.read_csv(pred_path) if pred_path.endswith('.csv') else pd.read_parquet(pred_path)
+    assert len(pred_df) == len(test_df), f"Prediction rows ({len(pred_df)}) != test rows ({len(test_df)})"
+    # 2. Check indices preserved (if test_df has an index column, check order)
+    # 3. Check column names
+    assert label_col in pred_df.columns, f"Missing required column: {label_col}"
+    # 4. Check output format (float between 0 and 1)
+    assert np.all((pred_df[label_col] >= 0) & (pred_df[label_col] <= 1)), "Probabilities not in [0,1]"
+    # 5. Check for NaNs
+    assert not pred_df[label_col].isnull().any(), "NaN values in predictions"
+    print("Validation checks passed.")
+
+def train_and_predict(train_df, test_df, image_col, label_col, output_dir, model_dir=None, holdout_frac=0.1):
+    """
+    Train AutoGluon MultiModalPredictor and predict on test set.
+    Returns: predictions DataFrame (with original test indices), model path, validation score (if available)
+    """
+    # Prepare data
+    train_df = train_df.copy()
+    test_df = test_df.copy()
+    # Add absolute image paths
+    train_df[image_col] = train_df[image_col].apply(get_image_path_from_name)
+    test_df[image_col] = test_df[image_col].apply(get_image_path_from_name)
+
+    # Hold out validation set if needed
+    val_score = None
+    if holdout_frac > 0 and len(train_df) > 10:
+        train_df = train_df.sample(frac=1, random_state=42).reset_index(drop=True)  # shuffle
+        val_size = int(len(train_df) * holdout_frac)
+        val_df = train_df.iloc[:val_size]
+        train_df2 = train_df.iloc[val_size:]
+    else:
+        val_df = None
+        train_df2 = train_df
+
+    # Model directory
+    if model_dir is None:
+        model_dir = os.path.join(output_dir, "model_" + get_timestamp())
+    os.makedirs(model_dir, exist_ok=True)
+
+    # Train
+    predictor = MultiModalPredictor(
+        label=label_col,
+        problem_type="binary",
+        path=model_dir,
+        eval_metric="roc_auc",
+    )
+    predictor.fit(
+        train_df2,
+        presets="best_quality",
+        time_limit=None,
+        hyperparameters=None,
+    )
+
+    # Validation
+    if val_df is not None and len(val_df) > 0:
+        try:
+            val_probs = predictor.predict_proba(val_df, as_pandas=True)[1]  # Probability for class 1 (malignant)
+            val_true = val_df[label_col].values
+            val_score = roc_auc_score(val_true, val_probs)
+            print(f"Validation AUROC: {val_score:.4f}")
+        except Exception as e:
+            print(f"Validation failed: {e}")
+
+    # Predict on test set (probabilities for class 1)
+    test_probs = predictor.predict_proba(test_df, as_pandas=True)[1]  # Probability for class 1 (malignant)
+    # Prepare output DataFrame
+    out_df = test_df.copy()
+    out_df[label_col] = test_probs
+    # Only keep required columns: image_name and label_col (malignancy probability)
+    out_df = out_df[[image_col, label_col]]
+    return out_df, model_dir, val_score
+
+def predict_on_folder(model_path, folder_path, image_col='image_name', label_col='label'):
+    """
+    Function to predict malignancy probability for all images in a folder.
+    Returns a DataFrame with image_name and malignancy probability.
+    """
+    predictor = MultiModalPredictor.load(model_path)
+    # List all image files in folder
+    image_files = [f for f in os.listdir(folder_path) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff'))]
+    df = pd.DataFrame({image_col: [os.path.join(folder_path, f) for f in image_files]})
+    # Predict probabilities
+    probs = predictor.predict_proba(df, as_pandas=True)[1]
+    result_df = pd.DataFrame({
+        image_col: image_files,
+        label_col: probs
+    })
+    return result_df
+
+if __name__ == "__main__":
+    # Ensure output directory exists
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    # Load training data
+    train_df = pd.read_csv(TRAIN_CSV)
+    train_df = preprocess_train(train_df)
+    train_df = map_labels(train_df)
+
+    # For this task, assume test set is a folder of images (for the function), but for evaluation, we use the same CSV format as train
+    # We'll simulate a test set as all images in the dataset (for demonstration), but in practice, test_df would be provided
+
+    # For demonstration, let's use the same CSV as test (in real use, replace with actual test CSV)
+    TEST_CSV = TRAIN_CSV  # Replace with actual test CSV path if available
+    test_df = pd.read_csv(TEST_CSV)
+    test_df = preprocess_test(test_df)
+    # Remove label column if present (since test set should not have labels)
+    if 'label' in test_df.columns:
+        test_df = test_df.drop(columns=['label'])
+
+    # Train and predict
+    image_col = 'image_name'
+    label_col = 'label'
+    predictions_df, model_dir, val_score = train_and_predict(
+        train_df, test_df, image_col, label_col, OUTPUT_DIR
+    )
+
+    # Save predictions
+    # For this task, output should be: image_name, label (malignancy probability)
+    # Save in same format as test file
+    result_path = save_results(predictions_df, TEST_CSV, OUTPUT_DIR, filename=RESULTS_FILENAME)
+
+    # Validation checks
+    validate_output(result_path, test_df, label_col)
+
+    # Print model path and validation score
+    print(f"Model saved to: {model_dir}")
+    if val_score is not None:
+        print(f"Validation AUROC: {val_score:.4f}")
+
+    # Provide the prediction function for new images
+    def predict_malignancy_probabilities(folder_path):
+        """
+        Predict malignancy probability (0–1) for each image in the given folder.
+        Returns a DataFrame with columns: image_name, label (malignancy probability)
+        """
+        return predict_on_folder(model_dir, folder_path, image_col='image_name', label_col='label')
+
+    # Example usage (uncomment to use):
+    # new_folder = "/path/to/new/images"
+    # preds = predict_malignancy_probabilities(new_folder)
+    # print(preds.head())
+```
+Please prioritize model architecture improvements and training optimization to enhance performance. Feature engineering may also be applied but with lower priority.
+
+
+Please provide the complete Python script that accomplishes these tasks, ensuring it's ready to run given the appropriate data inputs.
+
+### Task Description
+**Task Type:** Image classification (binary classification)
+
+**Input Format:**  
+- Training data:  
+  - Images referenced by the 'image_name' column in mydataset.csv  
+  - Labels provided in the 'label' column of mydataset.csv, with possible values including 'malignant' and 'non-neoplastic' (benign)
+- Prediction:  
+  - A function that takes a folder path containing new images
+
+**Prediction Output Format:**  
+- For each input image, output a malignancy probability (a float between 0 and 1)
+
+**Evaluation Metric:**  
+- Area under the receiver operator curve (AUROC)
+
+### Data Structure
+Absolute path to the folder: /home/anri21/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /home/anri21/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+First lines:
+ I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Absolute path: /home/anri21/be-fair/mlzero/addition_1_data/mydataset.csv
+Content:
+Columns:
+['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+First rows:
+ Unnamed: 0        super_label  skin_tone  alternative_skin_tone expert_opinion          label image_name
+          0       inflammatory          2                      2            NaN non-neoplastic    image_1
+          1       inflammatory          4                      5            NaN non-neoplastic    image_2
+          2 malignant melanoma          2                      1            NaN      malignant    image_3
+
+----------
+
+
+### User Instruction
+
+
+### Previous Errors
+These errors were encountered across different implementation approaches and may not be directly related to your current implementation. Use them as reference material to identify potential pitfalls and avoid similar mistakes in your implementation.
+ERROR_SUMMARY: The root cause is that the provided solution uses only tabular features (from mydataset.csv) and does not process image pixels, which is insufficient for an image classification task as required. Additionally, the prediction function for new images is not implemented and raises NotImplementedError, making it impossible to generate malignancy probabilities for new images based solely on their image files.
+
+SUGGESTED_FIX:  
+Refactor the solution to use an image-based deep learning model (e.g., a CNN via PyTorch, TensorFlow, or AutoGluon Multimodal) that loads and processes image files directly for both training and prediction. Implement the prediction function to accept a folder of new images, preprocess them, and output malignancy probabilities for each image as specified.
+
+ERROR_SUMMARY: The error occurs because the hyperparameters dictionary passed to `MultiModalPredictor.fit()` uses the key `"model.image"`, but this key does not exist in the current AutoGluon configuration for your task. As a result, when AutoGluon tries to apply the override, it raises a `KeyError` indicating that `"model.image"` is not found in the config.
+
+SUGGESTED_FIX:  
+Remove the `"model.image"` key from the `hyperparameters` dictionary in your `fit_args`, or update it to use the correct key for specifying the image backbone in your version of AutoGluon. Instead, rely on the `"presets": "best_quality"` argument, which automatically selects a strong image backbone, or consult the [AutoGluon MultiModal documentation](https://auto.gluon.ai/stable/tutorials/multimodal/index.html) for the correct way to specify the image model checkpoint in your version.
+
+### Tutorials for Reference
+

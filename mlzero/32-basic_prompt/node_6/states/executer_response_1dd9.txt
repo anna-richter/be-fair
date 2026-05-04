@@ -1,0 +1,3 @@
+DECISION: FIX  
+ERROR_SUMMARY: Training failed with ValueError: Found array with 0 sample(s) (shape=(0, 12)) while a minimum of 1 is required by LogisticRegression. This occurred because, after preprocessing and feature extraction, the training set was empty—likely due to missing or unreadable images, or all rows being dropped due to NaN values in features.  
+VALIDATION_SCORE: None
