@@ -17,9 +17,9 @@ conda activate mlzero_env
 export OPENAI_API_KEY=$OPENAI_API_KEY
 
 srun mlzero \
-	--input /home/anri21/be-fair/mlzero/basic_prompt_data \
-	--config /home/anri21/be-fair/mlzero/conf.yaml \
+	--input /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/basic_prompt_data \
+	--config /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/conf.yaml \
 	--max-iterations 20 \
-	--output /home/anri21/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-basic_prompt \
+	--output /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-basic_prompt \
 	--verbosity 4 \
 	--continuous_improvement

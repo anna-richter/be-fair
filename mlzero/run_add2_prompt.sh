@@ -17,9 +17,9 @@ conda activate mlzero_env
 export OPENAI_API_KEY=$OPENAI_API_KEY
 
 srun mlzero \
-	--input /home/anri21/be-fair/mlzero/addition_2_data \
-	--config /home/anri21/be-fair/mlzero/conf.yaml \
+	--input /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/addition_2_data \
+	--config /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/conf.yaml \
 	--max-iterations 20 \
-	--output /home/anri21/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-addition_2 \
+	--output /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-addition_2 \
 	--verbosity 4 \
 	--continuous_improvement
