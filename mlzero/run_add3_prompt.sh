@@ -12,6 +12,8 @@
 #SBATCH --error=%a_addition_3.e%j
 
 
+export PIP_CACHE_DIR="/sc-scratch/sc-scratch-ikim-guidlight/pip-cache"
+export TMPDIR="/sc-scratch/sc-scratch-ikim-guidlight/tmp"
 source /opt/miniforge/etc/profile.d/conda.sh
 conda activate mlzero_env
 export OPENAI_API_KEY=$OPENAI_API_KEY
@@ -21,5 +23,4 @@ srun mlzero \
 	--config /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/conf.yaml \
 	--max-iterations 20 \
 	--output /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-addition_3 \
-	--verbosity 4 \
 	--continuous_improvement
