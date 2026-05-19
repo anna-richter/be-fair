@@ -1,0 +1,498 @@
+
+Analyze the error and provide your response in this exact format:
+
+ERROR_SUMMARY: [Brief technical description of the root cause in 1-3 sentences]
+SUGGESTED_FIX: [Specific debugging directions in 1-3 sentences without code]
+
+### Error Message
+stderr: 
+==> WARNING: A newer version of conda exists. <==
+    current version: 25.11.0
+    latest version: 26.3.2
+Please update conda by running
+    $ conda update -n base -c conda-forge conda
+warning: Requirements file `/home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt` does not contain any dependencies
+Using Python 3.11.15 environment at: 42-addition_2/node_8/conda_env
+Resolved 79 packages in 1.04s
+Uninstalled 1 package in 1.67s
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 78 packages in 3m 23s
+ + aiohappyeyeballs==2.6.1
+ + aiohttp==3.13.5
+ + aiosignal==1.4.0
+ + annotated-doc==0.0.4
+ + annotated-types==0.7.0
+ + anyio==4.13.0
+ + attrs==26.1.0
+ + certifi==2026.4.22
+ + chardet==7.4.3
+ + charset-normalizer==3.4.7
+ + click==8.3.3
+ + cuda-bindings==13.2.0
+ + cuda-pathfinder==1.5.4
+ + cuda-toolkit==13.0.2
+ + datasets==4.8.5
+ + dill==0.4.1
+ + filelock==3.29.0
+ + frozenlist==1.8.0
+ + fsspec==2026.2.0
+ + h11==0.16.0
+ + hf-xet==1.5.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + huggingface-hub==1.14.0
+ + idna==3.13
+ + jinja2==3.1.6
+ + markdown-it-py==4.2.0
+ + markupsafe==3.0.3
+ + mdurl==0.1.2
+ + mpmath==1.3.0
+ + multidict==6.7.1
+ + multiprocess==0.70.19
+ + networkx==3.6.1
+ + numpy==2.4.4
+ + nvidia-cublas==13.1.0.3
+ + nvidia-cuda-cupti==13.0.85
+ + nvidia-cuda-nvrtc==13.0.88
+ + nvidia-cuda-runtime==13.0.96
+ + nvidia-cudnn-cu13==9.19.0.56
+ + nvidia-cufft==12.0.0.61
+ + nvidia-cufile==1.15.1.6
+ + nvidia-curand==10.4.0.35
+ + nvidia-cusolver==12.0.4.66
+ + nvidia-cusparse==12.6.3.3
+ + nvidia-cusparselt-cu13==0.8.0
+ + nvidia-nccl-cu13==2.28.9
+ + nvidia-nvjitlink==13.0.88
+ + nvidia-nvshmem-cu13==3.4.5
+ + nvidia-nvtx==13.0.85
+ + opencv-python==4.13.0.92
+ + pandas==3.0.2
+ + pillow==12.2.0
+ + propcache==0.4.1
+ + pyarrow==24.0.0
+ + pydantic==2.13.4
+ + pydantic-core==2.46.4
+ + pygments==2.20.0
+ + python-calamine==0.6.2
+ + python-dateutil==2.9.0.post0
+ + pytz==2026.2
+ + pyyaml==6.0.3
+ + requests==2.34.0.dev1
+ + rich==15.0.0
+ - setuptools==82.0.1
+ + setuptools==81.0.0
+ + shellingham==1.5.4
+ + six==1.17.0
+ + sympy==1.14.0
+ + torch==2.11.0
+ + torchaudio==2.11.0
+ + torchvision==0.26.0
+ + tqdm==4.67.3
+ + triton==3.6.0
+ + typer==0.25.1
+ + typing-extensions==4.15.0
+ + typing-inspection==0.4.2
+ + urllib3==2.7.0
+ + xxhash==3.7.0
+ + yarl==1.23.0
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_8/conda_env/lib/python3.11/site-packages/torch/cuda/__init__.py:180: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12070). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_8/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_8/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=EfficientNet_B4_Weights.IMAGENET1K_V1`. You can also use `weights=EfficientNet_B4_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+  0%|          | 0.00/74.5M [00:00<?, ?B/s]
+ 10%|█         | 7.75M/74.5M [00
+[...TRUNCATED (37710 characters)...]
+image features:  12%|█▏        | 6/52 [00:10<01:19,  1.72s/it]
+Extracting image features:  13%|█▎        | 7/52 [00:12<01:17,  1.73s/it]
+Extracting image features:  15%|█▌        | 8/52 [00:13<01:15,  1.73s/it]
+Extracting image features:  17%|█▋        | 9/52 [00:15<01:14,  1.72s/it]
+Extracting image features:  19%|█▉        | 10/52 [00:17<01:12,  1.72s/it]
+Extracting image features:  21%|██        | 11/52 [00:18<01:10,  1.72s/it]
+Extracting image features:  23%|██▎       | 12/52 [00:20<01:09,  1.73s/it]
+Extracting image features:  25%|██▌       | 13/52 [00:22<01:07,  1.74s/it]
+Extracting image features:  27%|██▋       | 14/52 [00:24<01:05,  1.73s/it]
+Extracting image features:  29%|██▉       | 15/52 [00:25<01:04,  1.73s/it]
+Extracting image features:  31%|███       | 16/52 [00:27<01:02,  1.73s/it]
+Extracting image features:  33%|███▎      | 17/52 [00:29<01:00,  1.74s/it]
+Extracting image features:  35%|███▍      | 18/52 [00:31<00:59,  1.74s/it]
+Extracting image features:  37%|███▋      | 19/52 [00:32<00:56,  1.73s/it]
+Extracting image features:  38%|███▊      | 20/52 [00:34<00:55,  1.73s/it]
+Extracting image features:  40%|████      | 21/52 [00:36<00:54,  1.75s/it]
+Extracting image features:  42%|████▏     | 22/52 [00:38<00:52,  1.75s/it]
+Extracting image features:  44%|████▍     | 23/52 [00:39<00:50,  1.76s/it]
+Extracting image features:  46%|████▌     | 24/52 [00:41<00:49,  1.76s/it]
+Extracting image features:  48%|████▊     | 25/52 [00:43<00:47,  1.76s/it]
+Extracting image features:  50%|█████     | 26/52 [00:45<00:45,  1.76s/it]
+Extracting image features:  52%|█████▏    | 27/52 [00:46<00:44,  1.76s/it]
+Extracting image features:  54%|█████▍    | 28/52 [00:48<00:41,  1.75s/it]
+Extracting image features:  56%|█████▌    | 29/52 [00:50<00:40,  1.74s/it]
+Extracting image features:  58%|█████▊    | 30/52 [00:52<00:38,  1.74s/it]
+Extracting image features:  60%|█████▉    | 31/52 [00:53<00:36,  1.73s/it]
+Extracting image features:  62%|██████▏   | 32/52 [00:55<00:34,  1.73s/it]
+Extracting image features:  63%|██████▎   | 33/52 [00:57<00:33,  1.74s/it]
+Extracting image features:  65%|██████▌   | 34/52 [00:58<00:31,  1.74s/it]
+Extracting image features:  67%|██████▋   | 35/52 [01:00<00:29,  1.75s/it]
+Extracting image features:  69%|██████▉   | 36/52 [01:02<00:27,  1.74s/it]
+Extracting image features:  71%|███████   | 37/52 [01:04<00:26,  1.75s/it]
+Extracting image features:  73%|███████▎  | 38/52 [01:05<00:24,  1.75s/it]
+Extracting image features:  75%|███████▌  | 39/52 [01:07<00:22,  1.75s/it]
+Extracting image features:  77%|███████▋  | 40/52 [01:09<00:20,  1.74s/it]
+Extracting image features:  79%|███████▉  | 41/52 [01:11<00:19,  1.76s/it]
+Extracting image features:  81%|████████  | 42/52 [01:13<00:17,  1.76s/it]
+Extracting image features:  83%|████████▎ | 43/52 [01:14<00:15,  1.75s/it]
+Extracting image features:  85%|████████▍ | 44/52 [01:16<00:14,  1.76s/it]
+Extracting image features:  87%|████████▋ | 45/52 [01:18<00:12,  1.76s/it]
+Extracting image features:  88%|████████▊ | 46/52 [01:20<00:10,  1.76s/it]
+Extracting image features:  90%|█████████ | 47/52 [01:21<00:08,  1.76s/it]
+Extracting image features:  92%|█████████▏| 48/52 [01:23<00:07,  1.76s/it]
+Extracting image features:  94%|█████████▍| 49/52 [01:25<00:05,  1.77s/it]
+Extracting image features:  96%|█████████▌| 50/52 [01:27<00:03,  1.76s/it]
+Extracting image features:  98%|█████████▊| 51/52 [01:28<00:01,  1.75s/it]
+Extracting image features: 100%|██████████| 52/52 [01:30<00:00,  1.67s/it]
+Extracting image features: 100%|██████████| 52/52 [01:30<00:00,  1.74s/it]
+
+
+Error summary: No runtime errors occurred and the code executed to completion, producing predictions and saving results. However, the reported validation AUROC is 1.00000, which is unrealistically perfect and strongly suggests data leakage between the training and validation sets. This violates the requirement for a fair and robust evaluation and undermines the validity of the model's performance. The code must be reviewed to ensure proper data splitting and to prevent any leakage or label contamination.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB JPEG images of skin lesions (e.g., 500x335 pixels), provided as files in a folder.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+- **Additional requirement:** The model should minimize the AUROC gap between light and dark skin tones, while maintaining overall performance.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0         super_label  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0 malignant epidermal          3                      3            NaN      malignant image_14703
+          1        inflammatory          4                      4            NaN non-neoplastic  image_7458
+          2        inflammatory          2                      1            NaN non-neoplastic  image_6473
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0         super_label  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0        inflammatory          3                      3            NaN non-neoplastic image_10025
+          1 malignant epidermal          4                      4            NaN      malignant image_14107
+          2        inflammatory          5                      6  5 Potentially non-neoplastic  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of ...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/image_1282.jpg
+Content:
+File: image_1282.jpg
+Type: JPEG Image
+Size: 41.03 KB
+Format: JPEG
+Mode: RGB
+Size: (500, 335)
+
+----------
+
+
+### User Instructions
+
+
+### Previous Python Code:
+"""
+Skin Lesion Malignancy Probability Prediction Script
+
+This script trains a machine learning model (EfficientNet-B4 + LightGBM) to predict the probability of malignancy for skin lesion images.
+It extracts features from images using a pretrained EfficientNet-B4, then fits a LightGBM classifier on these features and metadata.
+Predictions are made for the test set, preserving all indices and columns, and results are saved in the required format.
+
+Installation requirements (run before executing this script):
+    pip install pandas scikit-learn lightgbm torch torchvision pillow tqdm
+
+Data and output locations are hardcoded as per the task specification.
+"""
+
+# Installation instructions (uncomment and run if needed)
+# !pip install pandas scikit-learn lightgbm torch torchvision pillow tqdm
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+
+from PIL import Image
+from tqdm import tqdm
+
+import torch
+import torch.nn as nn
+import torchvision.models as models
+import torchvision.transforms as transforms
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+from lightgbm import LGBMClassifier
+
+# Set random seed for reproducibility
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+
+# Paths
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data"
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_8/output"
+IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+
+RESULTS_FILENAME = "results"
+
+def get_label_map():
+    """
+    Returns a mapping from string labels to binary values.
+    'malignant' -> 1, all others (including 'benign', 'non-neoplastic') -> 0
+    """
+    return {'malignant': 1, 'benign': 0, 'non-neoplastic': 0}
+
+def check_label_coverage(df):
+    """
+    Checks that all label values are covered by the label mapping.
+    Raises ValueError if any unmapped labels are found.
+    """
+    label_map = get_label_map()
+    unique_labels = set(df['label'].dropna().unique())
+    missing = unique_labels - set(label_map.keys())
+    if missing:
+        raise ValueError(f"Unmapped label values found in training data: {missing}")
+
+def prepare_dataframe(df, is_train=True):
+    """
+    Prepares the dataframe:
+    - Drops NA labels (train only)
+    - Removes index column if present
+    - Maps label to binary (malignant=1, else=0)
+    - Adds absolute image path column
+    """
+    df = df.copy()
+    if 'Unnamed: 0' in df.columns:
+        df = df.drop(columns=['Unnamed: 0'])
+    if is_train:
+        df = df.dropna(subset=['label'])
+        check_label_coverage(df)
+        label_map = get_label_map()
+        df['label'] = df['label'].map(label_map)
+        # After mapping, drop any rows where label is still NA (unmapped)
+        df = df.dropna(subset=['label'])
+        df['label'] = df['label'].astype(int)
+    df['image_path'] = df['image_name'].apply(lambda x: os.path.join(IMAGE_DIR, f"{x}.jpg"))
+    return df
+
+def get_results_extension(test_csv_path):
+    _, ext = os.path.splitext(test_csv_path)
+    return ext
+
+def get_pred_column_name(train_df):
+    return 'label'
+
+def extract_image_features(image_paths, batch_size=32, device='cuda' if torch.cuda.is_available() else 'cpu'):
+    """
+    Extracts features from images using pretrained EfficientNet-B4 (removing final classification layer).
+    Returns a numpy array of shape (num_images, feature_dim).
+    """
+    # Use EfficientNet-B4 pretrained on ImageNet
+    model = models.efficientnet_b4(pretrained=True)
+    # Remove the final classification layer
+    model = nn.Sequential(*list(model.children())[:-1])  # output: (batch, 1792, 1, 1)
+    model.eval()
+    model.to(device)
+
+    preprocess = transforms.Compose([
+        transforms.Resize((380, 380)),
+        transforms.ToTensor(),
+        # Normalization for ImageNet
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+
+    features = []
+    with torch.no_grad():
+        for i in tqdm(range(0, len(image_paths), batch_size), desc="Extracting image features"):
+            batch_paths = image_paths[i:i+batch_size]
+            batch_imgs = []
+            for path in batch_paths:
+                try:
+                    img = Image.open(path).convert('RGB')
+                except Exception:
+                    # If image is missing or corrupted, use a black image
+                    img = Image.new('RGB', (380, 380), (0, 0, 0))
+                img = preprocess(img)
+                batch_imgs.append(img)
+            batch_tensor = torch.stack(batch_imgs).to(device)
+            batch_feats = model(batch_tensor).squeeze(-1).squeeze(-1)  # (batch, 1792)
+            features.append(batch_feats.cpu().numpy())
+    features = np.concatenate(features, axis=0)
+    return features
+
+def build_feature_dataframe(df, image_features):
+    """
+    Combines image features with selected metadata for ML model.
+    """
+    # Use skin_tone, alternative_skin_tone, super_label as metadata
+    meta = df[['skin_tone', 'alternative_skin_tone', 'super_label']].copy()
+    # Encode super_label as categorical
+    meta['super_label'] = meta['super_label'].astype('category').cat.codes
+    meta = meta.reset_index(drop=True)
+    features_df = pd.DataFrame(image_features, index=meta.index)
+    features_df = pd.concat([features_df, meta], axis=1)
+    return features_df
+
+def main():
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # 2. Preprocess data
+    train_df = prepare_dataframe(train_df, is_train=True)
+    test_df_orig = test_df.copy()
+    test_df = prepare_dataframe(test_df, is_train=False)
+
+    # 3. Split train/validation
+    train_data, val_data = train_test_split(
+        train_df,
+        test_size=0.1,
+        random_state=SEED,
+        stratify=train_df['label']
+    )
+
+    # 4. Extract image features
+    print("Extracting features for training images...")
+    train_image_features = extract_image_features(train_data['image_path'].tolist())
+    print("Extracting features for validation images...")
+    val_image_features = extract_image_features(val_data['image_path'].tolist())
+    print("Extracting features for test images...")
+    test_image_features = extract_image_features(test_df['image_path'].tolist())
+
+    # 5. Build feature dataframes
+    X_train = build_feature_dataframe(train_data, train_image_features)
+    y_train = train_data['label'].values
+    X_val = build_feature_dataframe(val_data, val_image_features)
+    y_val = val_data['label'].values
+    X_test = build_feature_dataframe(test_df, test_image_features)
+
+    # 6. Train model
+    timestamp = int(time.time()) + random.randint(0, 100000)
+    model_dir = os.path.join(OUTPUT_DIR, f"ml_model_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+
+    clf = LGBMClassifier(
+        n_estimators=800,
+        learning_rate=0.015,
+        num_leaves=128,
+        max_depth=12,
+        subsample=0.92,
+        colsample_bytree=0.92,
+        reg_alpha=3.0,
+        reg_lambda=3.0,
+        min_child_samples=12,
+        random_state=SEED,
+        n_jobs=-1
+    )
+    clf.fit(X_train, y_train)
+
+    # Save model
+    import joblib
+    joblib.dump(clf, os.path.join(model_dir, "lgbm_model.joblib"))
+
+    # 7. Predict on test set
+    test_pred_proba = clf.predict_proba(X_test)[:, 1]  # Probability of class 1 (malignant)
+
+    # Prepare results DataFrame
+    results_df = test_df_orig.copy()
+    pred_col = get_pred_column_name(train_df)
+    results_df[pred_col] = test_pred_proba
+
+    # 8. Save results
+    results_ext = get_results_extension(TEST_CSV)
+    results_path = os.path.join(OUTPUT_DIR, RESULTS_FILENAME + results_ext)
+    if pred_col not in test_df_orig.columns:
+        results_df = pd.concat([test_df_orig, pd.Series(test_pred_proba, name=pred_col)], axis=1)
+    else:
+        results_df[pred_col] = test_pred_proba
+
+    if results_ext == '.csv':
+        results_df.to_csv(results_path, index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {results_ext}")
+
+    # 9. Validation checks
+    assert len(results_df) == len(test_df_orig), "Number of predictions does not match number of test samples."
+    assert all(results_df.index == test_df_orig.index), "Test data indices are not preserved in the results."
+    assert pred_col in results_df.columns, f"Prediction column '{pred_col}' missing from results."
+    assert os.path.exists(results_path), f"Results file was not saved at {results_path}."
+    assert np.all((results_df[pred_col] >= 0) & (results_df[pred_col] <= 1)), "Predictions are not in [0, 1] range."
+
+    print(f"Results saved to: {results_path}")
+
+    # 10. Validation metric on held-out validation set
+    try:
+        val_pred_proba = clf.predict_proba(X_val)[:, 1]
+        val_auc = roc_auc_score(y_val, val_pred_proba)
+        print(f"Validation AUROC: {val_auc:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+if __name__ == "__main__":
+    main()
+
+### Previous Bash Script to Execute the Python Code:
+#!/bin/bash
+set -e
+
+ENV_DIR="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_8/conda_env"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_ML="/home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt"
+PY_SCRIPT="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_8/generated_code.py"
+
+# 1. Create conda env if not exists
+if [ ! -d "$ENV_DIR" ]; then
+    conda create -y -p "$ENV_DIR" python=3.11
+fi
+
+# 2. Activate env
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_DIR"
+
+# 3. Install uv
+pip install uv
+
+# 4. Install requirements with uv (prerelease allowed)
+uv pip install --prerelease=allow -r "$REQ_ML" -r "$REQ_COMMON"
+
+# 5. Install extra packages needed for the script
+pip install pandas scikit-learn lightgbm torch torchvision pillow tqdm joblib
+
+# 6. Run the Python script
+python "$PY_SCRIPT"
+
+### Relevant Tutorials
+

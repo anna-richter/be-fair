@@ -1,0 +1,119 @@
+Channels:
+ - conda-forge
+Platform: linux-64
+Collecting package metadata (repodata.json): - \ | / done
+Solving environment: \ | done
+
+## Package Plan ##
+  environment location: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_8/conda_env
+  added / updated specs:
+    - python=3.11
+The following NEW packages will be INSTALLED:
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-20_gnu 
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-hda65f42_9 
+  ca-certificates    conda-forge/noarch::ca-certificates-2026.4.22-hbd8a1cb_0 
+  ld_impl_linux-64   conda-forge/linux-64::ld_impl_linux-64-2.45.1-default_hbd61a6d_102 
+  libexpat           conda-forge/linux-64::libexpat-2.8.0-hecca717_0 
+  libffi             conda-forge/linux-64::libffi-3.5.2-h3435931_0 
+  libgcc             conda-forge/linux-64::libgcc-15.2.0-he0feb66_18 
+  libgcc-ng          conda-forge/linux-64::libgcc-ng-15.2.0-h69a702a_18 
+  libgomp            conda-forge/linux-64::libgomp-15.2.0-he0feb66_18 
+  liblzma            conda-forge/linux-64::liblzma-5.8.3-hb03c661_0 
+  libnsl             conda-forge/linux-64::libnsl-2.0.1-hb9d3cd8_1 
+  libsqlite          conda-forge/linux-64::libsqlite-3.53.1-h0c1763c_0 
+  libuuid            conda-forge/linux-64::libuuid-2.42-h5347b49_0 
+  libxcrypt          conda-forge/linux-64::libxcrypt-4.4.36-hd590300_1 
+  libzlib            conda-forge/linux-64::libzlib-1.3.2-h25fd6f3_2 
+  ncurses            conda-forge/linux-64::ncurses-6.6-hdb14827_0 
+  openssl            conda-forge/linux-64::openssl-3.6.2-h35e630c_0 
+  packaging          conda-forge/noarch::packaging-26.2-pyhc364b38_0 
+  pip                conda-forge/noarch::pip-26.1.1-pyh8b19718_0 
+  python             conda-forge/linux-64::python-3.11.15-hd63d673_0_cpython 
+  readline           conda-forge/linux-64::readline-8.3-h853b02a_0 
+  setuptools         conda-forge/noarch::setuptools-82.0.1-pyh332efcf_0 
+  tk                 conda-forge/linux-64::tk-8.6.13-noxft_h366c992_103 
+  tzdata             conda-forge/noarch::tzdata-2025c-hc9c84f9_1 
+  wheel              conda-forge/noarch::wheel-0.47.0-pyhd8ed1ab_0 
+  zstd               conda-forge/linux-64::zstd-1.5.7-hb78ec9c_6 
+Downloading and Extracting Packages: ...working... done
+Preparing transaction: - \ | / done
+Verifying transaction: \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | done
+Executing transaction: - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | done
+#
+# To activate this environment, use
+#     $ conda activate /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_8/conda_env
+# To deactivate an active environment, use
+#     $ conda deactivate
+Collecting uv
+  Using cached uv-0.11.11-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Using cached uv-0.11.11-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (24.6 MB)
+Installing collected packages: uv
+Successfully installed uv-0.11.11
+Requirement already satisfied: pandas in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (3.0.2)
+Collecting scikit-learn
+  Using cached scikit_learn-1.8.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (11 kB)
+Collecting lightgbm
+  Using cached lightgbm-4.6.0-py3-none-manylinux_2_28_x86_64.whl.metadata (17 kB)
+Requirement already satisfied: torch in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (2.11.0)
+Requirement already satisfied: torchvision in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (0.26.0)
+Requirement already satisfied: pillow in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (12.2.0)
+Requirement already satisfied: tqdm in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (4.67.3)
+Collecting joblib
+  Using cached joblib-1.5.3-py3-none-any.whl.metadata (5.5 kB)
+Requirement already satisfied: numpy>=1.26.0 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from pandas) (2.4.4)
+Requirement already satisfied: python-dateutil>=2.8.2 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
+Collecting scipy>=1.10.0 (from scikit-learn)
+  Using cached scipy-1.17.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting threadpoolctl>=3.2.0 (from scikit-learn)
+  Using cached threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+Requirement already satisfied: filelock in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (3.29.0)
+Requirement already satisfied: typing-extensions>=4.10.0 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (4.15.0)
+Requirement already satisfied: setuptools<82 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (81.0.0)
+Requirement already satisfied: sympy>=1.13.3 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (3.6.1)
+Requirement already satisfied: jinja2 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (2026.2.0)
+Requirement already satisfied: cuda-toolkit==13.0.2 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (13.0.2)
+Requirement already satisfied: cuda-bindings<14,>=13.0.3 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (13.2.0)
+Requirement already satisfied: nvidia-cudnn-cu13==9.19.0.56 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (9.19.0.56)
+Requirement already satisfied: nvidia-cusparselt-cu13==0.8.0 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (0.8.0)
+Requirement already satisfied: nvidia-nccl-cu13==2.28.9 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (2.28.9)
+Requirement already satisfied: nvidia-nvshmem-cu13==3.4.5 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (3.4.5)
+Requirement already satisfied: triton==3.6.0 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from torch) (3.6.0)
+Requirement already satisfied: nvidia-cublas==13.1.0.3.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (13.1.0.3)
+Requirement already satisfied: nvidia-cuda-runtime==13.0.96.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (13.0.96)
+Requirement already satisfied: nvidia-cufft==12.0.0.61.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (12.0.0.61)
+Requirement already satisfied: nvidia-cufile==1.15.1.6.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (1.15.1.6)
+Requirement already satisfied: nvidia-cuda-cupti==13.0.85.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (13.0.85)
+Requirement already satisfied: nvidia-curand==10.4.0.35.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (10.4.0.35)
+Requirement already satisfied: nvidia-cusolver==12.0.4.66.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (12.0.4.66)
+Requirement already satisfied: nvidia-cusparse==12.6.3.3.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (12.6.3.3)
+Requirement already satisfied: nvidia-nvjitlink==13.0.88.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (13.0.88)
+Requirement already satisfied: nvidia-cuda-nvrtc==13.0.88.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (13.0.88)
+Requirement already satisfied: nvidia-nvtx==13.0.85.* in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch) (13.0.85)
+Requirement already satisfied: cuda-pathfinder~=1.1 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from cuda-bindings<14,>=13.0.3->torch) (1.5.4)
+Requirement already satisfied: six>=1.5 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from python-dateutil>=2.8.2->pandas) (1.17.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from sympy>=1.13.3->torch) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./42-addition_2/node_8/conda_env/lib/python3.11/site-packages (from jinja2->torch) (3.0.3)
+Using cached scikit_learn-1.8.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (9.1 MB)
+Using cached lightgbm-4.6.0-py3-none-manylinux_2_28_x86_64.whl (3.6 MB)
+Using cached joblib-1.5.3-py3-none-any.whl (309 kB)
+Using cached scipy-1.17.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+Using cached threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
+Installing collected packages: threadpoolctl, scipy, joblib, scikit-learn, lightgbm
+Successfully installed joblib-1.5.3 lightgbm-4.6.0 scikit-learn-1.8.0 scipy-1.17.1 threadpoolctl-3.6.0
+Extracting features for training images...
+Downloading: "https://download.pytorch.org/models/efficientnet_b4_rwightman-23ab8bcd.pth" to /home/anri21/.cache/torch/hub/checkpoints/efficientnet_b4_rwightman-23ab8bcd.pth
+Extracting features for validation images...
+Extracting features for test images...
+[LightGBM] [Info] Number of positive: 1840, number of negative: 11587
+[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.052149 seconds.
+You can set `force_col_wise=true` to remove the overhead.
+[LightGBM] [Info] Total Bins 456985
+[LightGBM] [Info] Number of data points in the train set: 13427, number of used features: 1795
+[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.137037 -> initscore=-1.840118
+[LightGBM] [Info] Start training from score -1.840118
+[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+[LightGBM] [Warning] Stopped training because there are no more leaves that meet the split requirements
+Results saved to: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_8/output/results.csv
+Validation AUROC: 1.00000

@@ -1,0 +1,5 @@
+ERROR_SUMMARY:  
+The script completed without runtime errors and produced output, but the reported validation AUROC is 1.00000, which is implausibly perfect and strongly indicates data leakage or an invalid validation split. This means the model likely had access to information from the validation set during training, making the evaluation unreliable. Additionally, the script does not measure or minimize the AUROC gap between light and dark skin tones, which is a required fairness criterion for this task.
+
+SUGGESTED_FIX:  
+Carefully review the data preprocessing and splitting steps to ensure that no information from the validation set is used during training or feature extraction (including image feature extraction and metadata). Double-check that feature extraction is performed strictly within each split, and that no data from the validation set leaks into the training process. Furthermore, implement code to compute AUROC separately for light and dark skin tone groups and report (and aim to minimize) the AUROC gap between them, as required by the task.

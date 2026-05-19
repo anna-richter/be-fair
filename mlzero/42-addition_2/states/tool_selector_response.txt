@@ -1,0 +1,26 @@
+---
+EXPLANATION: The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with a requirement to minimize AUROC gap between light and dark skin tones. The input is a folder of images, and the output is a malignancy probability per image. The evaluation metric is AUROC, and fairness across skin tones is important.
+
+Let's analyze each available library:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, which are not relevant for image classification. It is not designed for training or deploying image classifiers.
+
+- machine learning: This is a generic reference to machine learning or deep learning algorithms. It is not a specific library, but if no other suitable library exists, it could be considered as a fallback for implementing custom solutions.
+
+- wav2vec2: This library is designed for audio data (ASR, audio classification) and is not applicable to image data.
+
+- qwen3: This is a text generation model, not suitable for image classification tasks.
+
+- autogluon.tabular: This library is optimized for tabular data and does not support image-based tasks, so it is not suitable here.
+
+- autogluon.multimodal: This library is specifically designed for multimodal classification tasks, including image classification. It supports image inputs and can handle tabular metadata (such as skin_tone) alongside images, which is highly relevant for this task. It is also designed to make it easy to incorporate fairness constraints or monitor subgroup performance (e.g., AUROC by skin tone). This makes it the best fit for the requirements.
+
+- autogluon.timeseries: This library is for time series forecasting and is not applicable to image classification.
+
+Based on the above, autogluon.multimodal is the most appropriate library, as it directly supports image classification and can incorporate tabular metadata (like skin_tone) to help address fairness. The generic "machine learning" reference is a fallback if no specialized library is available. The rest are not suitable for this task.
+
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. FlagEmbedding
+---

@@ -1,0 +1,205 @@
+```python
+"""
+Skin Lesion Malignancy Prediction Script
+
+This script trains an image classification model using AutoGluon MultiModal on a curated dataset of skin lesion images.
+It predicts the probability of malignancy for each lesion in the test set, saving results in the required format.
+The script ensures fairness by preserving all test samples and indices, and includes validation and output checks.
+It also reports the AUROC gap between light and dark skin tones on the validation set.
+
+Installation requirements (run before executing this script):
+    pip install autogluon.multimodal pandas scikit-learn
+
+Data and output locations are hardcoded as per the task specification.
+"""
+
+# Installation instructions (uncomment and run if needed)
+# !pip install autogluon.multimodal pandas scikit-learn
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+
+from autogluon.multimodal import MultiModalPredictor
+from sklearn.metrics import roc_auc_score
+
+# Set random seed for reproducibility
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+
+# Paths
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data"
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_17/output"
+IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+
+RESULTS_FILENAME = "results"
+
+def get_label_map():
+    """
+    Returns a mapping from string labels to binary values.
+    'malignant' -> 1, all others (including 'benign', 'non-neoplastic') -> 0
+    """
+    return {'malignant': 1, 'benign': 0, 'non-neoplastic': 0}
+
+def check_label_coverage(df):
+    """
+    Checks that all label values are covered by the label mapping.
+    Raises ValueError if any unmapped labels are found.
+    """
+    label_map = get_label_map()
+    unique_labels = set(df['label'].dropna().unique())
+    missing = unique_labels - set(label_map.keys())
+    if missing:
+        raise ValueError(f"Unmapped label values found in training data: {missing}")
+
+def prepare_dataframe(df, is_train=True):
+    """
+    Prepares the dataframe for AutoGluon:
+    - Drops NA labels (train only)
+    - Removes index column if present
+    - Maps label to binary (malignant=1, else=0)
+    - Adds absolute image path column
+    """
+    df = df.copy()
+    if 'Unnamed: 0' in df.columns:
+        df = df.drop(columns=['Unnamed: 0'])
+    if is_train:
+        df = df.dropna(subset=['label'])
+        check_label_coverage(df)
+        label_map = get_label_map()
+        df['label'] = df['label'].map(label_map)
+        df = df.dropna(subset=['label'])
+        df['label'] = df['label'].astype(int)
+    df['image_path'] = df['image_name'].apply(lambda x: os.path.join(IMAGE_DIR, f"{x}.jpg"))
+    return df
+
+def get_results_extension(test_csv_path):
+    _, ext = os.path.splitext(test_csv_path)
+    return ext
+
+def get_pred_column_name(train_df):
+    return 'label'
+
+def compute_skin_tone_aurocs(val_data, val_pred_proba):
+    """
+    Compute AUROC for light and dark skin tones and their gap.
+    Light: skin_tone <= 3
+    Dark: skin_tone >= 4
+    """
+    skin_tone = val_data['skin_tone'].values
+    y_true = val_data['label'].values
+    y_pred = np.array(val_pred_proba)
+    mask_light = skin_tone <= 3
+    mask_dark = skin_tone >= 4
+    auroc_light = roc_auc_score(y_true[mask_light], y_pred[mask_light]) if np.any(mask_light) and len(np.unique(y_true[mask_light])) > 1 else np.nan
+    auroc_dark = roc_auc_score(y_true[mask_dark], y_pred[mask_dark]) if np.any(mask_dark) and len(np.unique(y_true[mask_dark])) > 1 else np.nan
+    auroc_gap = np.abs(auroc_light - auroc_dark) if (not np.isnan(auroc_light) and not np.isnan(auroc_dark)) else np.nan
+    return auroc_light, auroc_dark, auroc_gap
+
+def main():
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # 2. Preprocess data
+    train_df = prepare_dataframe(train_df, is_train=True)
+    test_df_orig = test_df.copy()
+    test_df = prepare_dataframe(test_df, is_train=False)
+
+    # 3. Split train/validation
+    from sklearn.model_selection import train_test_split
+    train_data, val_data = train_test_split(
+        train_df,
+        test_size=0.1,
+        random_state=SEED,
+        stratify=train_df['label']
+    )
+
+    # 4. Train model
+    timestamp = int(time.time()) + random.randint(0, 100000)
+    model_dir = os.path.join(OUTPUT_DIR, f"autogluon_model_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+
+    predictor = MultiModalPredictor(
+        label='label',
+        problem_type='binary',
+        path=model_dir,
+        eval_metric='roc_auc',
+    )
+
+    predictor.fit(
+        train_data=train_data,
+        time_limit=None,
+        presets='best_quality',
+        tuning_data=val_data,
+        hyperparameters=None,
+    )
+
+    # 5. Predict on test set
+    test_pred_proba = predictor.predict_proba(test_df, as_pandas=True)
+    # test_pred_proba is a DataFrame with columns [0, 1] for class probabilities
+
+    # We want the probability for class 1 (malignant)
+    if 1 in test_pred_proba.columns:
+        malignancy_proba = test_pred_proba[1]
+    elif '1' in test_pred_proba.columns:
+        malignancy_proba = test_pred_proba['1']
+    else:
+        malignancy_proba = test_pred_proba.iloc[:, -1]
+
+    # Prepare results DataFrame
+    results_df = test_df_orig.copy()
+    pred_col = get_pred_column_name(train_df)
+    results_df[pred_col] = malignancy_proba.values
+
+    # 6. Save results
+    results_ext = get_results_extension(TEST_CSV)
+    results_path = os.path.join(OUTPUT_DIR, RESULTS_FILENAME + results_ext)
+    if pred_col not in test_df_orig.columns:
+        results_df = pd.concat([test_df_orig, malignancy_proba.rename(pred_col)], axis=1)
+    else:
+        results_df[pred_col] = malignancy_proba.values
+
+    if results_ext == '.csv':
+        results_df.to_csv(results_path, index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {results_ext}")
+
+    # 7. Validation checks
+    assert len(results_df) == len(test_df_orig), "Number of predictions does not match number of test samples."
+    assert all(results_df.index == test_df_orig.index), "Test data indices are not preserved in the results."
+    assert pred_col in results_df.columns, f"Prediction column '{pred_col}' missing from results."
+    assert os.path.exists(results_path), f"Results file was not saved at {results_path}."
+    assert np.all((results_df[pred_col] >= 0) & (results_df[pred_col] <= 1)), "Predictions are not in [0, 1] range."
+
+    print(f"Results saved to: {results_path}")
+
+    # 8. Validation metric on held-out validation set and AUROC gap for fairness
+    try:
+        val_pred_proba = predictor.predict_proba(val_data, as_pandas=True)
+        if 1 in val_pred_proba.columns:
+            val_malignancy_proba = val_pred_proba[1]
+        elif '1' in val_pred_proba.columns:
+            val_malignancy_proba = val_pred_proba['1']
+        else:
+            val_malignancy_proba = val_pred_proba.iloc[:, -1]
+        val_true = val_data['label'].values
+        val_auc = roc_auc_score(val_true, val_malignancy_proba)
+        print(f"Validation AUROC: {val_auc:.5f}")
+
+        # Fairness: AUROC gap between light and dark skin tones
+        auroc_light, auroc_dark, auroc_gap = compute_skin_tone_aurocs(val_data, val_malignancy_proba)
+        print(f"Validation AUROC (light skin): {auroc_light:.5f}")
+        print(f"Validation AUROC (dark skin): {auroc_dark:.5f}")
+        print(f"Validation AUROC gap (light vs dark): {auroc_gap:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+if __name__ == "__main__":
+    main()
+```

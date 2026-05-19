@@ -1,0 +1,345 @@
+
+As an AutoML Agent, you will be given a folder containing data and description files. Please generate Python code using autogluon.multimodal to train a predictor and make predictions on test data. Follow these specifications:
+
+ONLY save files to the working directory: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_17/output.
+
+1. Data preprocessing:
+   - Remove training data samples without valid labels (drop NA values from training dataset ONLY, NOT from test dataset) unless explicitly instructed otherwise.
+   - Remove the unneccesary index column (if applicable)
+
+2. Model training:
+   - Use autogluon.multimodal with appropriate parameters for the task
+   - If a model is trained, save it in a folder with random timestamp within /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_17/output
+
+3. Prediction:
+   - Make predictions on the ENTIRE test set, preserving ORIGINAL INDICES to maintain exact row correspondence. NEVER drop any test rows for any reason (including missing values), and ensure the output has the exact same number of rows as the test set.
+   - Save the predicted results to /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_17/output, result file name should be "results", the format and extension should be same as the test data file
+   - Output column names must exactly match those in the training or sample submission files without adding "predicted_" prefixes or creating any new columns.
+   - IMPORTANT: At the end, implement validation checks that assert the prediction file maintains exact test data indices, verify correct column names match requirements, confirm proper output format, verify the number of predictions equals the number of test samples, and if applicable, sanity check output predictions are valid and correct.
+
+4. Documentation:
+   - Add a brief docstring at the beginning of the script explaining its purpose
+   - Include additional installation steps with comments at the beginning of the script
+   - Include comments explaining any complex operations or design decisions
+
+5. Others:
+   - To avoid DDP errors, wrap the code in: if __name__ == "__main__":
+   - Ensure errors are propagated up and not silently caught - do not use try/except blocks unless you explicitly re-raise the exception.
+
+6. Validation (only when there is labeled training data):
+   - If there is training and but no validation data is given, hold out a validation dataset (10 percent of the data) at the start, train only on the remaining data.
+   - At the end compute and print the final evaluation metric score on the validation set.
+   - Use a try-except block for the validation step - if validation fails, it's acceptable to continue.
+
+
+Hyperparameter tuning is unnecessary because the presets is already configured.
+The usage of document prediction is different from image prediction.
+Check data path carefully when encounter ValueError: No model is available for this dataset.
+No need to specify model.names, and do not increase default per gpu batch size to avoid OOM errors.
+For semantic segmentation, use single GPU by setting CUDA_VISIBLE_DEVICES=0
+For semantic segmentation, the predicted mask should be saved as greyscale JPG image (squeeze then cv2.imwrite) in \"predicted_mask\" folder under output folder and save its absolute path in label column.
+AutoGluon MultiModal requires converting multiple label columns into either a single combined label for mutually exclusive cases or training separate predictors for each label in non-exclusive scenarios.
+
+### Previous Code to Improve
+```python
+"""
+Skin Lesion Malignancy Prediction Script
+
+This script trains an image classification model using AutoGluon MultiModal on a curated dataset of skin lesion images.
+It predicts the probability of malignancy for each lesion in the test set, saving results in the required format.
+The script ensures fairness by preserving all test samples and indices, and includes validation and output checks.
+It also reports the AUROC gap between light and dark skin tones on the validation set.
+
+Installation requirements (run before executing this script):
+    pip install autogluon.multimodal pandas scikit-learn
+
+Data and output locations are hardcoded as per the task specification.
+"""
+
+# Installation instructions (uncomment and run if needed)
+# !pip install autogluon.multimodal pandas scikit-learn
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+
+from autogluon.multimodal import MultiModalPredictor
+from sklearn.metrics import roc_auc_score
+
+# Set random seed for reproducibility
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+
+# Paths
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data"
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_15/output"
+IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+
+RESULTS_FILENAME = "results"
+
+def get_label_map():
+    """
+    Returns a mapping from string labels to binary values.
+    'malignant' -> 1, all others (including 'benign', 'non-neoplastic') -> 0
+    """
+    return {'malignant': 1, 'benign': 0, 'non-neoplastic': 0}
+
+def check_label_coverage(df):
+    """
+    Checks that all label values are covered by the label mapping.
+    Raises ValueError if any unmapped labels are found.
+    """
+    label_map = get_label_map()
+    unique_labels = set(df['label'].dropna().unique())
+    missing = unique_labels - set(label_map.keys())
+    if missing:
+        raise ValueError(f"Unmapped label values found in training data: {missing}")
+
+def prepare_dataframe(df, is_train=True):
+    """
+    Prepares the dataframe for AutoGluon:
+    - Drops NA labels (train only)
+    - Removes index column if present
+    - Maps label to binary (malignant=1, else=0)
+    - Adds absolute image path column
+    """
+    df = df.copy()
+    if 'Unnamed: 0' in df.columns:
+        df = df.drop(columns=['Unnamed: 0'])
+    if is_train:
+        df = df.dropna(subset=['label'])
+        check_label_coverage(df)
+        label_map = get_label_map()
+        df['label'] = df['label'].map(label_map)
+        df = df.dropna(subset=['label'])
+        df['label'] = df['label'].astype(int)
+    df['image_path'] = df['image_name'].apply(lambda x: os.path.join(IMAGE_DIR, f"{x}.jpg"))
+    return df
+
+def get_results_extension(test_csv_path):
+    _, ext = os.path.splitext(test_csv_path)
+    return ext
+
+def get_pred_column_name(train_df):
+    return 'label'
+
+def compute_skin_tone_aurocs(val_data, val_pred_proba):
+    """
+    Compute AUROC for light and dark skin tones and their gap.
+    Light: skin_tone <= 3
+    Dark: skin_tone >= 4
+    """
+    skin_tone = val_data['skin_tone'].values
+    y_true = val_data['label'].values
+    y_pred = np.array(val_pred_proba)
+    mask_light = skin_tone <= 3
+    mask_dark = skin_tone >= 4
+    auroc_light = roc_auc_score(y_true[mask_light], y_pred[mask_light]) if np.any(mask_light) and len(np.unique(y_true[mask_light])) > 1 else np.nan
+    auroc_dark = roc_auc_score(y_true[mask_dark], y_pred[mask_dark]) if np.any(mask_dark) and len(np.unique(y_true[mask_dark])) > 1 else np.nan
+    auroc_gap = np.abs(auroc_light - auroc_dark) if (not np.isnan(auroc_light) and not np.isnan(auroc_dark)) else np.nan
+    return auroc_light, auroc_dark, auroc_gap
+
+def main():
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # 2. Preprocess data
+    train_df = prepare_dataframe(train_df, is_train=True)
+    test_df_orig = test_df.copy()
+    test_df = prepare_dataframe(test_df, is_train=False)
+
+    # 3. Split train/validation
+    from sklearn.model_selection import train_test_split
+    train_data, val_data = train_test_split(
+        train_df,
+        test_size=0.1,
+        random_state=SEED,
+        stratify=train_df['label']
+    )
+
+    # 4. Train model
+    timestamp = int(time.time()) + random.randint(0, 100000)
+    model_dir = os.path.join(OUTPUT_DIR, f"autogluon_model_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+
+    predictor = MultiModalPredictor(
+        label='label',
+        problem_type='binary',
+        path=model_dir,
+        eval_metric='roc_auc',
+    )
+
+    predictor.fit(
+        train_data=train_data,
+        time_limit=None,
+        presets='best_quality',
+        tuning_data=val_data,
+        hyperparameters=None,
+    )
+
+    # 5. Predict on test set
+    test_pred_proba = predictor.predict_proba(test_df, as_pandas=True)
+    # test_pred_proba is a DataFrame with columns [0, 1] for class probabilities
+
+    # We want the probability for class 1 (malignant)
+    if 1 in test_pred_proba.columns:
+        malignancy_proba = test_pred_proba[1]
+    elif '1' in test_pred_proba.columns:
+        malignancy_proba = test_pred_proba['1']
+    else:
+        malignancy_proba = test_pred_proba.iloc[:, -1]
+
+    # Prepare results DataFrame
+    results_df = test_df_orig.copy()
+    pred_col = get_pred_column_name(train_df)
+    results_df[pred_col] = malignancy_proba.values
+
+    # 6. Save results
+    results_ext = get_results_extension(TEST_CSV)
+    results_path = os.path.join(OUTPUT_DIR, RESULTS_FILENAME + results_ext)
+    if pred_col not in test_df_orig.columns:
+        results_df = pd.concat([test_df_orig, malignancy_proba.rename(pred_col)], axis=1)
+    else:
+        results_df[pred_col] = malignancy_proba.values
+
+    if results_ext == '.csv':
+        results_df.to_csv(results_path, index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {results_ext}")
+
+    # 7. Validation checks
+    assert len(results_df) == len(test_df_orig), "Number of predictions does not match number of test samples."
+    assert all(results_df.index == test_df_orig.index), "Test data indices are not preserved in the results."
+    assert pred_col in results_df.columns, f"Prediction column '{pred_col}' missing from results."
+    assert os.path.exists(results_path), f"Results file was not saved at {results_path}."
+    assert np.all((results_df[pred_col] >= 0) & (results_df[pred_col] <= 1)), "Predictions are not in [0, 1] range."
+
+    print(f"Results saved to: {results_path}")
+
+    # 8. Validation metric on held-out validation set and AUROC gap for fairness
+    try:
+        val_pred_proba = predictor.predict_proba(val_data, as_pandas=True)
+        if 1 in val_pred_proba.columns:
+            val_malignancy_proba = val_pred_proba[1]
+        elif '1' in val_pred_proba.columns:
+            val_malignancy_proba = val_pred_proba['1']
+        else:
+            val_malignancy_proba = val_pred_proba.iloc[:, -1]
+        val_true = val_data['label'].values
+        val_auc = roc_auc_score(val_true, val_malignancy_proba)
+        print(f"Validation AUROC: {val_auc:.5f}")
+
+        # Fairness: AUROC gap between light and dark skin tones
+        auroc_light, auroc_dark, auroc_gap = compute_skin_tone_aurocs(val_data, val_malignancy_proba)
+        print(f"Validation AUROC (light skin): {auroc_light:.5f}")
+        print(f"Validation AUROC (dark skin): {auroc_dark:.5f}")
+        print(f"Validation AUROC gap (light vs dark): {auroc_gap:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+if __name__ == "__main__":
+    main()
+```
+Please prioritize model architecture improvements and training optimization to enhance performance. Feature engineering may also be applied but with lower priority.
+
+
+Please provide the complete Python script that accomplishes these tasks, ensuring it's ready to run given the appropriate data inputs.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB JPEG images of skin lesions (e.g., 500x335 pixels), provided as files in a folder.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+- **Additional requirement:** The model should minimize the AUROC gap between light and dark skin tones, while maintaining overall performance.
+
+### Data Structure
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0         super_label  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0 malignant epidermal          3                      3            NaN      malignant image_14703
+          1        inflammatory          4                      4            NaN non-neoplastic  image_7458
+          2        inflammatory          2                      1            NaN non-neoplastic  image_6473
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0         super_label  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0        inflammatory          3                      3            NaN non-neoplastic image_10025
+          1 malignant epidermal          4                      4            NaN      malignant image_14107
+          2        inflammatory          5                      6  5 Potentially non-neoplastic  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of ...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/image_1282.jpg
+Content:
+File: image_1282.jpg
+Type: JPEG Image
+Size: 41.03 KB
+Format: JPEG
+Mode: RGB
+Size: (500, 335)
+
+----------
+
+
+### User Instruction
+
+
+### Previous Errors
+These errors were encountered across different implementation approaches and may not be directly related to your current implementation. Use them as reference material to identify potential pitfalls and avoid similar mistakes in your implementation.
+ERROR_SUMMARY: The error occurs because the target column ('label') in your training dataframe contains NaN values after preprocessing. This is likely due to some label values in train.csv not matching the keys in your label mapping dictionary, causing the mapping to produce NaN for those rows.
+
+SUGGESTED_FIX: Inspect the unique values in the 'label' column of train.csv and ensure your label mapping dictionary covers all possible label strings present. Update the mapping or add a check to raise an error if unmapped labels are found, and verify that no NaNs remain in the 'label' column before proceeding to train_test_split.
+
+ERROR_SUMMARY: The error occurs because the label mapping in the code only accounts for 'malignant' and 'non-neoplastic', but the training data contains an additional label value: 'benign'. As a result, the function `check_label_coverage` raises a ValueError when it encounters 'benign' as an unmapped label in the training data.
+
+SUGGESTED_FIX:  
+Inspect the unique values in the 'label' column of your training data and update the label mapping in `get_label_map()` to include all relevant classes (e.g., map both 'benign' and 'non-neoplastic' to 0 if they are both considered non-malignant). Ensure that the mapping reflects the intended binary classification (malignant vs. benign/non-malignant) and that all label values in the dataset are covered by the mapping.
+
+ERROR_SUMMARY: The error occurs because the code attempts to import `Image2Vec` from the `FlagEmbedding` package, but this symbol does not exist in the installed version of the package. This is likely due to a version mismatch, a change in the FlagEmbedding API, or an incorrect/incomplete installation of the package.
+
+SUGGESTED_FIX: Check the installed version of the FlagEmbedding package and consult its official documentation or PyPI page to verify the correct import path and available classes. If `Image2Vec` is not present, update your code to use the correct class or function for image embedding (such as `FlagImageEncoder` or similar), or install a version of FlagEmbedding that provides `Image2Vec` if required.
+
+ERROR_SUMMARY: The error occurs because the `MultiModalPredictor` constructor in the installed version of AutoGluon (1.5.1b20260508) does not accept a `seed` keyword argument. Passing `seed=SEED` to the constructor results in a `TypeError`, preventing model instantiation and script execution.
+
+SUGGESTED_FIX: Remove the `seed=SEED` argument from the `MultiModalPredictor` constructor call. If reproducibility is required, set the random seed using other means (e.g., global random/NumPy seeds or via the `fit()` method if supported), but do not pass `seed` to the constructor.
+
+ERROR_SUMMARY: The code executed successfully and produced output, but the reported validation AUROC is 1.00000, which is unrealistically perfect and indicates severe data leakage between the training and validation sets. This suggests that information from the validation set is inadvertently being used during training, invalidating the evaluation and model performance.
+
+SUGGESTED_FIX: Carefully review the data preprocessing and splitting logic to ensure that the validation set is completely isolated from the training process. Check for any accidental reuse of image features, metadata, or labels between train and validation splits, and verify that no information from the validation set is accessible to the model during training or feature extraction.
+
+ERROR_SUMMARY: The validation AUROC is exactly 1.0, which is unrealistically perfect and indicates severe data leakage between the training and validation sets. This suggests that information from the validation set is being used during training or feature extraction, likely due to improper separation of data during preprocessing or feature extraction steps.
+
+SUGGESTED_FIX: Carefully review your data splitting and feature extraction pipeline to ensure that the validation set is completely isolated from the training process. Specifically, make sure that any feature extraction (especially using pretrained models) is performed separately for the training and validation sets, and that no normalization, augmentation, or metadata derived from the full dataset is shared between them. Double-check that the validation images and their features are not included in any form in the training data or model fitting steps.
+
+ERROR_SUMMARY: The script completed without runtime errors and produced output, but the reported validation AUROC is 1.00000, which is implausibly perfect and strongly indicates data leakage or an invalid validation split. This means the model likely had access to information from the validation set during training, making the evaluation unreliable. Additionally, the script does not measure or minimize the AUROC gap between light and dark skin tones, which is a required fairness criterion for this task.
+
+SUGGESTED_FIX:  
+Carefully review the data preprocessing and splitting steps to ensure that no information from the validation set is used during training or feature extraction (including image feature extraction and metadata). Double-check that feature extraction is performed strictly within each split, and that no data from the validation set leaks into the training process. Furthermore, implement code to compute AUROC separately for light and dark skin tone groups and report (and aim to minimize) the AUROC gap between them, as required by the task.
+
+### Tutorials for Reference
+

@@ -1,0 +1,3 @@
+DECISION: FIX  
+ERROR_SUMMARY: ImportError: cannot import name 'Image2Vec' from 'FlagEmbedding'. The code fails at the import statement for Image2Vec, indicating either a version mismatch, incorrect installation, or a change in the FlagEmbedding package API.  
+VALIDATION_SCORE: None

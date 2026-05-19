@@ -1,0 +1,167 @@
+2026-05-08 11:59:12 ERROR    [autogluon.assistant.tools_registry.indexing] There is no /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/indices/BAAI_bge-base-en-v1.5/wav2vec2/tutorials.index or /home/anri21/.conda/envs/mlzero_env/lib/python3.12/site-packages/autogluon/assistant/tools_registry/indices/BAAI_bge-base-en-v1.5/wav2vec2/tutorials.metadata.
+2026-05-08 11:59:15 ERROR    [autogluon.assistant.tools_registry.indexing] Error building tutorials index for FlagEmbedding: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:15 ERROR    [autogluon.assistant.tools_registry.indexing] Error building condensed_tutorials index for FlagEmbedding: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:16 ERROR    [autogluon.assistant.tools_registry.indexing] Error building tutorials index for machine learning: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:16 ERROR    [autogluon.assistant.tools_registry.indexing] Error building condensed_tutorials index for machine learning: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:17 ERROR    [autogluon.assistant.tools_registry.indexing] Error building tutorials index for wav2vec2: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:17 ERROR    [autogluon.assistant.tools_registry.indexing] Error building condensed_tutorials index for wav2vec2: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:18 ERROR    [autogluon.assistant.tools_registry.indexing] Error building tutorials index for qwen3: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:18 ERROR    [autogluon.assistant.tools_registry.indexing] Error building condensed_tutorials index for qwen3: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:18 ERROR    [autogluon.assistant.tools_registry.indexing] Error building tutorials index for autogluon.tabular: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:19 ERROR    [autogluon.assistant.tools_registry.indexing] Error building condensed_tutorials index for autogluon.tabular: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:19 ERROR    [autogluon.assistant.tools_registry.indexing] Error building tutorials index for autogluon.multimodal: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:20 ERROR    [autogluon.assistant.tools_registry.indexing] Error building condensed_tutorials index for autogluon.multimodal: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:20 ERROR    [autogluon.assistant.tools_registry.indexing] Error building tutorials index for autogluon.timeseries: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:21 ERROR    [autogluon.assistant.tools_registry.indexing] Error building condensed_tutorials index for autogluon.timeseries: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 11:59:25 BRIEF    [autogluon.assistant.agents.data_perception_agent] Analyzing folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data
+2026-05-08 11:59:26 BRIEF    [autogluon.assistant.agents.data_perception_agent] Found 16580 files
+2026-05-08 11:59:26 BRIEF    [autogluon.assistant.agents.data_perception_agent] Grouped into 3 patterns
+2026-05-08 11:59:26 BRIEF    [autogluon.assistant.agents.data_perception_agent] Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/train.csv
+2026-05-08 11:59:34 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 11:59:34 BRIEF    [autogluon.assistant.agents.data_perception_agent] Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/test.csv
+2026-05-08 11:59:41 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 11:59:41 BRIEF    [autogluon.assistant.agents.data_perception_agent] Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/descriptions.txt
+2026-05-08 11:59:51 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: FIX
+2026-05-08 11:59:51 BRIEF    [autogluon.assistant.agents.data_perception_agent] Reading example file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/image_1282.jpg
+2026-05-08 11:59:55 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 12:00:05 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 1/20
+2026-05-08 12:00:07 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 12:00:07 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for autogluon.multimodal
+2026-05-08 12:00:08 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 12:00:08 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 12:08:04 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: FIX
+2026-05-08 12:08:08 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 2/20
+2026-05-08 12:08:11 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 12:08:11 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 12:08:15 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 12:08:15 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 12:14:31 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: FIX
+2026-05-08 12:14:36 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 3/20
+2026-05-08 12:14:38 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 12:14:38 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for FlagEmbedding
+2026-05-08 12:14:40 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 12:14:40 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 12:21:32 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: FIX
+2026-05-08 12:21:35 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 4/20
+2026-05-08 12:21:37 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 12:21:37 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for autogluon.multimodal
+2026-05-08 12:21:39 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 12:21:39 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 12:30:00 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: FIX
+2026-05-08 12:30:06 WARNING  [autogluon.assistant.managers.node_manager] Debug attempt failed. Debug attempts on parent node 0: 1/3
+2026-05-08 12:30:06 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 5/20
+2026-05-08 12:30:08 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 12:30:09 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 12:30:11 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 12:30:11 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 12:44:28 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 12:44:28 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 12:44:28 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 6/20
+2026-05-08 12:44:30 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 12:44:31 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 12:44:32 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 12:44:32 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 12:54:01 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 12:54:01 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 12:54:01 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 7/20
+2026-05-08 12:54:03 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 12:54:03 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 12:54:04 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 12:54:04 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 13:03:25 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 13:03:25 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 13:03:25 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 8/20
+2026-05-08 13:03:27 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 13:03:27 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 13:03:28 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 13:03:28 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 13:18:37 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 13:18:37 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 13:18:37 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 9/20
+2026-05-08 13:18:39 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 13:18:40 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 13:18:41 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 13:18:41 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 13:42:04 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: FIX
+2026-05-08 13:42:07 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 10/20
+2026-05-08 13:42:09 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 13:42:09 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 13:42:12 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 13:42:12 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 14:06:10 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 14:06:10 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 14:06:11 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 11/20
+2026-05-08 14:06:12 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 14:06:13 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 14:06:14 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 14:06:14 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 14:30:30 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 14:30:30 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 14:30:30 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 12/20
+2026-05-08 14:30:33 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 14:30:33 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 14:30:35 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 14:30:35 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 14:54:08 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: FIX
+2026-05-08 14:54:11 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 13/20
+2026-05-08 14:54:13 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 14:54:14 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for machine learning
+2026-05-08 14:54:16 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 14:54:16 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 15:17:41 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: FIX
+2026-05-08 15:17:49 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 14/20
+2026-05-08 15:17:51 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 15:17:51 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for autogluon.multimodal
+2026-05-08 15:17:53 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 15:17:53 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 15:40:10 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 15:40:10 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 15:40:10 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 15/20
+2026-05-08 15:40:12 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 15:40:12 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for autogluon.multimodal
+2026-05-08 15:40:14 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 15:40:14 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 16:00:37 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 16:00:37 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 16:00:37 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 16/20
+2026-05-08 16:00:40 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 16:00:40 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for autogluon.multimodal
+2026-05-08 16:00:41 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 16:00:41 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 16:21:08 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 16:21:08 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 16:21:08 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 17/20
+2026-05-08 16:21:12 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 16:21:12 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for autogluon.multimodal
+2026-05-08 16:21:14 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 16:21:14 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 16:42:11 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 16:42:11 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 16:42:11 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 18/20
+2026-05-08 16:42:14 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 16:42:14 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for autogluon.multimodal
+2026-05-08 16:42:16 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 16:42:16 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 17:05:01 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 17:05:02 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 17:05:02 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 19/20
+2026-05-08 17:05:05 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 17:05:05 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for autogluon.multimodal
+2026-05-08 17:05:07 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 17:05:07 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 17:25:47 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 17:25:47 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 17:25:47 BRIEF    [autogluon.assistant.coding_agent] Starting MCTS iteration 20/20
+2026-05-08 17:25:50 ERROR    [autogluon.assistant.agents.retriever_agent] Error in tutorial retriever: BertModel.__init__() got an unexpected keyword argument 'dtype'
+2026-05-08 17:25:50 WARNING  [autogluon.assistant.prompts.reranker_prompt] No tutorials found for autogluon.multimodal
+2026-05-08 17:25:52 WARNING  [autogluon.assistant.prompts.reranker_prompt] No valid indices found in LLM response
+2026-05-08 17:25:52 WARNING  [autogluon.assistant.agents.reranker_agent] Tutorial reranking failed, falling back to top tutorials by retrieval score.
+2026-05-08 17:46:23 BRIEF    [autogluon.assistant.agents.executer_agent] Planner decision: SUCCESS
+2026-05-08 17:46:23 BRIEF    [autogluon.assistant.managers.node_manager] Task completed successfully! Best node: 4 with validation score 1.0
+2026-05-08 17:46:23 WARNING  [autogluon.assistant.coding_agent] [bold red]Warning: Reached maximum iterations (20)[/bold red]
+2026-05-08 17:46:23 BRIEF    [autogluon.assistant.managers.node_manager] Total tokens — input: 2193134, output: 54534, sum: 2247668
+2026-05-08 17:46:23 BRIEF    [autogluon.assistant.coding_agent] MCTS search completed in 20778.48 seconds
+2026-05-08 17:46:23 BRIEF    [autogluon.assistant.coding_agent] Total nodes explored: 20
+2026-05-08 17:46:23 BRIEF    [autogluon.assistant.coding_agent] Best validation score: 1.0
+2026-05-08 17:46:23 BRIEF    [autogluon.assistant.coding_agent] Tools used: FlagEmbedding, autogluon.multimodal, machine learning
+2026-05-08 17:46:23 BRIEF    [autogluon.assistant.coding_agent] Output saved in /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2

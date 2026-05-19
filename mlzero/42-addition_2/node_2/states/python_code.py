@@ -1,0 +1,182 @@
+"""
+Skin Lesion Malignancy Probability Prediction using FlagEmbedding
+
+This script uses FlagEmbedding (ViT-based image encoder) to extract image embeddings for skin lesion images,
+trains a simple classifier on these embeddings to predict malignancy probability, and outputs predictions for the test set.
+All indices and columns are preserved, and the output matches the test file format.
+
+Installation requirements (run before executing this script):
+    pip install pandas scikit-learn torch pillow tqdm flagembedding
+
+Data and output locations are hardcoded as per the task specification.
+"""
+
+# Installation instructions (uncomment and run if needed)
+# !pip install pandas scikit-learn torch pillow tqdm flagembedding
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+
+from tqdm import tqdm
+from PIL import Image
+
+import torch
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+
+from FlagEmbedding import Image2Vec
+
+# Set random seed for reproducibility
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+
+# Paths
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data"
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_2/output"
+IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+RESULTS_FILENAME = "results"
+
+def get_label_map():
+    """
+    Returns a mapping from string labels to binary values.
+    'malignant' -> 1, all others (including 'benign', 'non-neoplastic') -> 0
+    """
+    return {'malignant': 1, 'benign': 0, 'non-neoplastic': 0}
+
+def check_label_coverage(df):
+    """
+    Checks that all label values are covered by the label mapping.
+    Raises ValueError if any unmapped labels are found.
+    """
+    label_map = get_label_map()
+    unique_labels = set(df['label'].dropna().unique())
+    missing = unique_labels - set(label_map.keys())
+    if missing:
+        raise ValueError(f"Unmapped label values found in training data: {missing}")
+
+def prepare_dataframe(df, is_train=True):
+    """
+    Prepares the dataframe:
+    - Drops NA labels (train only)
+    - Removes index column if present
+    - Maps label to binary (malignant=1, else=0)
+    - Adds absolute image path column
+    """
+    df = df.copy()
+    if 'Unnamed: 0' in df.columns:
+        df = df.drop(columns=['Unnamed: 0'])
+    if is_train:
+        df = df.dropna(subset=['label'])
+        check_label_coverage(df)
+        label_map = get_label_map()
+        df['label'] = df['label'].map(label_map)
+        df = df.dropna(subset=['label'])
+        df['label'] = df['label'].astype(int)
+    df['image_path'] = df['image_name'].apply(lambda x: os.path.join(IMAGE_DIR, f"{x}.jpg"))
+    return df
+
+def get_results_extension(test_csv_path):
+    _, ext = os.path.splitext(test_csv_path)
+    return ext
+
+def get_pred_column_name(train_df):
+    return 'label'
+
+def extract_flag_embeddings(image_paths, batch_size=64, device='cuda' if torch.cuda.is_available() else 'cpu'):
+    """
+    Extracts image embeddings using FlagEmbedding's ViT model.
+    Returns a numpy array of shape (num_images, embedding_dim).
+    """
+    # Use the ViT-B-16 model from FlagEmbedding (or another available model)
+    model = Image2Vec("ViT-B-16", device=device)
+    embeddings = []
+    for i in tqdm(range(0, len(image_paths), batch_size), desc="Extracting FlagEmbeddings"):
+        batch_paths = image_paths[i:i+batch_size]
+        # FlagEmbedding expects a list of PIL Images or file paths
+        batch_emb = model.encode(batch_paths, to_numpy=True, normalize=True)
+        embeddings.append(batch_emb)
+    embeddings = np.concatenate(embeddings, axis=0)
+    return embeddings
+
+def main():
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # 2. Preprocess data
+    train_df = prepare_dataframe(train_df, is_train=True)
+    test_df_orig = test_df.copy()
+    test_df = prepare_dataframe(test_df, is_train=False)
+
+    # 3. Split train/validation
+    train_data, val_data = train_test_split(
+        train_df,
+        test_size=0.1,
+        random_state=SEED,
+        stratify=train_df['label']
+    )
+
+    # 4. Extract FlagEmbeddings
+    print("Extracting FlagEmbeddings for training images...")
+    train_embeddings = extract_flag_embeddings(train_data['image_path'].tolist())
+    print("Extracting FlagEmbeddings for validation images...")
+    val_embeddings = extract_flag_embeddings(val_data['image_path'].tolist())
+    print("Extracting FlagEmbeddings for test images...")
+    test_embeddings = extract_flag_embeddings(test_df['image_path'].tolist())
+
+    # 5. Train classifier
+    clf = LogisticRegression(
+        solver='lbfgs',
+        max_iter=1000,
+        random_state=SEED
+    )
+    clf.fit(train_embeddings, train_data['label'].values)
+
+    # 6. Predict on test set
+    test_pred_proba = clf.predict_proba(test_embeddings)[:, 1]  # Probability of class 1 (malignant)
+
+    # Prepare results DataFrame
+    results_df = test_df_orig.copy()
+    pred_col = get_pred_column_name(train_df)
+    results_df[pred_col] = test_pred_proba
+
+    # 7. Save results
+    results_ext = get_results_extension(TEST_CSV)
+    results_path = os.path.join(OUTPUT_DIR, RESULTS_FILENAME + results_ext)
+    if pred_col not in test_df_orig.columns:
+        results_df = pd.concat([test_df_orig, pd.Series(test_pred_proba, name=pred_col)], axis=1)
+    else:
+        results_df[pred_col] = test_pred_proba
+
+    if results_ext == '.csv':
+        results_df.to_csv(results_path, index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {results_ext}")
+
+    # 8. Validation checks
+    assert len(results_df) == len(test_df_orig), "Number of predictions does not match number of test samples."
+    assert all(results_df.index == test_df_orig.index), "Test data indices are not preserved in the results."
+    assert pred_col in results_df.columns, f"Prediction column '{pred_col}' missing from results."
+    assert os.path.exists(results_path), f"Results file was not saved at {results_path}."
+    assert np.all((results_df[pred_col] >= 0) & (results_df[pred_col] <= 1)), "Predictions are not in [0, 1] range."
+
+    print(f"Results saved to: {results_path}")
+
+    # 9. Validation metric on held-out validation set
+    try:
+        val_pred_proba = clf.predict_proba(val_embeddings)[:, 1]
+        val_auc = roc_auc_score(val_data['label'].values, val_pred_proba)
+        print(f"Validation AUROC: {val_auc:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+if __name__ == "__main__":
+    main()

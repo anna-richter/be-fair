@@ -1,0 +1,5 @@
+ERROR_SUMMARY:  
+The error occurs because the label mapping in the code only accounts for 'malignant' and 'non-neoplastic', but the training data contains an additional label value: 'benign'. As a result, the function `check_label_coverage` raises a ValueError when it encounters 'benign' as an unmapped label in the training data.
+
+SUGGESTED_FIX:  
+Inspect the unique values in the 'label' column of your training data and update the label mapping in `get_label_map()` to include all relevant classes (e.g., map both 'benign' and 'non-neoplastic' to 0 if they are both considered non-malignant). Ensure that the mapping reflects the intended binary classification (malignant vs. benign/non-malignant) and that all label values in the dataset are covered by the mapping.

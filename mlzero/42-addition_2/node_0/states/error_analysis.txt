@@ -1,0 +1,3 @@
+ERROR_SUMMARY: The error occurs because the target column ('label') in your training dataframe contains NaN values after preprocessing. This is likely due to some label values in train.csv not matching the keys in your label mapping dictionary, causing the mapping to produce NaN for those rows.
+
+SUGGESTED_FIX: Inspect the unique values in the 'label' column of train.csv and ensure your label mapping dictionary covers all possible label strings present. Update the mapping or add a check to raise an error if unmapped labels are found, and verify that no NaNs remain in the 'label' column before proceeding to train_test_split.

@@ -1,0 +1,3 @@
+ERROR_SUMMARY: The error occurs because the `MultiModalPredictor` constructor in the installed version of AutoGluon (1.5.1b20260508) does not accept a `seed` keyword argument. Passing `seed=SEED` to the constructor results in a `TypeError`, preventing model instantiation and script execution.
+
+SUGGESTED_FIX: Remove the `seed=SEED` argument from the `MultiModalPredictor` constructor call. If reproducibility is required, set the random seed using other means (e.g., global random/NumPy seeds or via the `fit()` method if supported), but do not pass `seed` to the constructor.

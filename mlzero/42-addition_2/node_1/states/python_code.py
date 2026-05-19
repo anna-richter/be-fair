@@ -1,0 +1,238 @@
+"""
+Skin Lesion Malignancy Probability Prediction Script
+
+This script trains a machine learning model (ResNet50 + LightGBM) to predict the probability of malignancy for skin lesion images.
+It extracts features from images using a pretrained ResNet50, then fits a LightGBM classifier on these features and metadata.
+Predictions are made for the test set, preserving all indices and columns, and results are saved in the required format.
+
+Installation requirements (run before executing this script):
+    pip install pandas scikit-learn lightgbm torch torchvision pillow
+
+Data and output locations are hardcoded as per the task specification.
+"""
+
+# Installation instructions (uncomment and run if needed)
+# !pip install pandas scikit-learn lightgbm torch torchvision pillow
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+
+from PIL import Image
+from tqdm import tqdm
+
+import torch
+import torch.nn as nn
+import torchvision.models as models
+import torchvision.transforms as transforms
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+from lightgbm import LGBMClassifier
+
+# Set random seed for reproducibility
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+
+# Paths
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data"
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_1/output"
+IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+
+RESULTS_FILENAME = "results"
+
+def get_label_map():
+    """
+    Returns a mapping from string labels to binary values.
+    'malignant' -> 1, all others (including 'non-neoplastic') -> 0
+    """
+    return {'malignant': 1, 'non-neoplastic': 0}
+
+def check_label_coverage(df):
+    """
+    Checks that all label values are covered by the label mapping.
+    Raises ValueError if any unmapped labels are found.
+    """
+    label_map = get_label_map()
+    unique_labels = set(df['label'].dropna().unique())
+    missing = unique_labels - set(label_map.keys())
+    if missing:
+        raise ValueError(f"Unmapped label values found in training data: {missing}")
+
+def prepare_dataframe(df, is_train=True):
+    """
+    Prepares the dataframe:
+    - Drops NA labels (train only)
+    - Removes index column if present
+    - Maps label to binary (malignant=1, else=0)
+    - Adds absolute image path column
+    """
+    df = df.copy()
+    if 'Unnamed: 0' in df.columns:
+        df = df.drop(columns=['Unnamed: 0'])
+    if is_train:
+        df = df.dropna(subset=['label'])
+        check_label_coverage(df)
+        label_map = get_label_map()
+        df['label'] = df['label'].map(label_map)
+        # After mapping, drop any rows where label is still NA (unmapped)
+        df = df.dropna(subset=['label'])
+        df['label'] = df['label'].astype(int)
+    df['image_path'] = df['image_name'].apply(lambda x: os.path.join(IMAGE_DIR, f"{x}.jpg"))
+    return df
+
+def get_results_extension(test_csv_path):
+    _, ext = os.path.splitext(test_csv_path)
+    return ext
+
+def get_pred_column_name(train_df):
+    return 'label'
+
+def extract_image_features(image_paths, batch_size=64, device='cuda' if torch.cuda.is_available() else 'cpu'):
+    """
+    Extracts features from images using pretrained ResNet50 (removing final classification layer).
+    Returns a numpy array of shape (num_images, feature_dim).
+    """
+    # Use ResNet50 pretrained on ImageNet
+    model = models.resnet50(pretrained=True)
+    # Remove the final classification layer
+    model = nn.Sequential(*list(model.children())[:-1])  # output: (batch, 2048, 1, 1)
+    model.eval()
+    model.to(device)
+
+    preprocess = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        # Normalization for ImageNet
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+
+    features = []
+    with torch.no_grad():
+        for i in tqdm(range(0, len(image_paths), batch_size), desc="Extracting image features"):
+            batch_paths = image_paths[i:i+batch_size]
+            batch_imgs = []
+            for path in batch_paths:
+                try:
+                    img = Image.open(path).convert('RGB')
+                except Exception:
+                    # If image is missing or corrupted, use a black image
+                    img = Image.new('RGB', (224, 224), (0, 0, 0))
+                img = preprocess(img)
+                batch_imgs.append(img)
+            batch_tensor = torch.stack(batch_imgs).to(device)
+            batch_feats = model(batch_tensor).squeeze(-1).squeeze(-1)  # (batch, 2048)
+            features.append(batch_feats.cpu().numpy())
+    features = np.concatenate(features, axis=0)
+    return features
+
+def build_feature_dataframe(df, image_features):
+    """
+    Combines image features with selected metadata for ML model.
+    """
+    # Use skin_tone, alternative_skin_tone, super_label as metadata
+    meta = df[['skin_tone', 'alternative_skin_tone', 'super_label']].copy()
+    # Encode super_label as categorical
+    meta['super_label'] = meta['super_label'].astype('category').cat.codes
+    meta = meta.reset_index(drop=True)
+    features_df = pd.DataFrame(image_features, index=meta.index)
+    features_df = pd.concat([features_df, meta], axis=1)
+    return features_df
+
+def main():
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # 2. Preprocess data
+    train_df = prepare_dataframe(train_df, is_train=True)
+    test_df_orig = test_df.copy()
+    test_df = prepare_dataframe(test_df, is_train=False)
+
+    # 3. Split train/validation
+    train_data, val_data = train_test_split(
+        train_df,
+        test_size=0.1,
+        random_state=SEED,
+        stratify=train_df['label']
+    )
+
+    # 4. Extract image features
+    print("Extracting features for training images...")
+    train_image_features = extract_image_features(train_data['image_path'].tolist())
+    print("Extracting features for validation images...")
+    val_image_features = extract_image_features(val_data['image_path'].tolist())
+    print("Extracting features for test images...")
+    test_image_features = extract_image_features(test_df['image_path'].tolist())
+
+    # 5. Build feature dataframes
+    X_train = build_feature_dataframe(train_data, train_image_features)
+    y_train = train_data['label'].values
+    X_val = build_feature_dataframe(val_data, val_image_features)
+    y_val = val_data['label'].values
+    X_test = build_feature_dataframe(test_df, test_image_features)
+
+    # 6. Train model
+    timestamp = int(time.time()) + random.randint(0, 100000)
+    model_dir = os.path.join(OUTPUT_DIR, f"ml_model_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+
+    clf = LGBMClassifier(
+        n_estimators=200,
+        learning_rate=0.05,
+        random_state=SEED,
+        n_jobs=-1
+    )
+    clf.fit(X_train, y_train)
+
+    # Save model
+    import joblib
+    joblib.dump(clf, os.path.join(model_dir, "lgbm_model.joblib"))
+
+    # 7. Predict on test set
+    test_pred_proba = clf.predict_proba(X_test)[:, 1]  # Probability of class 1 (malignant)
+
+    # Prepare results DataFrame
+    results_df = test_df_orig.copy()
+    pred_col = get_pred_column_name(train_df)
+    results_df[pred_col] = test_pred_proba
+
+    # 8. Save results
+    results_ext = get_results_extension(TEST_CSV)
+    results_path = os.path.join(OUTPUT_DIR, RESULTS_FILENAME + results_ext)
+    if pred_col not in test_df_orig.columns:
+        results_df = pd.concat([test_df_orig, pd.Series(test_pred_proba, name=pred_col)], axis=1)
+    else:
+        results_df[pred_col] = test_pred_proba
+
+    if results_ext == '.csv':
+        results_df.to_csv(results_path, index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {results_ext}")
+
+    # 9. Validation checks
+    assert len(results_df) == len(test_df_orig), "Number of predictions does not match number of test samples."
+    assert all(results_df.index == test_df_orig.index), "Test data indices are not preserved in the results."
+    assert pred_col in results_df.columns, f"Prediction column '{pred_col}' missing from results."
+    assert os.path.exists(results_path), f"Results file was not saved at {results_path}."
+    assert np.all((results_df[pred_col] >= 0) & (results_df[pred_col] <= 1)), "Predictions are not in [0, 1] range."
+
+    print(f"Results saved to: {results_path}")
+
+    # 10. Validation metric on held-out validation set
+    try:
+        val_pred_proba = clf.predict_proba(X_val)[:, 1]
+        val_auc = roc_auc_score(y_val, val_pred_proba)
+        print(f"Validation AUROC: {val_auc:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+if __name__ == "__main__":
+    main()

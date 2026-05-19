@@ -1,0 +1,451 @@
+You are an expert code evaluator. Analyze the execution results of the following Python code and determine if the execution was successful or if issues need to be fixed.
+
+### Task Descriptions
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB JPEG images of skin lesions (e.g., 500x335 pixels), provided as files in a folder.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+- **Additional requirement:** The model should minimize the AUROC gap between light and dark skin tones, while maintaining overall performance.
+
+### Data Structure
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0         super_label  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0 malignant epidermal          3                      3            NaN      malignant image_14703
+          1        inflammatory          4                      4            NaN non-neoplastic  image_7458
+          2        inflammatory          2                      1            NaN non-neoplastic  image_6473
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0         super_label  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0        inflammatory          3                      3            NaN non-neoplastic image_10025
+          1 malignant epidermal          4                      4            NaN      malignant image_14107
+          2        inflammatory          5                      6  5 Potentially non-neoplastic  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of ...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/image_1282.jpg
+Content:
+File: image_1282.jpg
+Type: JPEG Image
+Size: 41.03 KB
+Format: JPEG
+Mode: RGB
+Size: (500, 335)
+
+----------
+
+
+### Python Code
+"""
+Skin Lesion Malignancy Probability Prediction using FlagEmbedding
+
+This script uses FlagEmbedding (ViT-based image encoder) to extract image embeddings for skin lesion images,
+trains a simple classifier on these embeddings to predict malignancy probability, and outputs predictions for the test set.
+All indices and columns are preserved, and the output matches the test file format.
+
+Installation requirements (run before executing this script):
+    pip install pandas scikit-learn torch pillow tqdm flagembedding
+
+Data and output locations are hardcoded as per the task specification.
+"""
+
+# Installation instructions (uncomment and run if needed)
+# !pip install pandas scikit-learn torch pillow tqdm flagembedding
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+
+from tqdm import tqdm
+from PIL import Image
+
+import torch
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+
+from FlagEmbedding import Image2Vec
+
+# Set random seed for reproducibility
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+
+# Paths
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data"
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_2/output"
+IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+RESULTS_FILENAME = "results"
+
+def get_label_map():
+    """
+    Returns a mapping from string labels to binary values.
+    'malignant' -> 1, all others (including 'benign', 'non-neoplastic') -> 0
+    """
+    return {'malignant': 1, 'benign': 0, 'non-neoplastic': 0}
+
+def check_label_coverage(df):
+    """
+    Checks that all label values are covered by the label mapping.
+    Raises ValueError if any unmapped labels are found.
+    """
+    label_map = get_label_map()
+    unique_labels = set(df['label'].dropna().unique())
+    missing = unique_labels - set(label_map.keys())
+    if missing:
+        raise ValueError(f"Unmapped label values found in training data: {missing}")
+
+def prepare_dataframe(df, is_train=True):
+    """
+    Prepares the dataframe:
+    - Drops NA labels (train only)
+    - Removes index column if present
+    - Maps label to binary (malignant=1, else=0)
+    - Adds absolute image path column
+    """
+    df = df.copy()
+    if 'Unnamed: 0' in df.columns:
+        df = df.drop(columns=['Unnamed: 0'])
+    if is_train:
+        df = df.dropna(subset=['label'])
+        check_label_coverage(df)
+        label_map = get_label_map()
+        df['label'] = df['label'].map(label_map)
+        df = df.dropna(subset=['label'])
+        df['label'] = df['label'].astype(int)
+    df['image_path'] = df['image_name'].apply(lambda x: os.path.join(IMAGE_DIR, f"{x}.jpg"))
+    return df
+
+def get_results_extension(test_csv_path):
+    _, ext = os.path.splitext(test_csv_path)
+    return ext
+
+def get_pred_column_name(train_df):
+    return 'label'
+
+def extract_flag_embeddings(image_paths, batch_size=64, device='cuda' if torch.cuda.is_available() else 'cpu'):
+    """
+    Extracts image embeddings using FlagEmbedding's ViT model.
+    Returns a numpy array of shape (num_images, embedding_dim).
+    """
+    # Use the ViT-B-16 model from FlagEmbedding (or another available model)
+    model = Image2Vec("ViT-B-16", device=device)
+    embeddings = []
+    for i in tqdm(range(0, len(image_paths), batch_size), desc="Extracting FlagEmbeddings"):
+        batch_paths = image_paths[i:i+batch_size]
+        # FlagEmbedding expects a list of PIL Images or file paths
+        batch_emb = model.encode(batch_paths, to_numpy=True, normalize=True)
+        embeddings.append(batch_emb)
+    embeddings = np.concatenate(embeddings, axis=0)
+    return embeddings
+
+def main():
+    # 1. Load data
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # 2. Preprocess data
+    train_df = prepare_dataframe(train_df, is_train=True)
+    test_df_orig = test_df.copy()
+    test_df = prepare_dataframe(test_df, is_train=False)
+
+    # 3. Split train/validation
+    train_data, val_data = train_test_split(
+        train_df,
+        test_size=0.1,
+        random_state=SEED,
+        stratify=train_df['label']
+    )
+
+    # 4. Extract FlagEmbeddings
+    print("Extracting FlagEmbeddings for training images...")
+    train_embeddings = extract_flag_embeddings(train_data['image_path'].tolist())
+    print("Extracting FlagEmbeddings for validation images...")
+    val_embeddings = extract_flag_embeddings(val_data['image_path'].tolist())
+    print("Extracting FlagEmbeddings for test images...")
+    test_embeddings = extract_flag_embeddings(test_df['image_path'].tolist())
+
+    # 5. Train classifier
+    clf = LogisticRegression(
+        solver='lbfgs',
+        max_iter=1000,
+        random_state=SEED
+    )
+    clf.fit(train_embeddings, train_data['label'].values)
+
+    # 6. Predict on test set
+    test_pred_proba = clf.predict_proba(test_embeddings)[:, 1]  # Probability of class 1 (malignant)
+
+    # Prepare results DataFrame
+    results_df = test_df_orig.copy()
+    pred_col = get_pred_column_name(train_df)
+    results_df[pred_col] = test_pred_proba
+
+    # 7. Save results
+    results_ext = get_results_extension(TEST_CSV)
+    results_path = os.path.join(OUTPUT_DIR, RESULTS_FILENAME + results_ext)
+    if pred_col not in test_df_orig.columns:
+        results_df = pd.concat([test_df_orig, pd.Series(test_pred_proba, name=pred_col)], axis=1)
+    else:
+        results_df[pred_col] = test_pred_proba
+
+    if results_ext == '.csv':
+        results_df.to_csv(results_path, index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {results_ext}")
+
+    # 8. Validation checks
+    assert len(results_df) == len(test_df_orig), "Number of predictions does not match number of test samples."
+    assert all(results_df.index == test_df_orig.index), "Test data indices are not preserved in the results."
+    assert pred_col in results_df.columns, f"Prediction column '{pred_col}' missing from results."
+    assert os.path.exists(results_path), f"Results file was not saved at {results_path}."
+    assert np.all((results_df[pred_col] >= 0) & (results_df[pred_col] <= 1)), "Predictions are not in [0, 1] range."
+
+    print(f"Results saved to: {results_path}")
+
+    # 9. Validation metric on held-out validation set
+    try:
+        val_pred_proba = clf.predict_proba(val_embeddings)[:, 1]
+        val_auc = roc_auc_score(val_data['label'].values, val_pred_proba)
+        print(f"Validation AUROC: {val_auc:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+if __name__ == "__main__":
+    main()
+
+## Execution Results
+### Standard Output (stdout)
+
+Channels:
+ - conda-forge
+Platform: linux-64
+Collecting package metadata (repodata.json): - \ | done
+Solving environment: - \ done
+
+## Package Plan ##
+  environment location: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_2/conda_env
+  added / updated specs:
+    - python=3.11
+The following NEW packages will be INSTALLED:
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-20_gnu 
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-hda65f42_9 
+  ca-certificates    conda-forge/noarch::ca-certificates-2026.4.22-hbd8a1cb_0 
+  ld_impl_linux-64   conda-forge/linux-64::ld_impl_linux-64-2.45.1-default_hbd61a6d_102 
+  libexpat           conda-forge/linux-64::libexpat-2.8.0-hecca717_0 
+  libffi             conda-forge/linux-64::libffi-3.5.2-h3435931_0 
+  libgcc             conda-forge/linux-64::libgcc-15.2.0-he0feb66_18 
+  libgcc-ng          conda-forge/linux-64::libgcc-ng-15.2.0-h69a702a_18 
+  libgomp            conda-forge/linux-64::libgomp-15.2.0-he0feb66_18 
+  liblzma            conda-forge/linux-64::liblzma-5.8.3-hb03c661_0 
+  libnsl             conda-forge/linux-64::libnsl-2.0.1-hb9d3cd8_1 
+  libsqlite          conda-forge/linux-64::libsqlite-3.53.1-h0c1763c_0 
+  libuuid            conda-forge/linux-64::libuuid-2.42-h5347b49_0 
+  libxcrypt          conda-forge/linux-64::libxcrypt-4.4.36-hd590300_1 
+  libzlib            conda-forge/linux-64::libzlib-1.3.2-h25fd6f3_2 
+  ncurses            conda-forge/linux-64::ncurses-6.6-hdb14827_0 
+  openssl            conda-forge/linux-64::openssl-3.6.2-h35e630c_0 
+  packaging          conda-forge/noarch::packaging-26.2-pyhc364b38_0 
+  pip                conda-forge/noarch::pip-26.1.1-pyh8b19718_0 
+  python             conda-forge/linux-64::python-3.11.15-hd63d673_0_cpython 
+  readline           conda-forge/linux-64::readline-8.3-h853b02a_0 
+  setuptools         conda-forge/noarch::setuptools-82.0.1-pyh332efcf_0 
+  tk                 conda-forge/linux-64::tk-8.6.13-noxft_h366c992_103 
+  tzdata             conda-forge/noarch::tzdata-2025c-hc9c84f9_1 
+  wheel              conda-forge/noarch::wheel-0.47.0-pyhd8ed1ab_0 
+  zstd               conda-forge/linux-64::zstd-1.5.7-hb78ec9c_6 
+Downloading and Extracting Packages: ...working... done
+Preparing transaction: / - \ | done
+Verifying transaction: - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | done
+Executing transaction: - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / done
+#
+# To activate this environment, use
+#     $ conda activate /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_2/conda_env
+# To deactivate an active environment, use
+#     $ conda deactivate
+Collecting uv
+  Using cached uv-0.11.11-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Using cached uv-0.11.11-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (24.6 MB)
+Installing collected packages: uv
+Successfully installed uv-0.11.11
+
+
+### Standard Error (stderr)
+
+
+==> WARNING: A newer version of conda exists. <==
+    current version: 25.11.0
+    latest version: 26.3.2
+Please update conda by running
+    $ conda update -n base -c conda-forge conda
+Using Python 3.11.15 environment at: 42-addition_2/node_2/conda_env
+Resolved 108 packages in 1.28s
+   Building cbor==1.0.0
+Downloading transformers (10.1MiB)
+Downloading lz4 (1.3MiB)
+Downloading lxml (5.0MiB)
+ Downloaded lz4
+ Downloaded lxml
+      Built cbor==1.0.0
+ Downloaded transformers
+Prepared 7 packages in 12.30s
+Uninstalled 1 package in 1.57s
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 107 packages in 4m 09s
+ + accelerate==1.13.0
+ + aiohappyeyeballs==2.6.1
+ + aiohttp==3.13.5
+ + aiosignal==1.4.0
+ + annotated-doc==0.0.4
+ + annotated-types==0.7.0
+ + anyio==4.13.0
+ + attrs==26.1.0
+ + beautifulsoup4==4.14.3
+ + cbor==1.0.0
+ + certifi==2026.4.22
+ + chardet==7.4.3
+ + charset-normalizer==3.4.7
+ + click==8.3.3
+ + cuda-bindings==13.2.0
+ + cuda-pathfinder==1.5.4
+ + cuda-toolkit==13.0.2
+ + datasets==4.8.5
+ + dill==0.4.1
+ + faiss-cpu==1.13.2
+ + filelock==3.29.0
+ + flagembedding==1.4.0
+ + frozenlist==1.8.0
+ + fsspec==2026.2.0
+ + h11==0.16.0
+ + hf-xet==1.5.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + huggingface-hub==1.14.0
+ + idna==3.13
+ + ijson==3.5.0
+ + inscriptis==2.7.1
+ + ir-datasets==0.5.11
+ + jinja2==3.1.6
+ + joblib==1.5.3
+ + lxml==6.0.4
+ + lz4==4.4.5
+ + markdown-it-py==4.2.0
+ + markupsafe==3.0.3
+ + mdurl==0.1.2
+ + mpmath==1.3.0
+ + multidict==6.7.1
+ + multiprocess==0.70.19
+ + networkx==3.6.1
+ + numpy==2.4.4
+ + nvidia-cublas==13.1.0.3
+ + nvidia-cuda-cupti==13.0.85
+ + nvidia-cuda-nvrtc==13.0.88
+ + nvidia-cuda-runtime==13.0.96
+ + nvidia-cudnn-cu13==9.19.0.56
+ + nvidia-cufft==12.0.0.61
+ + nvidia-cufile==1.15.1.6
+ + nvidia-curand==10.4.0.35
+ + nvidia-cusolver==12.0.4.66
+ + nvidia-cusparse==12.6.3.3
+ + nvidia-cusparselt-cu13==0.8.0
+ + nvidia-nccl-cu13==2.28.9
+ + nvidia-nvjitlink==13.0.88
+ + nvidia-nvshmem-cu13==3.4.5
+ + nvidia-nvtx==13.0.85
+ + opencv-python==4.13.0.92
+ + pandas==3.0.2
+ + peft==0.19.1
+ + pillow==12.2.0
+ + propcache==0.4.1
+ + protobuf==7.35.0rc2
+ + psutil==7.2.2
+ + pyarrow==24.0.0
+ + pydantic==2.13.4
+ + pydantic-core==2.46.4
+ + pygments==2.20.0
+ + python-calamine==0.6.2
+ + python-dateutil==2.9.0.post0
+ + pytz==2026.2
+ + pyyaml==6.0.3
+ + regex==2026.4.4
+ + requests==2.34.0.dev1
+ + rich==15.0.0
+ + safetensors==0.8.0rc0
+ + scikit-learn==1.8.0
+ + scipy==1.17.1
+ + sentence-transformers==5.4.1
+ + sentencepiece==0.2.1
+ - setuptools==82.0.1
+ + setuptools==81.0.0
+ + shellingham==1.5.4
+ + six==1.17.0
+ + soupsieve==2.8.3
+ + sympy==1.14.0
+ + threadpoolctl==3.6.0
+ + tokenizers==0.23.0rc0
+ + torch==2.11.0
+ + torchaudio==2.11.0
+ + torchvision==0.26.0
+ + tqdm==4.67.3
+ + transformers==5.8.0
+ + trec-car-tools==2.6
+ + triton==3.6.0
+ + typer==0.25.1
+ + typing-extensions==4.15.0
+ + typing-inspection==0.4.2
+ + unlzw3==0.2.3
+ + urllib3==2.7.0
+ + warc3-wet==0.2.5
+ + warc3-wet-clueweb09==0.2.5
+ + xxhash==3.7.0
+ + yarl==1.23.0
+ + zlib-state==0.1.12
+Traceback (most recent call last):
+  File "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_2/generated_code.py", line 31, in <module>
+    from FlagEmbedding import Image2Vec
+ImportError: cannot import name 'Image2Vec' from 'FlagEmbedding' (/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/42-addition_2/node_2/conda_env/lib/python3.11/site-packages/FlagEmbedding/__init__.py)
+
+
+Evaluate the execution results and decide on one of the following actions:
+1. SUCCESS - If the execution was completely successful and met all requirements.
+2. FIX - If there were errors, issues, or performance problems that need to be addressed.
+
+Provide your decision in the following format:
+DECISION: [SUCCESS or FIX]
+ERROR_SUMMARY: [Brief summary of errors if any, or "None" if no errors]
+VALIDATION_SCORE: [If there is a validation score for the solution, provide it as a number, otherwise "None"]
+
+The error summary should be brief but informative enough for another agent to understand what needs to be fixed.
+Even if the code executed without throwing errors, it might still have issues with logic or not meet all requirements.
+
+For validation scores:
+- If there is a validation score present in the execution results, extract it (e.g. the last validation score reported in the training process).
+- Convert the score to ensure higher values indicate better performance (multiply "lower is better" metrics like RMSE, MAE, or loss by -1)
+- Return the converted score that follows the "higher is better" convention

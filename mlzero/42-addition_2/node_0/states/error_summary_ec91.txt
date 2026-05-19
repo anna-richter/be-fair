@@ -1,0 +1,1 @@
+The code failed with a ValueError during train/validation split: "Input y contains NaN." This indicates that the training dataframe still contains NaN values in the 'label' column after preprocessing, likely due to unexpected label values or missing label mapping.

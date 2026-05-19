@@ -1,0 +1,25 @@
+import os
+from PIL import Image
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/image_1282.jpg"
+
+def analyze_image(path):
+    info = {}
+    try:
+        with Image.open(path) as img:
+            info['Format'] = img.format
+            info['Mode'] = img.mode
+            info['Size'] = img.size
+    except Exception as e:
+        info['Error'] = str(e)
+    return info
+
+size_bytes = os.path.getsize(file_path)
+size_kb = size_bytes / 1024
+
+info = analyze_image(file_path)
+print(f"File: {os.path.basename(file_path)}")
+print(f"Type: JPEG Image")
+print(f"Size: {size_kb:.2f} KB")
+for k, v in info.items():
+    print(f"{k}: {v}")

@@ -1,0 +1,3 @@
+ERROR_SUMMARY: The error occurs because the code attempts to import `Image2Vec` from the `FlagEmbedding` package, but this symbol does not exist in the installed version of the package. This is likely due to a version mismatch, a change in the FlagEmbedding API, or an incorrect/incomplete installation of the package.
+
+SUGGESTED_FIX: Check the installed version of the FlagEmbedding package and consult its official documentation or PyPI page to verify the correct import path and available classes. If `Image2Vec` is not present, update your code to use the correct class or function for image embedding (such as `FlagImageEncoder` or similar), or install a version of FlagEmbedding that provides `Image2Vec` if required.

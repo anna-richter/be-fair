@@ -1,0 +1,1659 @@
+Unnamed: 0,super_label,skin_tone,alternative_skin_tone,expert_opinion,label,image_name
+0,inflammatory,3,3,,9.876621e-05,image_10025
+1,malignant epidermal,4,4,,0.9997868,image_14107
+2,inflammatory,5,6,5 Potentially,0.00022960825,image_4000
+3,inflammatory,3,3,,1.275555e-05,image_3166
+4,inflammatory,2,2,5 Potentially,3.9515207e-06,image_15680
+5,inflammatory,2,-1,,2.2474089e-05,image_10360
+6,inflammatory,2,2,,9.516251e-06,image_5562
+7,inflammatory,2,5,,1.0030142e-06,image_701
+8,inflammatory,1,1,,7.52799e-06,image_7126
+9,inflammatory,2,1,,2.2252812e-06,image_3911
+10,inflammatory,1,1,,3.487206e-06,image_9385
+11,inflammatory,3,3,,1.8559109e-05,image_7196
+12,inflammatory,1,1,,5.133655e-06,image_10681
+13,genodermatoses,6,6,,0.039268754,image_3394
+14,inflammatory,5,6,,0.000118667966,image_5863
+15,inflammatory,6,4,,1.7950628e-06,image_12134
+16,genodermatoses,2,2,,0.0065261493,image_12854
+17,inflammatory,1,1,,2.0420332e-06,image_9598
+18,inflammatory,5,4,,0.00012632042,image_6276
+19,inflammatory,5,5,,2.3278231e-05,image_14212
+20,inflammatory,-1,-1,,4.0610603e-06,image_6867
+21,malignant epidermal,4,3,,0.99949765,image_7253
+22,genodermatoses,1,-1,,0.011743792,image_2459
+23,benign epidermal,3,2,,1.0249399e-05,image_7804
+24,inflammatory,2,2,,1.7672329e-06,image_4101
+25,malignant melanoma,2,1,,0.9995915,image_1211
+26,inflammatory,3,1,,1.1015954e-06,image_14146
+27,malignant cutaneous lymphoma,2,2,,0.9970708,image_11273
+28,benign dermal,2,1,,7.031184e-05,image_5944
+29,inflammatory,3,-1,,3.5624163e-07,image_2096
+30,inflammatory,4,2,,1.3684697e-05,image_4170
+31,inflammatory,2,3,,1.3211958e-05,image_20
+32,malignant epidermal,-1,1,,0.99995446,image_6445
+33,inflammatory,3,4,,4.0452273e-06,image_11104
+34,inflammatory,2,2,,5.6484225e-07,image_14064
+35,malignant epidermal,1,1,,0.99996793,image_16555
+36,malignant melanoma,4,3,,0.994146,image_14260
+37,inflammatory,1,1,,5.0054718e-05,image_8102
+38,genodermatoses,3,4,,0.012796518,image_9007
+39,inflammatory,2,1,,2.1953487e-05,image_16229
+40,inflammatory,2,1,,6.4895394e-06,image_10491
+41,inflammatory,2,1,,2.2427344e-06,image_14702
+42,genodermatoses,4,5,,0.0037580945,image_8289
+43,inflammatory,2,1,,8.7826857e-07,image_4343
+44,inflammatory,1,1,,7.1273603e-06,image_12036
+45,inflammatory,2,1,,4.255953e-06,image_13577
+46,genodermatoses,1,1,,0.00051325787,image_11731
+47,inflammatory,4,3,,2.4728017e-06,image_10108
+48,malignant epidermal,1,1,,0.9998029,image_2405
+49,inflammatory,1,1,,2.1652586e-06,image_8662
+50,inflammatory,2,3,,7.4402865e-06,image_1854
+51,inflammatory,1,1,,2.0661043e-06,image_13344
+52,malignant melanoma,3,1,,0.9992053,image_7551
+53,malignant epidermal,1,3,,0.9995883,image_5938
+54,benign epidermal,1,1,,0.00031076215,image_14367
+55,inflammatory,2,1,,3.2125658e-06,image_410
+56,inflammatory,2,1,,7.366931e-07,image_3486
+57,inflammatory,4,3,,2.5071595e-05,image_6558
+58,inflammatory,2,-1,,1.2778727e-06,image_8953
+59,inflammatory,4,3,,7.099573e-06,image_13668
+60,inflammatory,5,5,,2.0500256e-06,image_3593
+61,inflammatory,3,4,,2.7802448e-06,image_13581
+62,inflammatory,3,3,,1.8091417e-06,image_13884
+63,inflammatory,5,4,,8.614651e-05,image_2715
+64,inflammatory,2,2,,2.350365e-06,image_5406
+65,inflammatory,4,5,,6.059873e-07,image_6492
+66,malignant melanoma,2,1,,0.9993411,image_14025
+67,inflammatory,3,2,,1.3709571e-06,image_1303
+68,genodermatoses,1,1,,0.0057974006,image_10881
+69,inflammatory,3,2,,1.2171438e-05,image_8294
+70,benign dermal,5,3,,0.004323087,image_13288
+71,genodermatoses,2,1,,0.0004272079,image_5479
+72,inflammatory,3,2,,5.2649096e-07,image_15639
+73,inflammatory,1,2,,1.1434016e-05,image_9355
+74,inflammatory,5,5,,3.7558673e-06,image_14589
+75,inflammatory,1,1,,1.2855592e-05,image_9200
+76,inflammatory,2,1,,3.5218418e-05,image_3904
+77,inflammatory,2,1,,4.1736366e-06,image_13566
+78,inflammatory,1,1,,5.4647453e-06,image_14110
+79,inflammatory,4,2,,9.3126704e-07,image_5768
+80,inflammatory,2,-1,,3.225139e-06,image_5381
+81,benign melanocyte,1,1,,0.00057590916,image_3426
+82,malignant epidermal,2,1,,0.9999502,image_734
+83,inflammatory,1,1,,0.00011213407,image_721
+84,inflammatory,1,2,,8.732611e-06,image_2070
+85,inflammatory,1,1,,6.5404374e-06,image_4721
+86,inflammatory,1,1,,2.7911265e-06,image_5397
+87,inflammatory,3,1,,8.545788e-07,image_11992
+88,inflammatory,2,1,,7.2679336e-06,image_12019
+89,benign epidermal,3,3,,0.000118667966,image_4030
+90,benign dermal,2,2,,3.883111e-05,image_7705
+91,inflammatory,4,2,,6.68307e-05,image_8068
+92,inflammatory,2,1,,7.324936e-06,image_4
+93,benign epidermal,2,3,,5.7387595e-05,image_13278
+94,inflammatory,5,6,,3.7636444e-05,image_10957
+95,malignant epidermal,3,3,,0.99960417,image_5146
+96,inflammatory,4,5,,3.206683e-05,image_16076
+97,benign dermal,1,1,,4.0694576e-05,image_13086
+98,benign melanocyte,3,2,,0.09859886,image_3480
+99,inflammatory,-1,-1,,0.00013658353,image_9376
+100,inflammatory,3,2,,2.3780706e-06,image_5848
+101,genodermatoses,2,3,,0.00072083797,image_9250
+102,genodermatoses,4,3,,0.0058086696,image_15401
+103,genodermatoses,4,4,1 Diagnostic,0.001034247,image_4128
+104,inflammatory,1,1,,4.757645e-05,image_16155
+105,inflammatory,2,2,,9.385711e-07,image_8471
+106,inflammatory,2,1,,1.5841376e-06,image_13552
+107,inflammatory,2,2,,2.9944408e-06,image_8230
+108,malignant epidermal,2,1,,0.9999782,image_7797
+109,malignant epidermal,1,1,,0.9994715,image_7022
+110,inflammatory,1,-1,,7.0021684e-07,image_3099
+111,benign dermal,4,3,,0.0008693674,image_5762
+112,genodermatoses,3,2,,0.0025409926,image_48
+113,inflammatory,2,1,,4.6656285e-05,image_10937
+114,benign epidermal,3,3,,0.0002323142,image_5911
+115,inflammatory,3,3,,1.6153817e-06,image_11636
+116,inflammatory,2,1,,4.0535928e-05,image_13997
+117,benign dermal,2,2,,5.5622062e-05,image_15131
+118,inflammatory,2,1,,9.385711e-07,image_5275
+119,genodermatoses,2,1,,0.00059766934,image_658
+120,benign melanocyte,4,3,,0.0005582003,image_3947
+121,malignant epidermal,6,5,,0.95296955,image_8441
+122,inflammatory,2,-1,,1.2434044e-06,image_3283
+123,inflammatory,3,3,,5.9319223e-06,image_602
+124,inflammatory,4,3,1 Diagnostic,6.9895054e-06,image_1122
+125,benign dermal,2,1,,0.0009217804,image_16142
+126,inflammatory,3,3,,7.2963794e-06,image_11497
+127,genodermatoses,5,5,,0.000611834,image_15231
+128,inflammatory,2,1,,2.178265e-05,image_1057
+129,inflammatory,2,2,1 Diagnostic,4.442812e-06,image_13003
+130,inflammatory,1,1,,1.2029638e-05,image_3981
+131,inflammatory,1,1,,3.3869266e-05,image_9973
+132,inflammatory,4,4,,2.796173e-07,image_14083
+133,malignant melanoma,2,2,,0.99911517,image_9543
+134,inflammatory,6,6,,1.6187583e-05,image_12908
+135,inflammatory,6,6,,0.00033996487,image_9286
+136,inflammatory,2,3,,1.2606945e-05,image_10051
+137,malignant epidermal,2,2,,0.9998647,image_8482
+138,benign epidermal,4,5,,5.560852e-07,image_12425
+139,inflammatory,1,2,,4.5127754e-06,image_6927
+140,genodermatoses,4,4,,0.014172365,image_6326
+141,malignant epidermal,2,1,,0.9999796,image_11134
+142,inflammatory,3,3,,6.0362476e-07,image_11326
+143,inflammatory,3,1,,2.596867e-05,image_197
+144,benign epidermal,2,1,,0.0003966612,image_9412
+145,malignant epidermal,1,1,,0.9999094,image_13838
+146,inflammatory,-1,-1,,8.716188e-05,image_9748
+147,inflammatory,3,3,,1.1957702e-06,image_12030
+148,inflammatory,4,3,,2.492196e-06,image_292
+149,inflammatory,4,4,,1.2728908e-06,image_1356
+150,inflammatory,4,5,,9.1655625e-09,image_8304
+151,malignant melanoma,2,1,,0.9986749,image_6957
+152,malignant melanoma,4,2,,0.99954,image_13166
+153,inflammatory,1,2,,6.49013e-05,image_3858
+154,inflammatory,5,5,,2.0103744e-06,image_7440
+155,inflammatory,4,4,,8.3478255e-07,image_14102
+156,inflammatory,3,4,,2.6322837e-06,image_4344
+157,malignant epidermal,2,1,,0.9999714,image_4853
+158,inflammatory,2,3,,2.5612826e-06,image_16189
+159,inflammatory,2,2,,2.6529287e-06,image_16517
+160,genodermatoses,4,4,,0.0058824453,image_11787
+161,inflammatory,4,1,,0.00010932308,image_7279
+162,genodermatoses,4,5,,0.00014009539,image_124
+163,inflammatory,2,2,,4.442812e-06,image_2158
+164,inflammatory,4,3,,4.936989e-06,image_10157
+165,inflammatory,2,1,,3.25718e-05,image_3563
+166,malignant cutaneous lymphoma,2,1,,0.9980122,image_13352
+167,benign dermal,2,3,,0.04733772,image_14661
+168,benign dermal,3,3,,0.00033144452,image_5726
+169,malignant epidermal,4,3,,0.999864,image_4442
+170,malignant epidermal,1,3,,0.99978,image_13652
+171,inflammatory,4,4,,2.3873781e-06,image_1656
+172,inflammatory,3,4,,1.1705165e-05,image_8198
+173,inflammatory,1,2,,3.7489724e-05,image_13349
+174,inflammatory,3,3,,1.4255697e-06,image_4961
+175,benign dermal,2,1,,0.0026010938,image_8798
+176,inflammatory,5,5,,6.9351136e-06,image_5956
+177,inflammatory,2,2,,1.5779617e-06,image_3658
+178,malignant dermal,2,1,,0.9936365,image_2406
+179,inflammatory,4,4,,4.013747e-06,image_15900
+180,benign dermal,2,1,,0.0028118584,image_4169
+181,inflammatory,2,2,,2.1400322e-06,image_2087
+182,malignant epidermal,5,-1,,0.99962294,image_7513
+183,inflammatory,5,5,,1.0699397e-05,image_829
+184,inflammatory,2,1,,2.72647e-06,image_12094
+185,inflammatory,4,3,,1.1772316e-06,image_12816
+186,malignant epidermal,1,1,,0.99995947,image_1035
+187,inflammatory,2,2,,2.4728017e-06,image_10564
+188,genodermatoses,4,3,,0.0003740956,image_9863
+189,inflammatory,4,3,,3.859984e-06,image_14139
+190,inflammatory,3,3,,2.8461761e-06,image_11267
+191,inflammatory,1,2,,9.934061e-06,image_14762
+192,inflammatory,2,3,,9.116015e-06,image_11481
+193,benign dermal,1,1,,0.00048785712,image_15761
+194,inflammatory,2,2,,7.889263e-06,image_5173
+195,benign dermal,6,6,,0.0004592085,image_1091
+196,inflammatory,4,3,,1.3846005e-05,image_14649
+197,inflammatory,5,6,,8.716188e-05,image_4772
+198,inflammatory,3,1,,6.120221e-06,image_7947
+199,benign epidermal,1,1,,1.4453909e-05,image_1800
+200,malignant cutaneous lymphoma,3,3,,0.92605335,image_8324
+201,inflammatory,6,6,,1.683241e-05,image_10219
+202,inflammatory,3,2,,2.3187476e-05,image_2130
+203,inflammatory,1,1,,2.7108801e-05,image_13533
+204,inflammatory,4,3,,9.797794e-07,image_14336
+205,inflammatory,2,1,,5.3910848e-05,image_8632
+206,inflammatory,1,1,,3.0006619e-05,image_2320
+207,inflammatory,2,-1,,5.737372e-07,image_15771
+208,inflammatory,3,1,,2.3090713e-07,image_15769
+209,inflammatory,4,4,,2.0303694e-05,image_6888
+210,inflammatory,3,3,,1.295642e-05,image_7661
+211,inflammatory,4,2,,2.0025368e-06,image_12280
+212,inflammatory,3,4,,4.8604484e-06,image_5569
+213,inflammatory,2,2,,1.420012e-06,image_5478
+214,inflammatory,2,2,,4.3989965e-07,image_9316
+215,inflammatory,2,2,,1.8448237e-06,image_10496
+216,inflammatory,3,1,,2.4779507e-05,image_4129
+217,inflammatory,3,1,,1.0410801e-05,image_4470
+218,malignant epidermal,1,1,,0.9999666,image_14791
+219,inflammatory,4,4,,8.044863e-06,image_3060
+220,inflammatory,6,6,,5.572527e-06,image_4036
+221,inflammatory,3,2,,2.396722e-06,image_16112
+222,inflammatory,2,2,,1.118943e-06,image_3291
+223,inflammatory,1,4,,4.5921354e-07,image_2496
+224,inflammatory,3,4,,1.7709239e-05,image_8171
+225,inflammatory,2,2,,2.5612826e-06,image_11974
+226,inflammatory,6,5,,1.3081766e-06,image_1011
+227,inflammatory,4,3,,3.662131e-05,image_10209
+228,benign epidermal,2,2,,0.00060471025,image_730
+229,benign dermal,3,2,,0.000423058,image_14663
+230,inflammatory,2,1,,2.83508e-06,image_15210
+231,inflammatory,2,1,,1.7741497e-06,image_15895
+232,inflammatory,2,1,,1.4311494e-06,image_5442
+233,genodermatoses,6,5,,0.00086260785,image_1985
+234,inflammatory,5,5,,1.482358e-06,image_4460
+235,inflammatory,3,1,,3.5421208e-06,image_9490
+236,benign dermal,1,1,,0.0003393018,image_3972
+237,benign dermal,4,-1,,0.00021070434,image_13505
+238,inflammatory,4,4,,8.154448e-07,image_323
+239,inflammatory,2,1,,3.9515207e-06,image_3446
+240,genodermatoses,4,4,,0.0041662566,image_5528
+241,inflammatory,-1,-1,,0.0006300126,image_9256
+242,inflammatory,3,3,,4.8604484e-06,image_358
+243,benign epidermal,2,1,,0.0024968279,image_13406
+244,genodermatoses,3,1,,0.000107208805,image_14655
+245,inflammatory,-1,1,,2.6529287e-06,image_8779
+246,inflammatory,4,3,,2.5314428e-06,image_12750
+247,inflammatory,3,4,,1.3954598e-05,image_6921
+248,inflammatory,3,4,,3.6832228e-06,image_10813
+249,malignant melanoma,2,2,,0.9972154,image_1871
+250,inflammatory,2,2,,4.0452273e-06,image_12366
+251,inflammatory,2,1,,1.1434016e-05,image_11344
+252,benign epidermal,1,1,,0.0008492457,image_14005
+253,inflammatory,4,3,,6.168222e-06,image_8508
+254,inflammatory,3,2,,1.354985e-06,image_3289
+255,inflammatory,2,2,,2.7108801e-05,image_1922
+256,malignant cutaneous lymphoma,4,2,,0.9969722,image_11571
+257,benign epidermal,2,1,,4.4519835e-05,image_8754
+258,inflammatory,1,1,,4.215063e-05,image_3782
+259,malignant epidermal,3,3,,0.99965334,image_2857
+260,inflammatory,2,2,,1.9409254e-06,image_8084
+261,benign dermal,3,-1,,1.0953122e-05,image_10753
+262,inflammatory,2,3,,0.00012291357,image_16113
+263,benign melanocyte,2,1,,0.0012065896,image_10921
+264,inflammatory,1,1,,5.7494176e-06,image_7064
+265,inflammatory,3,4,,9.934061e-06,image_3261
+266,malignant melanoma,2,3,,0.99960643,image_6142
+267,benign dermal,2,1,,0.0013939501,image_1594
+268,inflammatory,5,4,,1.5750957e-05,image_2215
+269,inflammatory,6,6,,0.0007870084,image_347
+270,genodermatoses,3,1,,0.0017207357,image_13718
+271,malignant melanoma,3,2,,0.9983125,image_9515
+272,benign epidermal,2,1,,0.00011913237,image_388
+273,genodermatoses,1,2,,0.0031788659,image_5059
+274,inflammatory,5,4,,4.6742484e-06,image_103
+275,inflammatory,1,-1,1 Diagnostic,0.00038747615,image_13842
+276,malignant epidermal,4,4,,0.9999765,image_9024
+277,inflammatory,4,4,,1.0030142e-06,image_12079
+278,inflammatory,5,4,,6.553815e-05,image_427
+279,benign epidermal,2,2,,5.133655e-06,image_13730
+280,genodermatoses,2,2,,0.0016974094,image_13361
+281,inflammatory,3,3,,4.8604484e-06,image_13974
+282,benign dermal,-1,-1,,0.0017274587,image_11335
+283,malignant melanoma,1,1,,0.9997527,image_4004
+284,benign epidermal,3,5,,6.6694342e-06,image_14331
+285,inflammatory,4,2,,4.7850945e-06,image_9163
+286,inflammatory,2,3,,1.1523693e-05,image_14955
+287,inflammatory,2,2,,4.710909e-06,image_10309
+288,inflammatory,1,3,,5.0343624e-06,image_8210
+289,inflammatory,3,3,,7.0443243e-06,image_11113
+290,inflammatory,3,2,,3.7121104e-06,image_12559
+291,inflammatory,2,1,,7.827867e-06,image_14792
+292,genodermatoses,3,4,,0.00038221668,image_5666
+293,malignant epidermal,1,1,,0.999944,image_8995
+294,malignant dermal,4,4,,0.9380106,image_2454
+295,malignant melanoma,4,4,,0.99909246,image_7164
+296,inflammatory,3,3,1 Diagnostic,6.9895054e-06,image_6832
+297,malignant cutaneous lymphoma,4,4,,0.98746,image_11749
+298,inflammatory,4,4,,3.353614e-06,image_14665
+299,inflammatory,3,3,,6.3144957e-06,image_9568
+300,malignant epidermal,-1,1,,0.99991655,image_6631
+301,inflammatory,6,6,,0.0002742567,image_3920
+302,inflammatory,3,3,,3.6688634e-06,image_11637
+303,malignant epidermal,-1,-1,,0.9998739,image_2858
+304,malignant epidermal,1,1,,0.9999621,image_4399
+305,inflammatory,3,-1,,8.218404e-07,image_12855
+306,genodermatoses,-1,2,,0.009081591,image_15050
+307,malignant epidermal,2,2,,0.99988806,image_12900
+308,inflammatory,4,4,,1.2979964e-06,image_9454
+309,benign dermal,3,3,,0.0018172832,image_12326
+310,inflammatory,2,1,,2.72149e-05,image_8880
+311,inflammatory,2,-1,,6.5917343e-06,image_10377
+312,inflammatory,2,-1,,5.1442214e-05,image_1531
+313,inflammatory,2,1,,2.7802448e-06,image_13989
+314,inflammatory,3,3,,3.200041e-06,image_10612
+315,inflammatory,2,3,,6.0963603e-06,image_425
+316,inflammatory,-1,-1,,0.00017064043,image_11766
+317,inflammatory,5,3,,5.2144983e-06,image_1711
+318,inflammatory,2,1,,3.0654517e-06,image_10584
+319,malignant epidermal,4,3,,0.9996302,image_6245
+320,inflammatory,2,2,,5.8628143e-06,image_328
+321,inflammatory,2,2,,1.1389439e-05,image_2120
+322,inflammatory,2,1,,3.263156e-06,image_9465
+323,inflammatory,3,1,,6.0963603e-06,image_13271
+324,inflammatory,3,4,,1.7778551e-05,image_2022
+325,genodermatoses,3,3,,0.00050827255,image_2678
+326,inflammatory,5,5,,6.5012944e-07,image_6730
+327,inflammatory,3,3,,4.9471593e-05,image_6206
+328,genodermatoses,3,3,,0.0010142631,image_8391
+329,benign dermal,2,1,,0.00040448154,image_1262
+330,inflammatory,2,2,,7.4986406e-06,image_12115
+331,inflammatory,4,2,,7.6465385e-06,image_16310
+332,malignant melanoma,1,1,,0.999433,image_5965
+333,inflammatory,2,1,,6.908076e-06,image_796
+334,inflammatory,2,1,,4.9951846e-06,image_12843
+335,inflammatory,4,3,,1.28054735e-05,image_15697
+336,inflammatory,2,1,,1.6378392e-05,image_6622
+337,genodermatoses,4,2,,0.00079939206,image_1373
+338,inflammatory,5,5,,9.759596e-07,image_8064
+339,inflammatory,2,2,,1.4255697e-06,image_89
+340,malignant melanoma,3,2,,0.99991715,image_11080
+341,inflammatory,4,4,,4.917742e-06,image_7703
+342,inflammatory,5,1,,4.504459e-05,image_14369
+343,inflammatory,4,5,,2.7052524e-06,image_4739
+344,benign dermal,4,3,,0.00024062474,image_879
+345,inflammatory,3,3,,3.741225e-06,image_9660
+346,inflammatory,2,1,,6.364022e-06,image_11941
+347,inflammatory,1,1,,3.6688634e-06,image_5660
+348,inflammatory,2,2,,3.0654517e-06,image_7519
+349,benign dermal,3,1,,7.7524135e-05,image_8875
+350,genodermatoses,4,5,,5.3075077e-05,image_8910
+351,inflammatory,4,3,,1.9183128e-06,image_6917
+352,inflammatory,3,3,,5.8399573e-06,image_255
+353,benign melanocyte,1,1,,0.00060471025,image_12468
+354,inflammatory,-1,-1,,0.00034397095,image_10549
+355,inflammatory,1,2,,3.4197576e-06,image_2743
+356,inflammatory,6,5,,1.07412725e-05,image_1457
+357,inflammatory,2,3,,7.2963794e-06,image_15939
+358,inflammatory,2,1,,4.936989e-06,image_11735
+359,inflammatory,1,1,,1.3081766e-06,image_1715
+360,genodermatoses,3,5,,0.00017536993,image_5924
+361,inflammatory,4,3,,2.1822405e-06,image_15480
+362,inflammatory,4,4,,3.936115e-06,image_150
+363,inflammatory,1,1,,1.3007128e-05,image_8318
+364,inflammatory,3,1,,2.6016164e-06,image_3560
+365,malignant epidermal,3,1,,0.9999286,image_15092
+366,inflammatory,2,2,,7.42471e-07,image_16156
+367,inflammatory,2,1,,1.9033847e-06,image_13034
+368,inflammatory,3,1,,3.808008e-05,image_4867
+369,benign epidermal,5,4,,0.0003982131,image_15245
+370,inflammatory,3,3,,1.0249399e-05,image_4507
+371,inflammatory,6,6,,0.00029137006,image_14445
+372,malignant dermal,3,2,,0.9822452,image_5708
+373,inflammatory,-1,-1,,0.0004280427,image_3071
+374,benign dermal,5,5,,8.597225e-06,image_10970
+375,inflammatory,1,1,,2.0986402e-06,image_15555
+376,benign dermal,2,2,,0.00015356242,image_1454
+377,inflammatory,2,2,,5.2966143e-06,image_8137
+378,inflammatory,3,2,,3.4197576e-06,image_4246
+379,inflammatory,2,2,,6.5404374e-06,image_3102
+380,genodermatoses,2,2,,0.00324136,image_12611
+381,benign dermal,2,3,,0.00081355654,image_14085
+382,inflammatory,1,1,,4.917742e-06,image_567
+383,malignant epidermal,-1,2,,0.999928,image_291
+384,malignant epidermal,3,1,,0.9999517,image_5126
+385,inflammatory,1,1,,1.4009213e-05,image_9595
+386,inflammatory,4,5,,2.1439e-07,image_12105
+387,inflammatory,2,2,,1.2434044e-06,image_2184
+388,inflammatory,4,3,,1.52068405e-05,image_9501
+389,inflammatory,4,2,,1.8481575e-07,image_6428
+390,inflammatory,2,1,,8.10796e-06,image_3546
+391,inflammatory,2,2,,1.7810935e-06,image_3746
+392,inflammatory,3,2,,1.1843139e-05,image_11200
+393,inflammatory,2,2,,2.4682904e-05,image_2251
+394,genodermatoses,4,5,,0.00010513541,image_11076
+395,inflammatory,5,5,,1.3709571e-06,image_16422
+396,inflammatory,3,3,,1.7880645e-06,image_12484
+397,inflammatory,3,3,,2.5666135e-05,image_2449
+398,inflammatory,2,2,,1.0188091e-06,image_14525
+399,benign dermal,3,1,,0.0015517841,image_13653
+400,inflammatory,1,1,,3.0006619e-05,image_1808
+401,inflammatory,2,1,,1.3391991e-06,image_9390
+402,inflammatory,2,1,,2.2427344e-06,image_9758
+403,inflammatory,2,-1,,1.04515475e-05,image_16540
+404,inflammatory,3,4,,6.8009763e-06,image_7357
+405,inflammatory,1,1,,2.6842004e-06,image_8770
+406,inflammatory,1,1,1 Diagnostic,5.6824347e-06,image_9004
+407,inflammatory,4,3,,3.3667393e-06,image_9322
+408,malignant epidermal,2,2,,0.99996114,image_9585
+409,benign epidermal,5,5,,6.1088555e-05,image_4487
+410,benign epidermal,4,2,,0.00016898243,image_11022
+411,inflammatory,2,1,,5.3800236e-06,image_5067
+412,inflammatory,3,3,,6.464239e-06,image_12427
+413,inflammatory,1,1,,3.340539e-06,image_14109
+414,inflammatory,1,1,,4.5659704e-06,image_3502
+415,inflammatory,5,3,,1.9525885e-05,image_4255
+416,benign dermal,4,-1,,2.7911265e-06,image_1167
+417,benign epidermal,2,1,,0.0002178163,image_14736
+418,inflammatory,1,1,,2.8797263e-06,image_10942
+419,inflammatory,1,1,,2.424974e-06,image_10074
+420,inflammatory,4,5,,3.0535007e-06,image_11844
+421,benign dermal,4,3,,0.0004263747,image_3222
+422,inflammatory,1,1,,2.2917342e-05,image_12436
+423,inflammatory,3,3,,4.917742e-06,image_13628
+424,inflammatory,1,1,,1.3525268e-05,image_6628
+425,benign epidermal,3,3,,0.0004888105,image_11534
+426,inflammatory,2,2,,8.0135e-06,image_15269
+427,malignant epidermal,-1,-1,,0.7341553,image_4126
+428,inflammatory,2,1,,2.7911265e-06,image_3195
+429,inflammatory,3,2,,1.8665697e-06,image_4895
+430,inflammatory,-1,-1,,0.0001336808,image_13732
+431,benign melanocyte,1,1,,0.0011809737,image_2055
+432,benign dermal,3,2,,0.001548761,image_9661
+433,inflammatory,2,2,,1.36313465e-05,image_7672
+434,inflammatory,2,2,,1.1277189e-06,image_2035
+435,benign dermal,3,2,,0.0015188508,image_13813
+436,genodermatoses,1,1,,0.002506575,image_9731
+437,malignant melanoma,3,3,,0.9991066,image_1723
+438,benign dermal,2,1,,6.0850405e-05,image_13493
+439,malignant melanoma,2,2,,0.9992549,image_9801
+440,genodermatoses,1,1,,0.0030994152,image_11794
+441,inflammatory,2,2,,6.439038e-06,image_9076
+442,inflammatory,4,5,,3.2192333e-05,image_7607
+443,inflammatory,1,1,,1.8631747e-05,image_15651
+444,malignant dermal,4,3,,0.88421434,image_2585
+445,inflammatory,3,3,,3.0179267e-06,image_2996
+446,malignant epidermal,4,3,,0.9997336,image_4398
+447,inflammatory,1,1,,4.0929117e-06,image_11127
+448,inflammatory,2,1,,3.1137256e-06,image_16188
+449,inflammatory,3,3,,3.0061608e-06,image_4986
+450,inflammatory,3,3,,3.741225e-06,image_16506
+451,inflammatory,4,5,,1.1864649e-06,image_14080
+452,benign dermal,1,-1,,0.00024729344,image_8331
+453,inflammatory,3,3,,4.3229747e-06,image_6279
+454,benign dermal,3,3,,0.00021152885,image_2175
+455,malignant epidermal,2,1,,0.99992335,image_11409
+456,inflammatory,2,2,,6.0613187e-05,image_4070
+457,malignant epidermal,3,2,,0.99996257,image_12753
+458,inflammatory,3,3,,6.895199e-05,image_13100
+459,inflammatory,2,1,,9.405386e-06,image_5013
+460,inflammatory,4,3,,2.2959193e-06,image_7475
+461,genodermatoses,1,2,,0.0069778804,image_15091
+462,inflammatory,5,5,,5.782371e-07,image_10996
+463,inflammatory,4,-1,,1.1082233e-05,image_285
+464,inflammatory,3,2,,9.459324e-07,image_102
+465,malignant epidermal,-1,-1,,0.96777767,image_8974
+466,inflammatory,2,2,,1.5595781e-06,image_8296
+467,inflammatory,2,2,,2.2603242e-06,image_2615
+468,inflammatory,4,6,,1.7672329e-06,image_15847
+469,inflammatory,2,4,,4.0294562e-06,image_7029
+470,malignant epidermal,2,2,,0.99998116,image_15806
+471,benign melanocyte,2,3,,0.003422935,image_6250
+472,inflammatory,2,2,,1.5386091e-05,image_13671
+473,inflammatory,2,1,,4.0929117e-06,image_8356
+474,inflammatory,3,3,,4.2063702e-06,image_6609
+475,inflammatory,3,2,,1.1523693e-05,image_1651
+476,inflammatory,2,2,,1.2029638e-05,image_13283
+477,inflammatory,2,1,,2.5019501e-06,image_9752
+478,inflammatory,3,3,,6.3392104e-06,image_10498
+479,genodermatoses,3,2,,0.0009344577,image_4167
+480,malignant epidermal,4,3,,0.99975175,image_863
+481,inflammatory,2,2,,6.203578e-07,image_15102
+482,inflammatory,2,1,,2.5215734e-06,image_2761
+483,inflammatory,3,4,,2.0661043e-06,image_8769
+484,genodermatoses,4,3,,0.0035796424,image_8582
+485,malignant epidermal,2,1,,0.9999664,image_6330
+486,inflammatory,1,1,,1.9183128e-06,image_8242
+487,inflammatory,2,1,,2.0704138e-05,image_9280
+488,malignant epidermal,2,2,,0.9999684,image_2345
+489,inflammatory,5,4,,4.03779e-05,image_8080
+490,genodermatoses,4,3,,0.00094546226,image_15605
+491,inflammatory,4,2,,5.572527e-06,image_7982
+492,malignant melanoma,1,1,,0.99853635,image_4141
+493,benign epidermal,3,-1,,2.4344647e-06,image_16224
+494,inflammatory,2,2,,3.1751379e-06,image_15319
+495,genodermatoses,2,1,,0.003524341,image_2586
+496,inflammatory,4,5,,1.1233225e-06,image_15595
+497,inflammatory,3,1,,5.638215e-06,image_10943
+498,inflammatory,2,1,,6.866734e-07,image_5720
+499,inflammatory,2,1,,8.332719e-06,image_7218
+500,malignant epidermal,3,3,,0.99995816,image_4871
+501,malignant dermal,6,5,,0.65885663,image_13530
+502,inflammatory,3,1,,5.023812e-07,image_2456
+503,inflammatory,2,3,,5.1241666e-05,image_5072
+504,inflammatory,3,3,,3.0535007e-06,image_12502
+505,genodermatoses,3,2,,0.0015885253,image_6071
+506,inflammatory,2,3,,2.6172338e-05,image_2389
+507,genodermatoses,1,1,,0.0026265525,image_12165
+508,inflammatory,4,-1,,9.973534e-05,image_16170
+509,inflammatory,1,1,,2.7586088e-06,image_14763
+510,inflammatory,1,1,,1.7709239e-05,image_6809
+511,malignant epidermal,2,2,,0.9998741,image_1120
+512,inflammatory,-1,-1,,2.1030175e-05,image_7090
+513,inflammatory,4,3,,1.0953122e-05,image_9423
+514,inflammatory,2,2,,1.420012e-06,image_1497
+515,malignant epidermal,3,2,,0.99998057,image_15353
+516,inflammatory,3,2,,1.9108343e-06,image_14163
+517,benign dermal,2,3,,0.0009092752,image_10155
+518,inflammatory,3,1,,3.9669867e-06,image_7730
+519,malignant melanoma,3,3,,0.999673,image_5313
+520,malignant epidermal,1,1,,0.99998665,image_13102
+521,inflammatory,2,2,,8.6128136e-07,image_14864
+522,inflammatory,1,1,,0.000120066616,image_10895
+523,inflammatory,5,5,,7.16822e-07,image_2151
+524,inflammatory,2,2,,1.9333586e-06,image_16056
+525,genodermatoses,2,2,,0.0014021304,image_2089
+526,inflammatory,1,2,,2.971138e-06,image_10849
+527,genodermatoses,1,1,,0.05834584,image_9460
+528,benign epidermal,6,6,,8.415109e-05,image_5529
+529,inflammatory,1,1,5 Potentially,4.3568803e-06,image_13336
+530,inflammatory,2,1,,2.1568167e-06,image_5866
+531,inflammatory,6,6,,1.6442495e-05,image_15669
+532,genodermatoses,2,3,,0.008728267,image_7183
+533,inflammatory,4,3,,1.005116e-05,image_7643
+534,inflammatory,1,1,,3.9207694e-06,image_3211
+535,inflammatory,2,3,,3.2377618e-06,image_2316
+536,inflammatory,3,1,,1.4681521e-05,image_3363
+537,malignant epidermal,3,3,,0.99991584,image_3690
+538,inflammatory,4,5,,1.9368524e-07,image_5291
+539,malignant epidermal,4,4,,0.9998437,image_12060
+540,inflammatory,1,1,,3.859984e-06,image_13238
+541,benign dermal,2,1,,0.0003604725,image_6183
+542,inflammatory,1,1,,2.7052524e-06,image_13608
+543,inflammatory,2,-1,,4.710909e-06,image_9214
+544,inflammatory,4,6,,0.00016865275,image_15207
+545,benign epidermal,2,1,,0.0015337332,image_10630
+546,inflammatory,3,2,,5.616788e-05,image_10200
+547,malignant melanoma,2,1,,0.9985869,image_15534
+548,inflammatory,3,1,,1.8665697e-06,image_2580
+549,inflammatory,-1,3,,2.4490826e-05,image_3976
+550,inflammatory,6,5,,1.9988918e-05,image_8001
+551,malignant melanoma,1,1,,0.9997358,image_8290
+552,inflammatory,4,3,,3.4064249e-06,image_10318
+553,inflammatory,5,3,,5.8171895e-06,image_2481
+554,inflammatory,1,1,,1.016964e-05,image_4581
+555,inflammatory,3,3,1 Diagnostic,2.4205505e-05,image_1523
+556,malignant melanoma,1,1,,0.99988174,image_8467
+557,inflammatory,3,3,,0.00016474655,image_6956
+558,benign epidermal,3,2,,7.6920885e-05,image_86
+559,malignant epidermal,1,1,,0.9999865,image_2267
+560,benign dermal,1,1,,0.00050235394,image_1124
+561,inflammatory,2,2,,1.3081766e-06,image_11043
+562,inflammatory,1,1,,3.2504345e-06,image_2920
+563,inflammatory,2,1,,6.4895394e-06,image_13711
+564,inflammatory,1,1,,2.463161e-06,image_2502
+565,inflammatory,6,6,,6.464239e-06,image_2100
+566,inflammatory,1,1,,1.4285517e-05,image_15173
+567,inflammatory,3,1,,1.2123986e-05,image_10503
+568,inflammatory,4,2,,3.7121104e-06,image_2727
+569,benign epidermal,2,1,,0.0001823546,image_14207
+570,benign dermal,2,-1,,0.00020622673,image_11911
+571,inflammatory,2,1,,5.8628143e-06,image_12898
+572,benign melanocyte,2,2,,0.00020743838,image_3108
+573,inflammatory,3,-1,1 Diagnostic,4.7850945e-06,image_7664
+574,inflammatory,5,6,,6.014152e-05,image_11686
+575,benign epidermal,3,3,,4.9182574e-05,image_9569
+576,inflammatory,3,2,,1.4255697e-06,image_15435
+577,inflammatory,4,3,,3.5008547e-06,image_10747
+578,malignant epidermal,2,2,,0.99996996,image_6026
+579,genodermatoses,1,1,,0.044597577,image_305
+580,malignant melanoma,1,1,,0.9998952,image_14268
+581,inflammatory,1,1,,9.259568e-06,image_885
+582,inflammatory,4,5,,7.1962756e-07,image_1706
+583,inflammatory,2,3,,1.1864649e-06,image_3965
+584,inflammatory,5,5,,1.3709571e-06,image_5744
+585,inflammatory,4,3,,3.3931449e-06,image_903
+586,benign dermal,3,-1,,0.0017926508,image_7389
+587,inflammatory,4,4,,3.741225e-06,image_2468
+588,malignant cutaneous lymphoma,1,2,,0.9991959,image_12709
+589,inflammatory,1,1,,3.5145565e-06,image_8991
+590,inflammatory,2,2,,1.1957702e-06,image_15882
+591,inflammatory,1,1,,3.1015863e-06,image_10767
+592,inflammatory,2,2,,5.486134e-06,image_5439
+593,malignant epidermal,2,3,,0.9998393,image_12500
+594,benign dermal,4,4,,3.3020155e-05,image_2326
+595,inflammatory,2,1,,5.275965e-06,image_9080
+596,benign epidermal,1,1,,9.351046e-05,image_1945
+597,inflammatory,2,2,,1.3763229e-06,image_9531
+598,malignant dermal,6,6,1 Diagnostic,0.9787127,image_9619
+599,inflammatory,1,1,,1.4397558e-05,image_9808
+600,malignant melanoma,-1,-1,,0.998147,image_2271
+601,inflammatory,3,-1,,3.1504294e-06,image_13625
+602,genodermatoses,4,3,,0.00080095365,image_6072
+603,inflammatory,1,1,,6.5917343e-06,image_8073
+604,inflammatory,2,1,,8.5637075e-06,image_14228
+605,inflammatory,1,1,,2.6529287e-06,image_1684
+606,inflammatory,4,4,,2.3595642e-06,image_11783
+607,malignant epidermal,4,3,,0.9994947,image_13723
+608,inflammatory,2,2,,0.00020502214,image_13810
+609,inflammatory,2,1,,5.7719203e-06,image_3878
+610,benign dermal,2,1,,0.0002373581,image_8422
+611,inflammatory,2,1,,1.529413e-06,image_2146
+612,inflammatory,4,2,,6.364022e-06,image_9315
+613,inflammatory,5,6,,2.6377607e-05,image_60
+614,benign dermal,6,6,,0.00089869124,image_3308
+615,inflammatory,3,2,,5.978447e-06,image_16114
+616,inflammatory,2,1,,1.1478769e-05,image_9714
+617,inflammatory,3,-1,,2.7052524e-06,image_11504
+618,genodermatoses,5,5,,0.0006538155,image_10112
+619,inflammatory,2,3,,1.8342893e-05,image_5891
+620,inflammatory,5,6,,3.8378734e-05,image_8619
+621,inflammatory,4,3,,9.187512e-06,image_8269
+622,inflammatory,1,1,,7.889263e-06,image_1494
+623,inflammatory,1,1,,1.0718818e-06,image_12576
+624,inflammatory,6,6,,4.813724e-05,image_11610
+625,inflammatory,2,2,,3.8150138e-06,image_9023
+626,benign epidermal,4,3,,3.822911e-05,image_8295
+627,inflammatory,5,5,,4.272611e-06,image_4111
+628,inflammatory,2,4,,6.120221e-06,image_9913
+629,malignant cutaneous lymphoma,3,2,,0.9887988,image_6291
+630,inflammatory,1,1,,4.248121e-05,image_6129
+631,inflammatory,4,4,,3.4331417e-06,image_8199
+632,benign epidermal,3,2,,0.00019035942,image_6001
+633,malignant epidermal,4,3,,0.9999522,image_9361
+634,benign dermal,2,1,,0.0005495509,image_7411
+635,inflammatory,3,1,,4.6017813e-06,image_3016
+636,inflammatory,2,2,,2.83508e-06,image_8615
+637,inflammatory,2,3,,1.1082233e-05,image_14898
+638,inflammatory,2,2,,1.8925148e-05,image_8823
+639,inflammatory,5,5,,1.6863055e-06,image_2752
+640,benign dermal,2,1,,0.00012077212,image_6235
+641,inflammatory,2,1,,1.8414685e-05,image_12989
+642,inflammatory,4,3,,1.1145806e-06,image_7710
+643,malignant epidermal,4,1,,0.9999825,image_10544
+644,benign epidermal,2,1,,0.0004840624,image_13478
+645,inflammatory,2,3,,5.1241666e-05,image_10805
+646,inflammatory,4,4,,2.2427344e-06,image_451
+647,inflammatory,1,1,,2.3737339e-05,image_908
+648,inflammatory,6,5,,2.83508e-06,image_10629
+649,inflammatory,1,1,,1.6995315e-06,image_13434
+650,malignant cutaneous lymphoma,2,2,,0.99705935,image_8959
+651,genodermatoses,1,1,,0.0027044297,image_10138
+652,benign dermal,3,-1,,0.00013186582,image_6490
+653,malignant epidermal,2,3,1 Diagnostic,0.9999558,image_8139
+654,benign epidermal,2,-1,,8.630874e-06,image_5107
+655,inflammatory,6,5,,4.917742e-06,image_9064
+656,inflammatory,-1,6,,4.539786e-05,image_3388
+657,inflammatory,4,3,,3.1627594e-06,image_5352
+658,genodermatoses,2,1,,0.014913983,image_16335
+659,inflammatory,4,3,5 Potentially,7.3536044e-06,image_16212
+660,inflammatory,2,-1,,8.904843e-06,image_15846
+661,genodermatoses,4,3,,0.00093081786,image_10418
+662,inflammatory,-1,-1,,0.00010554687,image_16153
+663,inflammatory,5,6,,2.0224537e-05,image_11419
+664,inflammatory,2,2,,9.553497e-06,image_4515
+665,inflammatory,4,1,,1.3367695e-05,image_3001
+666,inflammatory,3,2,,1.1864649e-06,image_7517
+667,inflammatory,2,1,,1.0011975e-05,image_9807
+668,inflammatory,2,-1,,4.4254903e-06,image_5546
+669,genodermatoses,3,3,,0.0046727303,image_7235
+670,benign melanocyte,3,3,,0.0004628084,image_3144
+671,inflammatory,-1,-1,,8.6985665e-06,image_12663
+672,benign dermal,2,-1,,3.3214194e-05,image_14284
+673,inflammatory,4,4,,1.3132967e-06,image_11876
+674,inflammatory,1,1,,4.477656e-06,image_6202
+675,inflammatory,4,3,,2.0744614e-05,image_15354
+676,inflammatory,-1,-1,,1.331558e-05,image_15328
+677,inflammatory,3,1,,6.302759e-05,image_4085
+678,malignant cutaneous lymphoma,2,2,,0.99783,image_5035
+679,inflammatory,-1,2,,1.6217043e-06,image_7408
+680,inflammatory,4,4,,1.414476e-06,image_9296
+681,malignant melanoma,-1,1,,0.9954615,image_13558
+682,inflammatory,2,1,,3.7052967e-05,image_16161
+683,genodermatoses,4,4,,0.0018350842,image_14956
+684,inflammatory,-1,-1,,1.9223171e-05,image_7723
+685,malignant melanoma,3,3,,0.9984053,image_12675
+686,inflammatory,1,1,,3.611983e-06,image_10159
+687,inflammatory,3,3,,3.9515207e-06,image_15011
+688,malignant melanoma,4,1,,0.99945897,image_9025
+689,inflammatory,2,1,,1.3109143e-05,image_4227
+690,malignant epidermal,2,1,,0.9999887,image_11075
+691,genodermatoses,3,3,,0.0014953383,image_382
+692,inflammatory,1,3,,3.7705674e-06,image_14348
+693,inflammatory,3,3,,8.267873e-06,image_2010
+694,inflammatory,1,1,,4.710909e-06,image_3270
+695,inflammatory,3,4,,1.295642e-05,image_13907
+696,inflammatory,2,2,,1.0011975e-05,image_477
+697,malignant epidermal,1,1,,0.99997747,image_10045
+698,inflammatory,4,4,,8.85157e-07,image_6878
+699,inflammatory,4,-1,,1.9333586e-06,image_2821
+700,inflammatory,2,1,,2.5314428e-06,image_13849
+701,malignant epidermal,3,3,,0.9990226,image_12659
+702,inflammatory,2,1,,7.6603953e-07,image_7540
+703,genodermatoses,4,3,,0.004895881,image_8531
+704,benign dermal,3,2,,7.707125e-05,image_6947
+705,inflammatory,5,5,,8.5124714e-07,image_12264
+706,inflammatory,5,6,,9.780049e-06,image_1248
+707,inflammatory,4,3,,2.6016164e-06,image_14027
+708,inflammatory,5,5,,2.2562048e-05,image_16066
+709,inflammatory,4,2,,5.978447e-06,image_11525
+710,inflammatory,2,2,,1.9033847e-06,image_2228
+711,genodermatoses,6,5,,0.0023231627,image_170
+712,inflammatory,5,4,,0.00027318773,image_12835
+713,benign epidermal,2,2,,0.00011637298,image_6699
+714,inflammatory,3,1,,5.967352e-05,image_15527
+715,malignant epidermal,3,2,,0.9999589,image_8975
+716,inflammatory,4,5,,7.52799e-06,image_4852
+717,inflammatory,3,2,,9.628426e-06,image_6919
+718,inflammatory,2,1,,0.0006986756,image_9724
+719,malignant melanoma,2,1,,0.9998568,image_7378
+720,benign epidermal,1,1,,1.4912718e-05,image_7840
+721,inflammatory,1,1,,7.889263e-06,image_4296
+722,inflammatory,1,-1,,4.239361e-06,image_15984
+723,benign dermal,3,3,,0.0023276936,image_12025
+724,inflammatory,2,-1,,7.155256e-06,image_2919
+725,benign dermal,2,1,,0.00043990332,image_9356
+726,inflammatory,3,1,,3.4331417e-06,image_5779
+727,inflammatory,2,1,,2.5314428e-06,image_7361
+728,inflammatory,5,5,,1.2728908e-06,image_7717
+729,inflammatory,4,2,,4.6378736e-06,image_5904
+730,inflammatory,1,2,,1.1233225e-06,image_9671
+731,inflammatory,1,1,,4.495181e-06,image_1311
+732,benign melanocyte,4,3,,0.0024107816,image_8332
+733,inflammatory,1,1,,5.2048563e-05,image_15646
+734,inflammatory,6,6,,0.00048311838,image_2699
+735,inflammatory,2,1,,1.2656288e-05,image_7678
+736,inflammatory,4,3,,4.3319036e-05,image_14307
+737,genodermatoses,4,4,,0.0019342613,image_12285
+738,inflammatory,1,2,,1.8414685e-05,image_15433
+739,inflammatory,4,4,,9.368716e-06,image_252
+740,malignant epidermal,1,1,,0.99992895,image_16533
+741,malignant epidermal,3,-1,,0.99992037,image_16554
+742,inflammatory,4,3,,2.1068543e-06,image_978
+743,malignant epidermal,2,2,,0.9999945,image_2309
+744,inflammatory,4,2,1 Diagnostic,7.827867e-06,image_5588
+745,inflammatory,-1,1,,5.133655e-06,image_151
+746,inflammatory,2,1,,3.8299454e-06,image_15557
+747,inflammatory,3,3,,7.2963794e-06,image_5206
+748,inflammatory,2,2,,1.3709571e-06,image_3284
+749,malignant epidermal,2,3,,0.99990606,image_352
+750,inflammatory,3,3,,2.41552e-06,image_14805
+751,inflammatory,5,6,,4.255953e-06,image_15247
+752,inflammatory,5,6,,0.000105959916,image_14069
+753,benign dermal,3,1,,0.006944127,image_10065
+754,inflammatory,5,5,,1.6863055e-06,image_5150
+755,inflammatory,6,6,,1.2411496e-05,image_8678
+756,inflammatory,4,3,,8.664652e-06,image_6443
+757,genodermatoses,3,4,,0.00086260785,image_5419
+758,malignant melanoma,4,2,,0.9990415,image_9542
+759,inflammatory,4,5,,9.836141e-07,image_13094
+760,inflammatory,3,2,,1.016964e-05,image_2178
+761,inflammatory,4,5,,6.8009763e-06,image_11365
+762,inflammatory,2,1,,5.908796e-06,image_6635
+763,inflammatory,3,2,,1.6280515e-06,image_14794
+764,inflammatory,2,3,,2.4682904e-05,image_6261
+765,genodermatoses,3,1,,0.00029137006,image_16346
+766,inflammatory,1,1,,8.545788e-07,image_4689
+767,malignant melanoma,2,1,,0.99346113,image_2930
+768,inflammatory,5,4,,0.00011501736,image_8702
+769,inflammatory,3,3,,4.739098e-05,image_8914
+770,inflammatory,4,4,,3.1504294e-06,image_11192
+771,inflammatory,5,5,,8.6985665e-06,image_5158
+772,inflammatory,4,3,,7.2395983e-06,image_2949
+773,genodermatoses,4,5,,0.00021360425,image_3059
+774,inflammatory,4,3,1 Diagnostic,3.0479143e-05,image_5759
+775,benign dermal,2,-1,,0.0001612454,image_6522
+776,malignant melanoma,3,4,,0.99442613,image_10243
+777,inflammatory,2,2,,1.5595781e-06,image_6387
+778,inflammatory,-1,2,,7.0863265e-05,image_4557
+779,inflammatory,2,1,,3.0297385e-06,image_11620
+780,benign epidermal,4,4,,7.197912e-05,image_15182
+781,inflammatory,2,1,,2.1484082e-06,image_12122
+782,genodermatoses,4,3,,0.0005692035,image_6187
+783,inflammatory,4,5,,5.614588e-08,image_15823
+784,inflammatory,4,5,,1.8846092e-07,image_736
+785,inflammatory,3,4,,5.7270026e-06,image_5964
+786,malignant dermal,4,4,,0.98765194,image_6114
+787,inflammatory,1,1,,1.3235971e-06,image_12084
+788,inflammatory,4,3,,1.8020884e-06,image_13937
+789,malignant epidermal,2,3,,0.99991655,image_8804
+790,inflammatory,3,-1,1 Diagnostic,1.676679e-05,image_10142
+791,genodermatoses,4,4,,0.0034362858,image_7026
+792,inflammatory,3,3,,8.81706e-07,image_6374
+793,inflammatory,4,-1,,1.9485221e-06,image_13286
+794,malignant cutaneous lymphoma,2,2,,0.998862,image_12119
+795,inflammatory,1,1,,1.1843139e-05,image_4666
+796,inflammatory,4,4,,4.1899716e-06,image_13403
+797,inflammatory,1,1,,1.354985e-06,image_15483
+798,benign dermal,-1,-1,,0.00018378455,image_14645
+799,inflammatory,3,3,,1.2241271e-06,image_9826
+800,inflammatory,4,3,,4.956311e-06,image_11593
+801,inflammatory,2,2,,4.157365e-06,image_11306
+802,inflammatory,4,3,,7.5574535e-06,image_5480
+803,malignant epidermal,2,1,,0.9999572,image_13422
+804,inflammatory,5,5,,2.0661043e-06,image_6177
+805,inflammatory,2,1,,1.5903378e-06,image_6439
+806,inflammatory,1,1,,1.420012e-06,image_10856
+807,inflammatory,1,1,,2.0623424e-05,image_14357
+808,inflammatory,2,2,,1.05717e-07,image_3861
+809,benign epidermal,3,3,,5.8519396e-05,image_6388
+810,inflammatory,5,5,,5.34782e-07,image_16128
+811,inflammatory,6,5,,1.5841376e-06,image_8250
+812,inflammatory,1,1,,1.5474412e-06,image_15826
+813,benign epidermal,2,1,,7.6920885e-05,image_9924
+814,inflammatory,4,2,,1.4255697e-06,image_5152
+815,inflammatory,1,1,,1.2979964e-06,image_13458
+816,genodermatoses,1,1,,0.0019994322,image_534
+817,inflammatory,3,3,,2.9827668e-06,image_7768
+818,malignant melanoma,2,1,,0.9999001,image_11777
+819,benign epidermal,2,1,,0.00011959859,image_13254
+820,inflammatory,2,1,,6.120221e-06,image_6505
+821,inflammatory,2,1,,5.550802e-06,image_1837
+822,inflammatory,1,1,,1.565682e-06,image_8117
+823,inflammatory,3,2,,8.4132984e-07,image_13978
+824,inflammatory,2,2,,4.5481697e-06,image_11410
+825,inflammatory,1,1,,5.1739194e-06,image_14245
+826,benign dermal,2,2,,0.00023689508,image_5859
+827,inflammatory,6,5,,4.917742e-06,image_14000
+828,inflammatory,4,3,,1.28054735e-05,image_13816
+829,inflammatory,3,3,,1.4064044e-05,image_8483
+830,inflammatory,2,3,,4.4173386e-05,image_15553
+831,inflammatory,3,2,,2.8409744e-05,image_6830
+832,genodermatoses,2,1,,0.011642225,image_10844
+833,inflammatory,6,5,,4.0610603e-06,image_9966
+834,inflammatory,6,6,,7.1832605e-06,image_11886
+835,genodermatoses,3,3,,0.0025558867,image_15034
+836,inflammatory,2,1,,7.197912e-05,image_3450
+837,inflammatory,2,2,,2.3923509e-05,image_4722
+838,inflammatory,4,2,,7.0021684e-07,image_13801
+839,inflammatory,2,1,,8.044863e-06,image_709
+840,benign epidermal,3,2,,0.00017952795,image_641
+841,benign dermal,2,2,,0.0012793075,image_467
+842,inflammatory,2,1,,6.5404374e-06,image_14465
+843,inflammatory,2,2,,4.0053322e-07,image_2359
+844,inflammatory,3,4,,6.014152e-05,image_11521
+845,malignant epidermal,2,1,,0.99997604,image_14466
+846,malignant cutaneous lymphoma,-1,2,,0.97824484,image_1558
+847,inflammatory,4,2,,5.2349073e-06,image_412
+848,inflammatory,3,2,,1.188949e-05,image_11401
+849,inflammatory,1,1,,2.2252812e-06,image_3317
+850,malignant epidermal,-1,-1,,0.9996424,image_6436
+851,inflammatory,2,1,,1.683241e-05,image_11879
+852,inflammatory,4,6,,6.477467e-05,image_11331
+853,inflammatory,2,1,,6.3144957e-06,image_6150
+854,inflammatory,2,1,,4.0929117e-06,image_2792
+855,inflammatory,3,2,,3.5559847e-06,image_14105
+856,malignant epidermal,2,2,,0.99991965,image_3578
+857,benign dermal,3,-1,,3.0718184e-05,image_8745
+858,malignant epidermal,2,3,,0.9999461,image_11137
+859,inflammatory,4,5,,6.387062e-08,image_11492
+860,inflammatory,2,2,,8.6465235e-07,image_9446
+861,inflammatory,3,-1,,9.2763645e-07,image_7803
+862,inflammatory,3,2,,1.529413e-06,image_13793
+863,inflammatory,2,2,,3.5979012e-06,image_3329
+864,genodermatoses,2,1,,0.0065833824,image_15268
+865,inflammatory,4,2,,3.7558673e-06,image_7018
+866,inflammatory,1,1,,6.439038e-06,image_5225
+867,malignant epidermal,5,6,,0.9984633,image_11649
+868,inflammatory,4,4,,2.8461761e-06,image_1534
+869,inflammatory,3,3,,5.7719203e-06,image_5435
+870,genodermatoses,4,4,,0.0089075025,image_15211
+871,inflammatory,3,3,,3.1137256e-06,image_5447
+872,inflammatory,4,4,,1.3211958e-05,image_752
+873,genodermatoses,4,2,,0.0017580388,image_4150
+874,malignant epidermal,-1,-1,,0.99983454,image_15670
+875,inflammatory,2,4,,2.9197266e-05,image_2085
+876,inflammatory,3,3,,2.2959193e-06,image_519
+877,malignant epidermal,3,3,,0.9999478,image_4885
+878,inflammatory,3,1,,5.5189234e-05,image_6815
+879,genodermatoses,2,1,,0.004256349,image_128
+880,inflammatory,2,1,,2.2780523e-06,image_8711
+881,inflammatory,3,2,,1.8520441e-06,image_12833
+882,benign dermal,3,2,,6.1088555e-05,image_12711
+883,inflammatory,1,1,,6.6955386e-06,image_10211
+884,inflammatory,4,3,,5.025061e-05,image_15081
+885,inflammatory,2,1,,6.9492744e-05,image_1359
+886,inflammatory,2,2,5 Potentially,3.6545598e-06,image_3635
+887,inflammatory,4,3,,3.0894944e-06,image_100
+888,inflammatory,4,3,,7.2395983e-06,image_10597
+889,benign epidermal,2,2,,4.539786e-05,image_9986
+890,inflammatory,3,3,,6.3889293e-06,image_3435
+891,malignant melanoma,5,4,,0.9983059,image_4844
+892,malignant epidermal,2,2,,0.9999337,image_8666
+893,inflammatory,2,1,,1.8271383e-05,image_13095
+894,benign dermal,2,2,,0.00046917636,image_13702
+895,malignant epidermal,3,3,,0.9969897,image_1164
+896,inflammatory,-1,-1,,8.044863e-06,image_9920
+897,benign epidermal,3,4,,0.0006785173,image_8273
+898,inflammatory,4,2,,3.288749e-06,image_4123
+899,inflammatory,5,4,,2.2917342e-05,image_15286
+900,inflammatory,2,1,,3.7558673e-06,image_7931
+901,malignant epidermal,1,2,,0.9999509,image_10435
+902,malignant melanoma,2,1,,0.9996309,image_13706
+903,inflammatory,2,1,,3.747992e-07,image_16388
+904,inflammatory,5,6,,5.1845658e-05,image_12997
+905,inflammatory,3,2,,1.3339782e-06,image_7299
+906,genodermatoses,2,1,,0.0076214303,image_3598
+907,benign dermal,3,3,,0.00065126823,image_5533
+908,inflammatory,5,5,,5.275965e-06,image_1660
+909,inflammatory,2,1,,9.080475e-06,image_9553
+910,inflammatory,4,3,,4.495181e-06,image_2994
+911,genodermatoses,4,4,,0.00102221,image_4029
+912,inflammatory,3,4,1 Diagnostic,3.7931623e-05,image_2719
+913,genodermatoses,4,3,,0.0005849732,image_1394
+914,malignant epidermal,2,1,,0.9999311,image_12823
+915,benign epidermal,1,1,,1.683241e-05,image_13201
+916,inflammatory,2,1,,7.211375e-06,image_1625
+917,inflammatory,1,1,,3.9980987e-06,image_1767
+918,inflammatory,5,4,,0.00021152885,image_12870
+919,inflammatory,4,4,,1.1454779e-06,image_6110
+920,genodermatoses,4,5,,7.4402865e-06,image_15439
+921,inflammatory,1,3,,5.3075077e-05,image_10770
+922,inflammatory,6,5,,0.0001615606,image_14098
+923,malignant melanoma,2,1,,0.9997974,image_11098
+924,inflammatory,4,3,,2.596867e-05,image_6844
+925,inflammatory,3,1,,9.516251e-06,image_3100
+926,inflammatory,5,4,,1.7164395e-05,image_1289
+927,malignant melanoma,4,3,,0.99929583,image_6221
+928,inflammatory,1,1,,6.240931e-06,image_14567
+929,inflammatory,1,1,,5.4434404e-06,image_5218
+930,malignant melanoma,2,2,,0.9987207,image_14878
+931,inflammatory,2,2,,5.5189234e-05,image_15778
+932,benign dermal,2,1,,0.0029349516,image_486
+933,inflammatory,5,3,,8.853435e-05,image_10543
+934,inflammatory,2,2,,2.6842004e-06,image_6441
+935,inflammatory,3,1,,6.205049e-05,image_1371
+936,malignant cutaneous lymphoma,2,2,,0.9975249,image_1088
+937,inflammatory,5,4,5 Potentially,0.00035350275,image_7252
+938,malignant melanoma,2,1,,0.9989857,image_4756
+939,benign dermal,3,-1,,0.00037191086,image_13207
+940,benign dermal,3,1,,0.0026265525,image_1347
+941,benign dermal,4,4,,0.00017917773,image_14515
+942,inflammatory,1,1,,3.3667393e-06,image_14329
+943,malignant epidermal,3,-1,,0.9984053,image_6922
+944,benign dermal,4,4,,5.8519396e-05,image_5894
+945,malignant epidermal,4,4,,0.99986935,image_11611
+946,inflammatory,2,1,,3.6976385e-06,image_14402
+947,malignant melanoma,1,1,,0.9969126,image_10582
+948,benign dermal,2,-1,,3.5773002e-05,image_14511
+949,inflammatory,2,1,,8.365331e-06,image_16213
+950,benign dermal,3,1,,0.00036686257,image_16466
+951,inflammatory,2,1,,1.8200151e-05,image_2859
+952,inflammatory,4,3,,5.0343624e-06,image_3551
+953,inflammatory,2,-1,,6.761843e-05,image_13415
+954,inflammatory,4,2,,3.9125487e-07,image_10313
+955,benign dermal,4,3,1 Diagnostic,2.596867e-05,image_13345
+956,malignant melanoma,2,3,,0.99987805,image_15457
+957,malignant epidermal,2,1,,0.99997604,image_2302
+958,malignant epidermal,6,5,,0.9967524,image_189
+959,inflammatory,5,4,,0.00015386257,image_14169
+960,inflammatory,3,4,,9.026151e-07,image_4338
+961,genodermatoses,5,5,,0.00091640017,image_12712
+962,malignant epidermal,4,1,,0.99968565,image_6995
+963,genodermatoses,5,4,,0.00071383786,image_737
+964,benign dermal,3,2,,0.00050827255,image_1412
+965,inflammatory,1,1,,4.6560253e-06,image_10207
+966,benign epidermal,2,3,,5.497408e-05,image_7476
+967,inflammatory,2,2,,2.769406e-06,image_4289
+968,genodermatoses,1,1,,0.000872767,image_15464
+969,malignant melanoma,2,1,,0.999666,image_8280
+970,inflammatory,6,3,,0.0037911441,image_11270
+971,benign dermal,1,1,,0.0023967307,image_4090
+972,inflammatory,3,3,,3.1259124e-06,image_12240
+973,inflammatory,4,3,,3.36057e-05,image_13927
+974,inflammatory,2,1,,4.3910513e-06,image_5513
+975,inflammatory,4,3,,1.2679282e-06,image_3845
+976,inflammatory,2,1,,1.30580365e-05,image_4537
+977,benign dermal,1,1,,0.00014567535,image_9539
+978,inflammatory,2,1,,7.889263e-06,image_2547
+979,inflammatory,5,5,,3.1627594e-06,image_12944
+980,genodermatoses,3,1,,0.00795339,image_4949
+981,inflammatory,3,3,,3.7853251e-06,image_6149
+982,malignant epidermal,3,2,,0.999977,image_9967
+983,malignant melanoma,3,1,1 Diagnostic,0.9987478,image_11510
+984,inflammatory,2,1,,6.439038e-06,image_4154
+985,inflammatory,6,6,,9.741921e-06,image_7321
+986,inflammatory,4,4,,6.6815164e-07,image_15703
+987,malignant epidermal,3,3,,0.9999634,image_4190
+988,malignant dermal,1,1,,0.99731654,image_12615
+989,inflammatory,1,1,,1.10390265e-05,image_7478
+990,malignant epidermal,2,2,,0.9994956,image_4102
+991,inflammatory,2,2,,6.3012703e-07,image_1476
+992,inflammatory,3,5,,3.439351e-07,image_4902
+993,inflammatory,2,2,,3.6832228e-06,image_11717
+994,inflammatory,4,1,,5.5076057e-06,image_58
+995,inflammatory,4,4,,5.897834e-05,image_9819
+996,inflammatory,2,1,,1.248271e-06,image_2237
+997,malignant melanoma,2,1,,0.9997125,image_7036
+998,malignant epidermal,1,2,,0.9999877,image_16035
+999,inflammatory,4,4,,2.0986402e-06,image_12463
+1000,inflammatory,3,-1,,1.6472424e-06,image_9858
+1001,genodermatoses,6,6,1 Diagnostic,0.04377274,image_7104
+1002,inflammatory,4,-1,,2.0904586e-06,image_9396
+1003,inflammatory,5,5,,1.565682e-06,image_9574
+1004,inflammatory,2,1,,2.203941e-05,image_3669
+1005,benign epidermal,-1,-1,,2.925075e-06,image_2806
+1006,inflammatory,3,1,,3.7705674e-06,image_5916
+1007,benign dermal,1,1,,0.00024298554,image_2026
+1008,inflammatory,2,2,,0.0002948036,image_3044
+1009,inflammatory,2,1,,1.6280515e-06,image_11671
+1010,inflammatory,1,-1,,5.275965e-06,image_12581
+1011,malignant melanoma,3,3,,0.9988463,image_6740
+1012,inflammatory,1,1,,4.5127754e-06,image_2555
+1013,benign dermal,1,1,,0.00017952795,image_674
+1014,malignant dermal,2,1,,0.99400806,image_4716
+1015,inflammatory,3,3,,2.8298988e-05,image_6885
+1016,inflammatory,1,1,,3.0838408e-05,image_11625
+1017,inflammatory,6,5,,2.131689e-06,image_7345
+1018,benign epidermal,4,4,,4.4694065e-05,image_16257
+1019,malignant epidermal,1,1,,0.9999231,image_1036
+1020,benign dermal,2,1,,0.00046010586,image_6425
+1021,genodermatoses,5,4,,0.043163683,image_6573
+1022,benign epidermal,4,3,,0.00049747445,image_9038
+1023,inflammatory,3,4,,1.12128655e-05,image_5640
+1024,inflammatory,2,1,,1.587449e-05,image_5853
+1025,inflammatory,3,3,,1.6217043e-06,image_6663
+1026,inflammatory,3,1,,2.5813704e-06,image_15749
+1027,inflammatory,4,4,,1.6601621e-06,image_9852
+1028,benign dermal,2,2,,0.0007598414,image_16309
+1029,inflammatory,1,1,,1.295642e-05,image_14214
+1030,inflammatory,3,3,,5.7270026e-06,image_7099
+1031,benign epidermal,1,1,,2.3737339e-05,image_9881
+1032,benign dermal,4,4,,8.992845e-05,image_7878
+1033,malignant epidermal,2,2,,0.9999695,image_16054
+1034,inflammatory,4,3,,8.8011e-06,image_11877
+1035,benign dermal,2,1,,4.832564e-05,image_15607
+1036,malignant melanoma,2,2,,0.999666,image_14784
+1037,inflammatory,1,1,,2.611799e-06,image_14484
+1038,inflammatory,4,2,,3.263156e-06,image_6316
+1039,inflammatory,1,1,,3.487206e-06,image_12357
+1040,malignant epidermal,1,2,,0.99982256,image_10359
+1041,inflammatory,1,4,,8.3002315e-06,image_13437
+1042,inflammatory,5,4,,7.0168608e-06,image_13942
+1043,inflammatory,3,2,,2.4010544e-07,image_8855
+1044,benign epidermal,2,1,,0.00023095727,image_13329
+1045,inflammatory,6,5,,1.9520434e-07,image_399
+1046,inflammatory,3,4,,8.6128136e-07,image_10293
+1047,genodermatoses,4,5,,8.716188e-05,image_9365
+1048,inflammatory,4,4,,1.6280515e-06,image_14601
+1049,inflammatory,1,1,,1.0370214e-05,image_13039
+1050,malignant cutaneous lymphoma,1,1,,0.99533635,image_12862
+1051,benign epidermal,1,1,,3.2699274e-05,image_14992
+1052,inflammatory,1,1,,5.2649096e-07,image_7686
+1053,inflammatory,4,-1,,7.395764e-07,image_15025
+1054,inflammatory,1,1,,1.5567452e-05,image_5668
+1055,inflammatory,3,3,,1.7330516e-06,image_3906
+1056,benign epidermal,2,2,,7.874486e-05,image_7524
+1057,malignant epidermal,3,2,,0.99991345,image_1990
+1058,inflammatory,1,1,,2.492196e-06,image_9675
+1059,inflammatory,5,5,,6.3392104e-06,image_13786
+1060,inflammatory,4,5,,1.235957e-07,image_11801
+1061,inflammatory,4,3,,1.1169151e-05,image_3653
+1062,inflammatory,5,4,,6.477467e-05,image_5382
+1063,inflammatory,2,-1,,6.827595e-06,image_16360
+1064,inflammatory,1,1,,5.3062024e-07,image_4305
+1065,inflammatory,2,2,,2.83508e-06,image_2183
+1066,inflammatory,1,2,,6.2165996e-06,image_281
+1067,inflammatory,2,1,,9.590888e-06,image_6065
+1068,inflammatory,3,3,,2.4876486e-05,image_12439
+1069,inflammatory,2,1,,1.010881e-06,image_14602
+1070,benign epidermal,1,1,,0.00022298052,image_13177
+1071,inflammatory,2,2,,4.495181e-06,image_15447
+1072,inflammatory,4,2,,2.4205505e-05,image_8170
+1073,inflammatory,6,5,1 Diagnostic,1.4453909e-05,image_15065
+1074,benign dermal,2,1,,0.00038747615,image_3155
+1075,genodermatoses,4,2,,0.0007096704,image_1721
+1076,inflammatory,2,-1,,1.2411496e-05,image_8621
+1077,malignant dermal,6,6,,0.98342276,image_16433
+1078,inflammatory,3,2,,3.3344186e-05,image_11736
+1079,inflammatory,1,1,,1.8559109e-05,image_9145
+1080,inflammatory,1,-1,,9.608286e-07,image_13385
+1081,inflammatory,5,5,,2.3923509e-05,image_3781
+1082,inflammatory,1,1,,8.597225e-06,image_11007
+1083,inflammatory,1,1,,2.8020504e-06,image_11500
+1084,inflammatory,6,5,,3.3335334e-07,image_3602
+1085,inflammatory,-1,2,,4.4001183e-05,image_10290
+1086,inflammatory,-1,-1,,1.1818393e-06,image_506
+1087,inflammatory,2,3,,5.908796e-06,image_8411
+1088,inflammatory,5,4,,7.4846226e-05,image_8052
+1089,inflammatory,3,2,,0.00010741838,image_4476
+1090,inflammatory,2,1,,8.0135e-06,image_4394
+1091,benign melanocyte,2,1,,0.00087789143,image_16022
+1092,malignant epidermal,2,2,,0.99996626,image_5119
+1093,inflammatory,-1,-1,,6.579465e-05,image_13917
+1094,inflammatory,4,2,,4.583841e-06,image_13007
+1095,inflammatory,2,3,,5.897834e-05,image_426
+1096,inflammatory,2,-1,,1.0289514e-05,image_14215
+1097,inflammatory,1,1,,8.766789e-06,image_3215
+1098,benign epidermal,2,4,,0.00038747615,image_16152
+1099,benign dermal,2,-1,,1.3160451e-05,image_12358
+1100,inflammatory,2,1,,2.769406e-06,image_9483
+1101,inflammatory,5,3,,2.0948186e-05,image_4065
+1102,inflammatory,5,5,,3.0894944e-06,image_8063
+1103,benign epidermal,5,5,,0.00016701405,image_12541
+1104,benign melanocyte,4,3,,0.0011855905,image_1209
+1105,inflammatory,6,6,,4.382964e-05,image_8962
+1106,inflammatory,2,1,,2.9426255e-05,image_5251
+1107,inflammatory,1,-1,,1.3030765e-06,image_9613
+1108,inflammatory,4,4,,1.2004505e-06,image_10164
+1109,malignant epidermal,3,3,,0.9986223,image_14157
+1110,malignant epidermal,3,2,,0.9999497,image_14959
+1111,inflammatory,-1,4,,0.00014147002,image_9893
+1112,inflammatory,2,1,,9.590888e-06,image_7429
+1113,malignant epidermal,4,3,,0.99994755,image_7514
+1114,inflammatory,1,2,,7.8727487e-07,image_15225
+1115,inflammatory,4,-1,,3.0179267e-06,image_9878
+1116,inflammatory,1,1,,6.7480514e-06,image_3249
+1117,inflammatory,6,6,,9.5354604e-05,image_4619
+1118,inflammatory,2,2,,1.5414083e-06,image_10058
+1119,inflammatory,3,3,,4.6017813e-06,image_4216
+1120,benign epidermal,2,2,,3.2955733e-05,image_4360
+1121,inflammatory,1,2,,6.439038e-06,image_14051
+1122,malignant epidermal,2,1,,0.99998033,image_8444
+1123,inflammatory,5,3,,2.3097078e-05,image_16053
+1124,inflammatory,2,2,,6.9622565e-06,image_10222
+1125,benign epidermal,1,1,,2.8520933e-05,image_3822
+1126,benign epidermal,3,3,,0.0005442133,image_7636
+1127,inflammatory,5,4,,7.2395983e-06,image_11953
+1128,benign melanocyte,2,1,1 Diagnostic,0.00089869124,image_9682
+1129,inflammatory,1,1,2 Characteristic,1.7128611e-06,image_8293
+1130,benign epidermal,4,3,,6.721744e-06,image_1200
+1131,benign dermal,2,2,,0.0012668908,image_2938
+1132,inflammatory,1,1,,8.714339e-07,image_13492
+1133,inflammatory,2,4,,2.131689e-06,image_11548
+1134,inflammatory,-1,1,,6.0725934e-06,image_10485
+1135,benign dermal,1,-1,,0.00047936055,image_9928
+1136,inflammatory,4,3,,2.5413503e-06,image_340
+1137,inflammatory,3,2,,9.045074e-06,image_2141
+1138,inflammatory,4,4,,2.0741907e-06,image_12660
+1139,benign dermal,3,3,,0.00017231473,image_564
+1140,inflammatory,1,1,,1.5057016e-06,image_4503
+1141,malignant epidermal,1,1,,0.9999219,image_5130
+1142,inflammatory,2,2,,1.2828741e-06,image_8705
+1143,malignant melanoma,5,2,,0.999445,image_857
+1144,genodermatoses,2,2,,0.0008813243,image_3890
+1145,inflammatory,2,2,,6.920591e-07,image_13872
+1146,inflammatory,4,3,,6.1327635e-05,image_4468
+1147,malignant epidermal,3,3,,0.9997181,image_8730
+1148,inflammatory,-1,-1,,0.00019910393,image_9387
+1149,inflammatory,2,3,,8.870129e-06,image_10139
+1150,inflammatory,1,1,,5.88576e-06,image_15336
+1151,inflammatory,3,2,,6.1074013e-07,image_10802
+1152,inflammatory,2,3,,2.2299198e-05,image_6393
+1153,malignant melanoma,2,2,,0.9995728,image_1098
+1154,inflammatory,4,1,,2.9311537e-05,image_6260
+1155,inflammatory,6,6,,0.00017332716,image_3680
+1156,malignant cutaneous lymphoma,1,1,,0.9960083,image_5099
+1157,inflammatory,2,2,,1.3287774e-06,image_10742
+1158,inflammatory,3,4,,5.1739194e-06,image_1489
+1159,inflammatory,3,3,,1.7398347e-06,image_2451
+1160,inflammatory,3,2,,1.587449e-05,image_8115
+1161,genodermatoses,6,3,,0.003572683,image_9203
+1162,inflammatory,4,3,,1.565682e-06,image_178
+1163,inflammatory,4,3,1 Diagnostic,9.223471e-06,image_10880
+1164,inflammatory,2,1,,1.8520441e-06,image_8452
+1165,inflammatory,2,1,,3.4672423e-05,image_7772
+1166,benign dermal,2,1,,1.1796968e-05,image_2040
+1167,genodermatoses,5,5,,0.00014596009,image_3121
+1168,inflammatory,-1,5,,9.759596e-07,image_2978
+1169,malignant epidermal,2,-1,,0.99992275,image_15934
+1170,inflammatory,3,1,,9.459324e-07,image_4107
+1171,inflammatory,5,5,,3.1627594e-06,image_12656
+1172,benign dermal,6,6,5 Potentially,0.0010859445,image_10768
+1173,inflammatory,4,2,,6.450701e-07,image_2989
+1174,inflammatory,3,3,,6.4139344e-06,image_5156
+1175,inflammatory,5,5,,1.1864649e-06,image_4780
+1176,inflammatory,3,3,,2.2739e-05,image_8352
+1177,inflammatory,2,1,,1.3472538e-05,image_9811
+1178,inflammatory,2,1,,2.0986402e-06,image_15530
+1179,inflammatory,2,1,,5.1136412e-06,image_15300
+1180,genodermatoses,1,1,,0.00027053358,image_7276
+1181,benign epidermal,3,3,,2.3187476e-05,image_2827
+1182,malignant epidermal,5,4,,0.99984646,image_9762
+1183,inflammatory,3,2,,1.0845167e-06,image_8315
+1184,inflammatory,2,2,,2.4728017e-06,image_10473
+1185,benign dermal,1,1,,0.0014297453,image_12737
+1186,inflammatory,4,3,,9.151693e-06,image_6979
+1187,inflammatory,3,2,,1.6217043e-06,image_3579
+1188,inflammatory,2,1,,1.7741497e-06,image_625
+1189,inflammatory,1,1,,1.7603431e-06,image_6877
+1190,malignant cutaneous lymphoma,3,2,,0.99561334,image_10477
+1191,inflammatory,1,1,,5.6162335e-06,image_5716
+1192,malignant epidermal,1,1,,0.99997854,image_13510
+1193,malignant epidermal,3,-1,,0.9996381,image_7722
+1194,inflammatory,4,5,,6.325933e-07,image_7597
+1195,inflammatory,1,1,,4.6474393e-05,image_5814
+1196,inflammatory,1,1,,9.405386e-06,image_9943
+1197,inflammatory,5,4,,8.766789e-06,image_11847
+1198,inflammatory,2,2,,1.482358e-06,image_15532
+1199,benign epidermal,4,3,,0.00015177361,image_6351
+1200,benign epidermal,2,-1,,9.874639e-07,image_1108
+1201,inflammatory,1,1,,4.1003162e-07,image_6959
+1202,inflammatory,1,1,,0.00018522573,image_11524
+1203,inflammatory,2,1,,1.663631e-05,image_7882
+1204,inflammatory,1,1,,1.6929056e-06,image_9610
+1205,genodermatoses,2,3,1 Diagnostic,0.0062291576,image_10639
+1206,inflammatory,2,1,,2.0103744e-06,image_9708
+1207,inflammatory,2,2,,6.8399635e-07,image_13834
+1208,inflammatory,5,5,,6.302759e-05,image_4683
+1209,inflammatory,1,1,,2.6425862e-06,image_1351
+1210,inflammatory,2,3,,2.4017143e-05,image_1548
+1211,inflammatory,-1,2,,3.314543e-06,image_7198
+1212,malignant epidermal,4,2,,0.9999578,image_9240
+1213,inflammatory,2,1,,0.00011889993,image_3206
+1214,inflammatory,5,5,,3.425942e-07,image_9124
+1215,malignant epidermal,2,1,,0.99997914,image_7629
+1216,benign dermal,2,1,,0.0011357827,image_15748
+1217,malignant epidermal,1,1,,0.9999794,image_10331
+1218,genodermatoses,5,5,,0.0001205365,image_5134
+1219,inflammatory,4,3,,1.4480192e-06,image_16507
+1220,inflammatory,1,1,,3.0061608e-06,image_5767
+1221,inflammatory,3,4,,2.5466403e-05,image_6340
+1222,benign melanocyte,1,1,,0.0026522598,image_6168
+1223,benign epidermal,1,1,,0.00013186582,image_14747
+1224,benign dermal,3,1,,0.00061904173,image_9846
+1225,inflammatory,5,5,,4.0220493e-05,image_10281
+1226,benign epidermal,2,3,,0.00041487868,image_4916
+1227,malignant epidermal,3,2,,0.9998902,image_15253
+1228,inflammatory,3,2,,5.759828e-07,image_4673
+1229,inflammatory,2,3,,4.3910513e-06,image_9526
+1230,inflammatory,4,5,,5.965923e-07,image_10538
+1231,inflammatory,4,3,,2.1233784e-06,image_9444
+1232,inflammatory,2,2,,1.0410801e-05,image_7946
+1233,genodermatoses,5,4,,0.0012943681,image_14726
+1234,malignant epidermal,4,3,,0.9999696,image_10968
+1235,inflammatory,6,6,,3.2125658e-06,image_15653
+1236,inflammatory,-1,-1,,1.0635404e-06,image_3722
+1237,inflammatory,5,5,,3.5218418e-05,image_3478
+1238,benign dermal,2,3,,0.0028283356,image_4725
+1239,inflammatory,5,6,,1.9679024e-05,image_9988
+1240,inflammatory,2,1,,3.0061608e-06,image_4122
+1241,malignant melanoma,3,2,,0.9996673,image_4027
+1242,benign melanocyte,2,1,,0.0003576683,image_12194
+1243,malignant melanoma,4,3,,0.9993333,image_8048
+1244,malignant epidermal,5,4,,0.9998697,image_4062
+1245,inflammatory,1,1,,2.2603242e-06,image_10872
+1246,inflammatory,5,3,,1.9108343e-06,image_11184
+1247,inflammatory,2,-1,,1.2679282e-06,image_14746
+1248,inflammatory,4,5,,9.007201e-08,image_4920
+1249,inflammatory,5,4,,0.0006166297,image_1040
+1250,inflammatory,3,3,,0.00013711806,image_4668
+1251,inflammatory,2,1,,8.332719e-06,image_2239
+1252,inflammatory,3,2,,8.23564e-06,image_8479
+1253,inflammatory,2,1,,5.225227e-05,image_6267
+1254,malignant melanoma,4,3,,0.9990545,image_11276
+1255,inflammatory,6,6,,0.00032567108,image_7883
+1256,inflammatory,2,1,,9.972941e-06,image_14147
+1257,inflammatory,5,4,,4.710909e-06,image_512
+1258,benign dermal,1,1,,0.00015416334,image_7572
+1259,inflammatory,1,1,,6.5660356e-06,image_9103
+1260,inflammatory,-1,-1,,5.7494176e-06,image_264
+1261,inflammatory,6,6,1 Diagnostic,4.4001183e-05,image_5715
+1262,benign dermal,5,5,,7.874486e-05,image_11703
+1263,inflammatory,3,-1,,2.419886e-07,image_10687
+1264,inflammatory,3,4,,1.1818393e-06,image_4644
+1265,inflammatory,5,4,,1.3160451e-05,image_9741
+1266,inflammatory,3,2,,2.6529287e-06,image_13763
+1267,inflammatory,5,3,,6.4895394e-06,image_14242
+1268,inflammatory,4,5,,2.322983e-06,image_7503
+1269,inflammatory,2,2,,7.224441e-07,image_9774
+1270,inflammatory,3,4,,3.0415963e-06,image_1453
+1271,inflammatory,3,2,,2.078517e-05,image_15040
+1272,malignant melanoma,4,4,,0.9992944,image_6346
+1273,genodermatoses,3,3,,0.007992008,image_16534
+1274,inflammatory,2,1,,9.332193e-06,image_2677
+1275,inflammatory,2,1,,1.9073577e-05,image_13861
+1276,inflammatory,4,5,,5.4532956e-07,image_5033
+1277,inflammatory,6,5,,4.4254903e-06,image_14672
+1278,inflammatory,2,1,,1.9988918e-05,image_2272
+1279,inflammatory,4,-1,,1.719565e-06,image_10664
+1280,inflammatory,-1,1,,2.0261423e-06,image_9287
+1281,inflammatory,4,4,,1.3817097e-06,image_12430
+1282,inflammatory,3,3,,1.723157e-05,image_1769
+1283,inflammatory,5,5,,1.0389034e-06,image_13797
+1284,inflammatory,3,2,,2.1568167e-06,image_7823
+1285,malignant dermal,3,-1,,0.94176143,image_12101
+1286,inflammatory,2,3,,2.5566074e-05,image_15888
+1287,malignant epidermal,2,2,,0.9999819,image_4661
+1288,inflammatory,1,1,,1.1843139e-05,image_15516
+1289,inflammatory,-1,-1,,2.6785696e-07,image_1571
+1290,genodermatoses,1,1,,0.0037800951,image_15147
+1291,inflammatory,6,6,,4.013747e-06,image_8929
+1292,inflammatory,1,1,,1.8738752e-06,image_2217
+1293,inflammatory,4,3,,9.590888e-06,image_15059
+1294,inflammatory,5,4,,2.1953487e-05,image_11014
+1295,malignant epidermal,1,2,,0.99998975,image_1007
+1296,inflammatory,5,4,,5.0054718e-05,image_380
+1297,malignant cutaneous lymphoma,1,5,,0.76723236,image_7373
+1298,inflammatory,6,5,,8.09099e-07,image_4105
+1299,inflammatory,2,1,,0.00085590064,image_938
+1300,malignant epidermal,-1,-1,,0.9982674,image_10960
+1301,inflammatory,6,1,,8.156225e-05,image_14603
+1302,inflammatory,5,5,,5.0738468e-06,image_11294
+1303,benign epidermal,2,3,,0.00013238186,image_13658
+1304,inflammatory,3,4,,1.4998317e-06,image_8909
+1305,inflammatory,3,2,,1.0699397e-05,image_4316
+1306,benign epidermal,2,2,,6.0613187e-05,image_12986
+1307,inflammatory,1,1,,1.2029638e-05,image_11938
+1308,inflammatory,4,3,,2.2252812e-06,image_543
+1309,inflammatory,1,1,,4.8226248e-06,image_2255
+1310,inflammatory,1,2,,2.2780523e-06,image_12827
+1311,inflammatory,2,2,,5.0540657e-06,image_1072
+1312,benign dermal,1,1,,0.00073791953,image_6019
+1313,benign epidermal,2,1,,0.0013939501,image_7736
+1314,inflammatory,2,1,,5.093705e-06,image_13756
+1315,inflammatory,2,1,,6.265356e-06,image_9799
+1316,malignant epidermal,3,4,,0.9999372,image_3070
+1317,inflammatory,2,2,,2.3139264e-06,image_4984
+1318,inflammatory,2,1,,3.3737222e-05,image_13500
+1319,inflammatory,1,1,,1.5386091e-05,image_294
+1320,malignant epidermal,2,3,,0.99992716,image_1890
+1321,inflammatory,1,1,,1.4453909e-05,image_14732
+1322,inflammatory,6,5,,7.5574535e-06,image_474
+1323,inflammatory,3,3,,5.550802e-06,image_7815
+1324,inflammatory,6,6,1 Diagnostic,0.00034802413,image_9626
+1325,inflammatory,5,3,,1.791799e-05,image_11118
+1326,benign epidermal,5,3,,0.0016484831,image_4011
+1327,malignant melanoma,1,1,,0.9996057,image_1567
+1328,inflammatory,2,1,,3.905484e-06,image_5636
+1329,inflammatory,2,1,,4.4602e-06,image_4074
+1330,inflammatory,4,3,,2.5215734e-06,image_14043
+1331,malignant epidermal,4,-1,,0.9998222,image_8697
+1332,inflammatory,2,1,,1.663631e-05,image_4820
+1333,inflammatory,2,2,,1.3656123e-06,image_6805
+1334,inflammatory,1,1,,1.3578202e-05,image_6851
+1335,benign epidermal,4,4,,0.00012291357,image_13125
+1336,malignant melanoma,2,2,,0.98880416,image_13377
+1337,inflammatory,2,2,,2.1400322e-06,image_12746
+1338,inflammatory,2,3,,1.9602307e-05,image_13449
+1339,inflammatory,6,5,,2.0823086e-06,image_15196
+1340,benign epidermal,4,3,,5.1947016e-05,image_16177
+1341,inflammatory,5,5,1 Diagnostic,1.9679024e-05,image_6467
+1342,inflammatory,4,4,,3.6478537e-05,image_6283
+1343,inflammatory,5,3,,2.2739e-05,image_9297
+1344,genodermatoses,1,1,,0.0035312066,image_6391
+1345,inflammatory,4,5,,2.586037e-07,image_8742
+1346,inflammatory,1,1,,1.4311494e-06,image_915
+1347,inflammatory,-1,-1,,7.1273603e-06,image_16039
+1348,inflammatory,2,1,,2.5169718e-05,image_6022
+1349,inflammatory,2,-1,,1.7159562e-07,image_14853
+1350,inflammatory,5,6,,0.00021824206,image_12031
+1351,inflammatory,2,4,,6.881144e-06,image_10728
+1352,benign dermal,2,1,,0.00023782208,image_15721
+1353,inflammatory,3,-1,,4.442812e-06,image_13488
+1354,genodermatoses,4,5,,0.00013954927,image_16497
+1355,inflammatory,2,1,,6.6955386e-06,image_4368
+1356,inflammatory,3,3,,2.8130173e-06,image_15737
+1357,inflammatory,2,1,,1.091042e-05,image_4955
+1358,inflammatory,2,2,,3.1693253e-05,image_4936
+1359,inflammatory,4,4,,4.701035e-07,image_3315
+1360,inflammatory,2,2,,8.545788e-07,image_13821
+1361,malignant cutaneous lymphoma,2,2,,0.9944935,image_5197
+1362,inflammatory,2,1,,3.5773002e-05,image_421
+1363,inflammatory,3,3,,1.1082233e-05,image_2440
+1364,inflammatory,3,4,,3.7333803e-07,image_3246
+1365,benign epidermal,5,4,,0.004796976,image_5475
+1366,malignant epidermal,3,3,,0.99973625,image_8765
+1367,malignant epidermal,4,3,,0.9999149,image_16165
+1368,inflammatory,4,3,,5.8399573e-06,image_10447
+1369,genodermatoses,5,4,,0.0030693873,image_5124
+1370,inflammatory,4,5,5 Potentially,5.1926456e-08,image_11093
+1371,genodermatoses,4,5,,6.253713e-05,image_9554
+1372,inflammatory,2,1,,2.5813704e-06,image_15938
+1373,inflammatory,3,3,,5.874842e-05,image_9609
+1374,benign epidermal,3,3,,0.00028573602,image_12147
+1375,benign epidermal,2,1,,5.4546286e-05,image_4886
+1376,inflammatory,2,4,,3.0718184e-05,image_15098
+1377,inflammatory,3,3,,1.1499611e-06,image_8671
+1378,inflammatory,3,3,,1.8020884e-06,image_1214
+1379,benign dermal,3,2,,5.5513534e-05,image_11903
+1380,malignant epidermal,5,3,,0.9997913,image_13017
+1381,inflammatory,1,1,,0.00010889691,image_1054
+1382,inflammatory,5,5,,3.9207694e-06,image_85
+1383,genodermatoses,4,4,,0.0068771075,image_1227
+1384,benign dermal,2,-1,,0.00022693384,image_7206
+1385,benign dermal,2,1,,0.0012327608,image_13056
+1386,genodermatoses,1,1,,0.0069778804,image_3939
+1387,inflammatory,1,1,,1.9561485e-06,image_10472
+1388,inflammatory,2,1,,2.5914735e-06,image_4063
+1389,inflammatory,1,1,,6.908076e-06,image_11257
+1390,inflammatory,2,2,,6.786734e-07,image_5117
+1391,inflammatory,3,3,,4.917742e-06,image_13325
+1392,benign dermal,2,1,,0.007815888,image_8886
+1393,malignant epidermal,1,1,,0.99994075,image_10241
+1394,inflammatory,1,1,,9.442197e-06,image_8655
+1395,inflammatory,2,1,,6.289879e-06,image_9685
+1396,inflammatory,4,5,,4.3477465e-07,image_14967
+1397,genodermatoses,5,5,,9.647852e-05,image_1419
+1398,malignant epidermal,-1,-1,,0.9997843,image_1471
+1399,inflammatory,4,5,,3.4590474e-08,image_177
+1400,inflammatory,4,3,,2.0383159e-05,image_8014
+1401,genodermatoses,3,3,,0.0009547316,image_13006
+1402,benign dermal,2,1,,0.00018450373,image_10658
+1403,inflammatory,2,1,,2.0904586e-06,image_1087
+1404,genodermatoses,3,3,,0.0043104948,image_5557
+1405,inflammatory,2,2,,2.1652586e-06,image_1006
+1406,inflammatory,3,1,,1.6995315e-06,image_11447
+1407,benign epidermal,2,2,,0.00018486437,image_2472
+1408,genodermatoses,4,3,,0.0023596606,image_13112
+1409,inflammatory,4,3,,3.314543e-06,image_8177
+1410,malignant epidermal,2,-1,,0.9999454,image_13106
+1411,inflammatory,4,3,,9.00981e-06,image_8100
+1412,inflammatory,2,1,,4.272611e-06,image_11615
+1413,inflammatory,5,3,,1.5326104e-05,image_13464
+1414,inflammatory,3,4,,1.7398347e-06,image_10882
+1415,inflammatory,4,3,,1.9148227e-05,image_10933
+1416,malignant epidermal,1,2,,0.99988675,image_12456
+1417,inflammatory,5,5,,6.3889293e-06,image_6088
+1418,inflammatory,4,4,,1.870467e-05,image_10948
+1419,inflammatory,1,1,,2.0741907e-06,image_5376
+1420,inflammatory,1,1,,2.207964e-06,image_8288
+1421,inflammatory,1,2,,1.757143e-05,image_9809
+1422,inflammatory,4,3,,2.1568167e-06,image_2772
+1423,inflammatory,5,4,,3.059843e-05,image_12638
+1424,inflammatory,1,1,,1.231491e-05,image_2862
+1425,inflammatory,2,1,,2.2603242e-06,image_51
+1426,inflammatory,4,4,,0.0004029052,image_3091
+1427,inflammatory,3,-1,,9.913286e-07,image_15202
+1428,inflammatory,1,1,,1.689829e-05,image_16456
+1429,inflammatory,5,5,,4.8038237e-06,image_14480
+1430,inflammatory,2,1,,2.9365235e-06,image_6978
+1431,inflammatory,3,1,,7.099573e-06,image_8695
+1432,inflammatory,5,5,,9.952087e-07,image_13210
+1433,inflammatory,4,4,,1.6344235e-06,image_904
+1434,inflammatory,4,5,,4.6101087e-07,image_14870
+1435,inflammatory,2,3,,7.4846226e-05,image_7489
+1436,malignant epidermal,2,1,,0.9999461,image_8725
+1437,genodermatoses,2,3,,0.0013070536,image_435
+1438,inflammatory,4,3,,1.3132967e-06,image_5091
+1439,inflammatory,1,1,,6.402007e-05,image_2185
+1440,inflammatory,1,1,,2.7802448e-06,image_5643
+1441,inflammatory,6,6,1 Diagnostic,8.188144e-05,image_432
+1442,inflammatory,-1,-1,,0.003586616,image_6495
+1443,inflammatory,1,2,,1.1454779e-06,image_9479
+1444,inflammatory,5,-1,,0.0001236358,image_12698
+1445,inflammatory,4,3,,4.442812e-06,image_15273
+1446,benign melanocyte,2,1,,0.0048768865,image_14033
+1447,inflammatory,5,5,,6.617533e-06,image_3659
+1448,benign melanocyte,3,1,,0.0014750634,image_14915
+1449,malignant cutaneous lymphoma,3,2,,0.99764496,image_2421
+1450,inflammatory,4,3,,3.6976385e-06,image_11040
+1451,benign epidermal,-1,3,,0.00023322323,image_4973
+1452,inflammatory,5,4,,1.2123986e-05,image_6988
+1453,inflammatory,2,2,,1.3525268e-05,image_12306
+1454,benign dermal,2,1,,0.0025960314,image_5816
+1455,inflammatory,2,2,,4.898569e-06,image_7622
+1456,inflammatory,5,4,,5.5076057e-06,image_5682
+1457,genodermatoses,2,3,,0.0022430876,image_9692
+1458,benign epidermal,3,2,,5.4333643e-05,image_3373
+1459,malignant melanoma,2,1,,0.9998029,image_10600
+1460,benign epidermal,5,5,,0.000105959916,image_16102
+1461,inflammatory,1,1,,1.0802887e-06,image_14659
+1462,benign dermal,2,1,,0.0002879765,image_10692
+1463,inflammatory,1,4,,6.464239e-06,image_2999
+1464,inflammatory,-1,-1,,1.7164395e-05,image_3647
+1465,inflammatory,4,6,,9.972941e-06,image_9220
+1466,benign dermal,3,1,,0.000328866,image_6746
+1467,genodermatoses,4,4,,0.0025409926,image_15416
+1468,inflammatory,1,1,,2.41552e-06,image_15830
+1469,inflammatory,1,1,,2.5268226e-05,image_3785
+1470,inflammatory,2,1,,1.76402e-05,image_13814
+1471,benign epidermal,3,4,,0.00014064362,image_14559
+1472,genodermatoses,3,3,,0.013982613,image_933
+1473,benign dermal,2,4,,0.00030834455,image_9528
+1474,inflammatory,1,1,,6.0725934e-06,image_3342
+1475,benign melanocyte,3,3,,0.0003138109,image_14550
+1476,inflammatory,1,1,,9.818327e-06,image_14685
+1477,inflammatory,2,4,,2.3923509e-05,image_5228
+1478,inflammatory,1,1,,1.2728908e-06,image_8510
+1479,genodermatoses,3,5,,0.00023551141,image_1731
+1480,malignant melanoma,2,2,,0.99993694,image_15046
+1481,inflammatory,3,3,,2.72149e-05,image_12035
+1482,inflammatory,1,2,,1.7709239e-05,image_14692
+1483,genodermatoses,-1,-1,,0.021875,image_2190
+1484,genodermatoses,3,3,,0.0007554055,image_6014
+1485,inflammatory,6,4,,1.9756046e-05,image_11348
+1486,benign dermal,4,3,,0.00069324224,image_12381
+1487,inflammatory,4,3,,2.5314428e-06,image_12691
+1488,inflammatory,-1,1,,7.1832605e-06,image_2299
+1489,inflammatory,5,4,,0.00023050673,image_15730
+1490,malignant epidermal,2,1,,0.99998295,image_10110
+1491,inflammatory,3,-1,,3.5071864e-07,image_8127
+1492,inflammatory,6,5,,2.663312e-06,image_4035
+1493,inflammatory,3,3,,2.1400322e-06,image_13535
+1494,inflammatory,2,2,,1.0209441e-05,image_2127
+1495,inflammatory,3,1,,1.9258212e-06,image_354
+1496,inflammatory,6,5,,6.3144957e-06,image_14426
+1497,inflammatory,3,3,,2.0182429e-06,image_11020
+1498,malignant epidermal,2,-1,,0.9999033,image_12197
+1499,inflammatory,1,2,,4.0294562e-06,image_16366
+1500,inflammatory,5,6,,3.9980987e-06,image_11639
+1501,inflammatory,5,5,,3.479893e-07,image_12949
+1502,inflammatory,-1,1,,5.2966143e-06,image_7137
+1503,inflammatory,4,3,,2.9595544e-06,image_10444
+1504,genodermatoses,4,3,,7.905304e-05,image_7761
+1505,inflammatory,2,2,,3.379916e-06,image_7773
+1506,inflammatory,3,2,,1.5474412e-06,image_1698
+1507,malignant epidermal,2,2,,0.999828,image_3281
+1508,inflammatory,4,3,,6.827595e-06,image_12777
+1509,benign epidermal,4,3,,1.2855592e-05,image_12603
+1510,inflammatory,-1,-1,,1.188949e-05,image_7810
+1511,inflammatory,2,1,,1.2557797e-05,image_6854
+1512,inflammatory,5,5,,1.8342893e-05,image_10111
+1513,inflammatory,6,5,,5.6719044e-05,image_13079
+1514,inflammatory,1,1,,1.7299017e-05,image_7048
+1515,inflammatory,4,2,,1.9409254e-06,image_9057
+1516,malignant epidermal,-1,-1,,0.8534859,image_2685
+1517,genodermatoses,5,5,2 Characteristic,0.00043308618,image_4402
+1518,inflammatory,2,2,,1.2219074e-05,image_2282
+1519,inflammatory,6,5,1 Diagnostic,4.701035e-07,image_6552
+1520,inflammatory,2,3,,6.452215e-05,image_1374
+1521,inflammatory,6,1,,2.2474089e-05,image_11289
+1522,inflammatory,4,4,,3.6261201e-06,image_13252
+1523,inflammatory,3,2,,4.6378736e-06,image_931
+1524,inflammatory,2,3,,2.8298988e-05,image_14158
+1525,benign epidermal,2,2,,2.4876486e-05,image_5413
+1526,inflammatory,4,3,,1.9148227e-05,image_5815
+1527,genodermatoses,5,5,,6.8549176e-05,image_5827
+1528,inflammatory,3,2,,1.5841376e-06,image_4016
+1529,inflammatory,5,5,,2.6737357e-06,image_11064
+1530,benign dermal,-1,-1,,7.998482e-05,image_1689
+1531,inflammatory,3,3,,1.12128655e-05,image_16272
+1532,benign epidermal,1,1,,5.2868167e-05,image_5036
+1533,inflammatory,1,1,,1.5567452e-05,image_2674
+1534,malignant epidermal,4,3,,0.99988174,image_8622
+1535,benign dermal,-1,-1,,0.0006499983,image_4755
+1536,genodermatoses,3,5,,1.5446309e-05,image_15045
+1537,inflammatory,4,4,,6.617533e-06,image_15728
+1538,inflammatory,2,1,,1.5567452e-05,image_1633
+1539,inflammatory,2,2,,1.1680703e-06,image_3185
+1540,inflammatory,2,1,,2.596867e-05,image_16201
+1541,inflammatory,4,3,,0.000106790874,image_9756
+1542,inflammatory,2,2,,5.3800236e-06,image_12443
+1543,inflammatory,2,1,,5.1739194e-06,image_11180
+1544,inflammatory,1,3,,2.3139264e-06,image_9130
+1545,malignant epidermal,4,4,,0.9996892,image_7043
+1546,inflammatory,4,5,,2.1568167e-06,image_6729
+1547,inflammatory,2,2,,4.3477465e-07,image_3624
+1548,benign epidermal,4,3,,5.86338e-05,image_6551
+1549,inflammatory,2,1,,8.171549e-06,image_7900
+1550,inflammatory,4,5,,2.3000692e-07,image_7584
+1551,inflammatory,3,4,,4.3568803e-06,image_14731
+1552,inflammatory,3,4,,1.0887615e-06,image_10244
+1553,inflammatory,4,3,,8.332719e-06,image_1581
+1554,inflammatory,5,4,2 Characteristic,5.874842e-05,image_13579
+1555,inflammatory,2,2,,4.8226248e-06,image_13267
+1556,inflammatory,2,1,,1.3367695e-05,image_13638
+1557,inflammatory,2,3,,1.3709571e-06,image_4769
+1558,inflammatory,1,1,,4.936989e-06,image_10197
+1559,inflammatory,6,6,,0.0003059457,image_2910
+1560,inflammatory,4,4,,2.2386472e-05,image_9635
+1561,inflammatory,2,2,,1.3109143e-05,image_16168
+1562,malignant dermal,2,3,,0.9982039,image_13811
+1563,inflammatory,2,1,,2.131689e-06,image_169
+1564,inflammatory,2,-1,,5.560852e-07,image_3533
+1565,inflammatory,5,4,,3.6908517e-05,image_13059
+1566,benign dermal,2,4,,0.00072790676,image_1012
+1567,inflammatory,2,1,,4.583841e-06,image_10213
+1568,inflammatory,4,5,,2.2033312e-07,image_9467
+1569,inflammatory,2,2,,2.3049051e-06,image_8545
+1570,benign epidermal,4,3,,0.00011751487,image_5310
+1571,inflammatory,4,3,,1.8304672e-06,image_10691
+1572,inflammatory,3,2,,1.7709239e-05,image_8957
+1573,inflammatory,4,3,,5.422219e-06,image_11820
+1574,inflammatory,2,2,,1.1102354e-06,image_1237
+1575,benign epidermal,5,1,,0.0002818572,image_11008
+1576,benign dermal,2,2,,0.00022516827,image_7473
+1577,benign dermal,2,-1,,2.178265e-05,image_10220
+1578,benign dermal,2,1,,0.0030014191,image_12533
+1579,malignant dermal,2,1,,0.9985134,image_15
+1580,inflammatory,3,3,,3.8150138e-06,image_16347
+1581,inflammatory,6,6,,8.317079e-05,image_683
+1582,inflammatory,4,-1,,3.288749e-06,image_9532
+1583,inflammatory,1,2,,2.6577248e-07,image_11932
+1584,inflammatory,4,5,,4.6925434e-06,image_7045
+1585,inflammatory,2,-1,,8.974685e-06,image_8669
+1586,benign epidermal,4,3,,0.00015874591,image_11508
+1587,benign dermal,1,1,,0.00016442515,image_2895
+1588,inflammatory,1,1,,6.3889293e-06,image_1770
+1589,benign dermal,2,1,,0.0012207952,image_8992
+1590,inflammatory,-1,1,,0.00012632042,image_5051
+1591,genodermatoses,2,1,,0.006519821,image_15564
+1592,inflammatory,2,1,,1.4593762e-06,image_10931
+1593,inflammatory,4,4,,9.4612624e-05,image_11577
+1594,benign epidermal,1,1,,3.206683e-05,image_7067
+1595,malignant cutaneous lymphoma,3,2,,0.9985562,image_8789
+1596,inflammatory,2,2,,3.6832228e-06,image_6527
+1597,inflammatory,2,1,,1.76402e-05,image_12736
+1598,benign dermal,3,2,,0.000104317325,image_9970
+1599,benign dermal,1,1,,0.00044421834,image_15449
+1600,inflammatory,1,1,,4.9757095e-06,image_609
+1601,malignant dermal,4,4,,0.9965503,image_4992
+1602,inflammatory,3,3,,2.5512968e-06,image_13305
+1603,inflammatory,1,2,,2.7321412e-05,image_9372
+1604,inflammatory,4,3,,3.741225e-06,image_6725
+1605,inflammatory,2,1,,3.2504345e-06,image_2361
+1606,benign dermal,4,3,,0.0006654023,image_1685
+1607,malignant epidermal,2,2,,0.9999918,image_11806
+1608,malignant melanoma,3,1,,0.99965537,image_13631
+1609,benign dermal,2,1,,0.00046552691,image_6093
+1610,inflammatory,2,3,,4.6925434e-06,image_1062
+1611,inflammatory,3,3,,1.5841376e-06,image_5690
+1612,genodermatoses,1,1,,0.0045032725,image_2247
+1613,inflammatory,5,4,,8.398073e-06,image_488
+1614,genodermatoses,4,4,,0.001348488,image_12893
+1615,inflammatory,4,2,,5.5076057e-06,image_5231
+1616,malignant epidermal,2,2,,0.9999553,image_7278
+1617,benign dermal,2,2,,3.494435e-05,image_5702
+1618,inflammatory,3,2,,3.1015863e-06,image_5981
+1619,malignant epidermal,3,2,,0.9999403,image_14041
+1620,inflammatory,2,1,,8.267873e-06,image_13555
+1621,inflammatory,3,3,,1.4009213e-05,image_13734
+1622,inflammatory,1,1,,8.430941e-06,image_16314
+1623,inflammatory,4,4,,1.9638046e-06,image_5039
+1624,inflammatory,2,1,,1.805852e-05,image_10373
+1625,inflammatory,3,-1,,4.8794714e-06,image_7865
+1626,inflammatory,4,4,5 Potentially,1.3817097e-06,image_7991
+1627,malignant epidermal,2,2,,0.99989045,image_6970
+1628,inflammatory,3,3,,1.2029638e-05,image_12303
+1629,benign dermal,1,-1,,2.8188662e-05,image_1403
+1630,inflammatory,3,2,,3.5699022e-06,image_5271
+1631,benign dermal,2,2,,4.757645e-05,image_1079
+1632,benign dermal,3,1,,0.0009075026,image_9072
+1633,malignant epidermal,6,6,,0.9995363,image_11293
+1634,inflammatory,2,2,,3.3275157e-06,image_5679
+1635,inflammatory,5,3,,2.9197266e-05,image_2609
+1636,genodermatoses,5,6,,0.0034766507,image_287
+1637,inflammatory,3,-1,,1.5474412e-06,image_13737
+1638,inflammatory,2,1,,4.7293465e-06,image_8825
+1639,benign dermal,1,-1,,5.7387595e-05,image_7757
+1640,benign dermal,4,2,,0.00013658353,image_3887
+1641,inflammatory,3,2,,7.2395983e-06,image_10093
+1642,benign epidermal,2,1,,3.9907507e-05,image_6182
+1643,inflammatory,3,3,,2.0261423e-06,image_10126
+1644,genodermatoses,5,5,,0.00058042357,image_8350
+1645,inflammatory,2,-1,,1.2728908e-06,image_2128
+1646,inflammatory,1,1,,1.3339782e-06,image_3257
+1647,inflammatory,3,3,,1.41743485e-05,image_4411
+1648,benign epidermal,2,1,,2.1195112e-05,image_15056
+1649,inflammatory,6,6,,0.00010091088,image_4873
+1650,inflammatory,2,1,,7.6465385e-06,image_1768
+1651,inflammatory,2,1,,2.48248e-06,image_2700
+1652,genodermatoses,2,2,,0.006450608,image_1714
+1653,inflammatory,5,3,,2.679298e-05,image_9192
+1654,benign dermal,2,2,,0.0047552,image_12452
+1655,inflammatory,1,1,,3.2759278e-06,image_8817
+1656,malignant dermal,4,4,,0.982591,image_13174
+1657,inflammatory,5,5,,2.0420332e-06,image_11264

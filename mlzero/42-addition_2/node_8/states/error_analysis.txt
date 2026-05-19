@@ -1,0 +1,3 @@
+ERROR_SUMMARY: The code executed successfully and produced output, but the reported validation AUROC is 1.00000, which is unrealistically perfect and indicates severe data leakage between the training and validation sets. This suggests that information from the validation set is inadvertently being used during training, invalidating the evaluation and model performance.
+
+SUGGESTED_FIX: Carefully review the data preprocessing and splitting logic to ensure that the validation set is completely isolated from the training process. Check for any accidental reuse of image features, metadata, or labels between train and validation splits, and verify that no information from the validation set is accessible to the model during training or feature extraction.

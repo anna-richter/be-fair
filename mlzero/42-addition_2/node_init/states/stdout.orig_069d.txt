@@ -1,0 +1,6 @@
+File: image_1282.jpg
+Type: JPEG Image
+Size: 41.03 KB
+Format: JPEG
+Mode: RGB
+Size: (500, 335)
