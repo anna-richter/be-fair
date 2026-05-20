@@ -15,6 +15,7 @@
 export PIP_CACHE_DIR="/sc-scratch/sc-scratch-ikim-guidlight/pip-cache"
 export TMPDIR="/sc-scratch/sc-scratch-ikim-guidlight/tmp"
 export UV_CACHE_DIR="/sc-scratch/sc-scratch-ikim-guidlight/uv-cache"
+export CONDA_PKGS_DIRS="/sc-scratch/sc-scratch-ikim-guidlight/conda-pkgs"
 source /opt/miniforge/etc/profile.d/conda.sh
 conda activate mlzero_env
 export OPENAI_API_KEY=$OPENAI_API_KEY
