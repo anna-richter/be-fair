@@ -2,14 +2,14 @@
 
 #SBATCH --time=47:59:59
 #SBATCH --gres=gpu:1 
-#SBATCH --job-name=%a_addition_2
+#SBATCH --job-name=%a_add2
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem-per-cpu=40G
 #SBATCH --partition=gpu
 #SBATCH --account=sc-users
-#SBATCH --output=%a_addition_2.o%j 
-#SBATCH --error=%a_addition_2.e%j
+#SBATCH --output=%a_add2.o%j 
+#SBATCH --error=%a_add2.e%j
 
 
 export PIP_CACHE_DIR="/sc-scratch/sc-scratch-ikim-guidlight/pip-cache"
@@ -23,5 +23,5 @@ srun mlzero \
 	--config /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/conf.yaml \
 	--max-iterations 20 \
 	--output /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-addition_2 \
-	--continuous_improvement #\
-#	--remove-iteration-folders
+	--continuous_improvement \
+	--remove-iteration-folders

@@ -2,14 +2,14 @@
 
 #SBATCH --time=47:59:59
 #SBATCH --gres=gpu:1 
-#SBATCH --job-name=%a_addition_3
+#SBATCH --job-name=%a_add3
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem-per-cpu=40G
 #SBATCH --partition=gpu
 #SBATCH --account=sc-users
-#SBATCH --output=%a_addition_3.o%j 
-#SBATCH --error=%a_addition_3.e%j
+#SBATCH --output=%a_add3.o%j 
+#SBATCH --error=%a_add3.e%j
 
 
 export PIP_CACHE_DIR="/sc-scratch/sc-scratch-ikim-guidlight/pip-cache"

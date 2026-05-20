@@ -23,4 +23,5 @@ srun mlzero \
 	--config /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/conf.yaml \
 	--max-iterations 20 \
 	--output /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-basic_prompt \
-	--continuous_improvement
+	--continuous_improvement #\
+#	--remove-iteration-folders
