@@ -20,9 +20,9 @@ conda activate mlzero_env
 export OPENAI_API_KEY=$OPENAI_API_KEY
 
 srun mlzero \
-	--input /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/basic_prompt_data \
-	--config /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/conf.yaml \
+	--input /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data \
+	--config /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/conf.yaml \
 	--max-iterations 20 \
-	--output /sc-projects/sc-proj-ikim-guidlight/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-basic_prompt \
+	--output /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-basic_prompt \
 	--continuous_improvement #\
 #	--remove-iteration-folders
