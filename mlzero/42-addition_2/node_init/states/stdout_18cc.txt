@@ -1,5 +1,0 @@
-File: image_2039.jpg
-Type: JPEG
-Mode: RGB
-Size (pixels): (451, 393)
-File Size (MB): 0.049
