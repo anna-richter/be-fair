@@ -1,4 +1,0 @@
-ERROR_SUMMARY: The AssertionError occurs because the training data's label column contains three classes: 'benign', 'malignant', and 'non-neoplastic', but the code expects only 'malignant' and 'non-neoplastic'. This mismatch causes the assertion `assert set(classes) == {'malignant', 'non-neoplastic'}` to fail, as the unexpected 'benign' class is present in the data.
-
-SUGGESTED_FIX:  
-Inspect the train.csv file to confirm the presence of the 'benign' class. Update the data preprocessing step to either filter out rows with the 'benign' label or map 'benign' to 'non-neoplastic' or another appropriate class, depending on the intended binary classification task. Ensure that after preprocessing, the label column contains only 'malignant' and 'non-neoplastic' before proceeding with model training and assertions.

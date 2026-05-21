@@ -1,4 +1,0 @@
-ERROR_SUMMARY: The error occurs because the version of LightGBM installed in your environment does not support the early_stopping_rounds parameter directly in the LGBMClassifier.fit() method. This leads to a TypeError when the script attempts to pass early_stopping_rounds as a keyword argument to fit(), causing model training to fail.
-
-SUGGESTED_FIX:  
-Check the installed LightGBM version (run pip show lightgbm) and either upgrade to at least version 3.0.0 (where early_stopping_rounds is supported in fit()), or remove the early_stopping_rounds argument from the fit() call and implement early stopping using the callbacks parameter instead. After making the appropriate change, rerun the script to ensure model training completes successfully.

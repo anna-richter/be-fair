@@ -1,1 +1,0 @@
-The code failed with a TypeError: LGBMClassifier.fit() got an unexpected keyword argument 'verbose'. The 'verbose' parameter is not supported in the fit() method of LGBMClassifier in recent LightGBM versions; verbosity should be controlled via callbacks or parameters.

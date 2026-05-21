@@ -1,5 +1,0 @@
-File: image_12962.jpg
-Size_MB: 0.49
-Format: JPEG
-Mode: RGB
-Dimensions: (1415, 884)

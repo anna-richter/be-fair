@@ -1,4 +1,0 @@
-ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions: "validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes", causing all model training to be skipped and a final RuntimeError: "No models were trained successfully during fit()".
-
-SUGGESTED_FIX:  
-Shorten the directory paths used for temporary files and model output so that the full UNIX socket path stays under 107 bytes. Move your working/output directories (e.g., `/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_2/output`) to a location with a much shorter absolute path (such as `/tmp/ag/` or `/scratch/ag/`), and update all relevant script variables and environment settings to use the new, shorter paths before rerunning the training.
