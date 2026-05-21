@@ -1,0 +1,847 @@
+
+As an AutoML Agent, you will be given a folder containing data and description files. Please generate Python code using autogluon.multimodal to train a predictor and make predictions on test data. Follow these specifications:
+
+ONLY save files to the working directory: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_8/output.
+
+1. Data preprocessing:
+   - Remove training data samples without valid labels (drop NA values from training dataset ONLY, NOT from test dataset) unless explicitly instructed otherwise.
+   - Remove the unneccesary index column (if applicable)
+
+2. Model training:
+   - Use autogluon.multimodal with appropriate parameters for the task
+   - If a model is trained, save it in a folder with random timestamp within /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_8/output
+
+3. Prediction:
+   - Make predictions on the ENTIRE test set, preserving ORIGINAL INDICES to maintain exact row correspondence. NEVER drop any test rows for any reason (including missing values), and ensure the output has the exact same number of rows as the test set.
+   - Save the predicted results to /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_8/output, result file name should be "results", the format and extension should be same as the test data file
+   - Output column names must exactly match those in the training or sample submission files without adding "predicted_" prefixes or creating any new columns.
+   - IMPORTANT: At the end, implement validation checks that assert the prediction file maintains exact test data indices, verify correct column names match requirements, confirm proper output format, verify the number of predictions equals the number of test samples, and if applicable, sanity check output predictions are valid and correct.
+
+4. Documentation:
+   - Add a brief docstring at the beginning of the script explaining its purpose
+   - Include additional installation steps with comments at the beginning of the script
+   - Include comments explaining any complex operations or design decisions
+
+5. Others:
+   - To avoid DDP errors, wrap the code in: if __name__ == "__main__":
+   - Ensure errors are propagated up and not silently caught - do not use try/except blocks unless you explicitly re-raise the exception.
+
+6. Validation (only when there is labeled training data):
+   - If there is training and but no validation data is given, hold out a validation dataset (10 percent of the data) at the start, train only on the remaining data.
+   - At the end compute and print the final evaluation metric score on the validation set.
+   - Use a try-except block for the validation step - if validation fails, it's acceptable to continue.
+
+
+Hyperparameter tuning is unnecessary because the presets is already configured.
+The usage of document prediction is different from image prediction.
+Check data path carefully when encounter ValueError: No model is available for this dataset.
+No need to specify model.names, and do not increase default per gpu batch size to avoid OOM errors.
+For semantic segmentation, use single GPU by setting CUDA_VISIBLE_DEVICES=0
+For semantic segmentation, the predicted mask should be saved as greyscale JPG image (squeeze then cv2.imwrite) in \"predicted_mask\" folder under output folder and save its absolute path in label column.
+AutoGluon MultiModal requires converting multiple label columns into either a single combined label for mutually exclusive cases or training separate predictors for each label in non-exclusive scenarios.
+
+### Previous Code to Improve
+```python
+"""
+Skin Lesion Malignancy Prediction Script using AutoGluon MultiModal
+
+This script trains an image classification model to predict the probability of malignancy for skin lesion images.
+It uses AutoGluon's MultiModalPredictor for binary classification, following these steps:
+- Loads and preprocesses the data (removes NA labels from train, drops index columns, maps 'benign' to 'non-neoplastic').
+- Trains a model on the training set (with 10% held out for validation if no validation set is provided).
+- Predicts malignancy probabilities for the test set, preserving original indices and output format.
+- Saves the trained model and prediction results to the specified output directory.
+- Performs validation checks to ensure output correctness.
+- Prints AUROC on the held-out validation set.
+
+Installation requirements (run if needed):
+    pip install --upgrade pip
+    pip install autogluon.multimodal
+
+Usage:
+    Place this script in any location and run it. It expects the following files:
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/*.jpg
+
+Outputs:
+    - Model directory: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_7/output/<random_timestamp>_automm_model/
+    - Prediction file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_7/output/results.csv (format matches test.csv)
+"""
+
+# Installation steps (uncomment if running in a new environment)
+# import sys
+# !{sys.executable} -m pip install --upgrade pip
+# !{sys.executable} -m pip install autogluon.multimodal
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+from autogluon.multimodal import MultiModalPredictor
+from sklearn.metrics import roc_auc_score
+
+# Set random seed for reproducibility
+RANDOM_SEED = 42
+np.random.seed(RANDOM_SEED)
+random.seed(RANDOM_SEED)
+
+if __name__ == "__main__":
+    # Paths
+    DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data"
+    IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+    TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+    TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+    OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_7/output"
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    # 1. Data Loading and Preprocessing
+    train = pd.read_csv(TRAIN_CSV)
+    test = pd.read_csv(TEST_CSV)
+
+    # Remove unnecessary index column if present
+    for col in ['Unnamed: 0', 'index']:
+        if col in train.columns:
+            train = train.drop(columns=[col])
+        if col in test.columns:
+            test = test.drop(columns=[col])
+
+    # Remove training samples without valid labels (drop NA in label column)
+    train = train.dropna(subset=['label'])
+
+    # Map 'benign' to 'non-neoplastic' if present
+    train['label'] = train['label'].replace({'benign': 'non-neoplastic'})
+
+    # Only keep 'malignant' and 'non-neoplastic'
+    train = train[train['label'].isin(['malignant', 'non-neoplastic'])].reset_index(drop=True)
+
+    # Only keep columns needed for modeling
+    train = train[['image_name', 'label']].copy()
+    test = test.copy()
+
+    # Add absolute image path column for AutoGluon
+    def image_path_fn(img_name):
+        return os.path.abspath(os.path.join(IMAGE_DIR, img_name if img_name.endswith('.jpg') else img_name + '.jpg'))
+
+    train['image_path'] = train['image_name'].apply(image_path_fn)
+    test['image_path'] = test['image_name'].apply(image_path_fn)
+
+    # 2. Hold out 10% validation set (stratified)
+    from sklearn.model_selection import train_test_split
+    train_data, val_data = train_test_split(
+        train,
+        test_size=0.1,
+        stratify=train['label'],
+        random_state=RANDOM_SEED,
+    )
+    train_data = train_data.reset_index(drop=True)
+    val_data = val_data.reset_index(drop=True)
+
+    # 3. Prepare data for AutoGluon
+    # AutoGluon expects the image column to be named 'image'
+    train_data_ag = train_data.rename(columns={'image_path': 'image'})
+    val_data_ag = val_data.rename(columns={'image_path': 'image'})
+    test_data_ag = test.rename(columns={'image_path': 'image'})
+
+    # 4. Model Training
+    # Save model to a random timestamped folder in OUTPUT_DIR
+    timestamp = int(time.time()) + random.randint(0, 99999)
+    model_dir = os.path.join(OUTPUT_DIR, f"{timestamp}_automm_model")
+    os.makedirs(model_dir, exist_ok=True)
+
+    predictor = MultiModalPredictor(
+        label='label',
+        problem_type="binary",
+        path=model_dir,
+    )
+
+    # Use only image and label columns for training
+    fit_cols = ['image', 'label']
+    predictor.fit(
+        train_data=train_data_ag[fit_cols],
+    )
+
+    # 5. Prediction on Test Set
+    # Predict_proba returns a DataFrame with columns for each class
+    proba_df = predictor.predict_proba(test_data_ag[['image']])
+
+    # The probability of 'malignant' is needed (float between 0 and 1)
+    if 'malignant' in proba_df.columns:
+        malignancy_proba = proba_df['malignant'].values
+    else:
+        raise ValueError(f"'malignant' class not found in prediction columns: {proba_df.columns}")
+
+    # Prepare output DataFrame: must match test.csv format and row order
+    results_df = test.copy()
+    results_df['malignant'] = malignancy_proba
+
+    # Save results with same format/extension as test.csv
+    results_path = os.path.join(OUTPUT_DIR, "results.csv")
+    results_df_out = results_df[['malignant']]
+    results_df_out.to_csv(results_path, index=False)
+
+    # 6. Validation checks
+    # a) Check number of predictions matches test set
+    assert len(results_df_out) == len(test), f"Number of predictions ({len(results_df_out)}) does not match test set ({len(test)})"
+    # b) Check output columns
+    assert list(results_df_out.columns) == ['malignant'], f"Output columns {list(results_df_out.columns)} do not match required ['malignant']"
+    # c) Check output format (CSV)
+    assert results_path.endswith('.csv'), "Output file must be CSV"
+    # d) Check indices preserved (row order matches test set)
+    assert all(results_df_out.index == test.index), "Output indices do not match test set indices"
+    # e) Check probabilities are floats in [0,1]
+    assert np.all((results_df_out['malignant'] >= 0) & (results_df_out['malignant'] <= 1)), "Malignancy probabilities are not all in [0,1]"
+
+    # 7. Validation metric on held-out validation set
+    try:
+        val_pred_proba = predictor.predict_proba(val_data_ag[['image']])
+        if 'malignant' in val_pred_proba.columns:
+            val_malignant_proba = val_pred_proba['malignant'].values
+        else:
+            raise ValueError(f"'malignant' class not found in validation prediction columns: {val_pred_proba.columns}")
+        # Convert labels to binary: 'malignant' = 1, 'non-neoplastic' = 0
+        val_true = (val_data_ag['label'] == 'malignant').astype(int).values
+        val_score = roc_auc_score(val_true, val_malignant_proba)
+        print(f"Validation AUROC: {val_score:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    print(f"Model saved to: {model_dir}")
+    print(f"Predictions saved to: {results_path}")
+```
+Please prioritize model architecture improvements and training optimization to enhance performance. Feature engineering may also be applied but with lower priority.
+
+
+Please provide the complete Python script that accomplishes these tasks, ensuring it's ready to run given the appropriate data inputs.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification)
+- **Input format:** RGB JPEG images of skin lesions (e.g., image_12962.jpg), referenced by image_name in the data files.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1) indicating the likelihood that the lesion is malignant.
+- **Training data:** Provided in train.csv, which includes image_name and a label column with values 'malignant' or 'non-neoplastic'.
+- **Test data:** Provided in test.csv, which lists image_name values for which predictions are required.
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+
+### Data Structure
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          3                      3            NaN      malignant image_14703
+          1          4                      4            NaN non-neoplastic  image_7458
+          2          2                      1            NaN non-neoplastic  image_6473
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+Text preview:
+ ,image_name
+0,image_10025
+1,image_14107
+2,image_4000
+3,image_3166
+4,image_15680
+5,image_10360
+6,image_5562
+7,image_701
+8,image_7126
+9,image_3911
+10,image_9385
+11,image_7196
+12,image_10681
+13,image_3394
+14,image_5863
+15,image_12134
+16,image_12854
+17,image_9598
+18,image_6276
+19,image_14212
+20,image_6867
+21,image_7253
+22,image_2459
+23,image_7804
+24,image_4101
+25,image_1211
+26,image_14146
+27,image_11273
+28,image_5944
+29,image_2096
+30,image_4170
+31,image_20
+32,image_6445
+33,image_11104
+34,image_14064
+35,image_16555
+36,image_14260
+37,image_8102
+38,image_9007
+39,image_16229
+40,image_10491
+41,image_14702
+42,image_8289
+43,image_4343
+44,image_12036
+45,image_13577
+46,image_11731
+47,image_10108
+48,image_2405
+49,ima...
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_12962.jpg
+Content:
+File: image_12962.jpg
+Size_MB: 0.49
+Format: JPEG
+Mode: RGB
+Dimensions: (1415, 884)
+
+----------
+
+
+### User Instruction
+
+
+### Previous Errors
+These errors were encountered across different implementation approaches and may not be directly related to your current implementation. Use them as reference material to identify potential pitfalls and avoid similar mistakes in your implementation.
+ERROR_SUMMARY: The AssertionError occurs because the training data's label column contains three classes: 'benign', 'malignant', and 'non-neoplastic', but the code expects only 'malignant' and 'non-neoplastic'. This mismatch causes the assertion `assert set(classes) == {'malignant', 'non-neoplastic'}` to fail, as the unexpected 'benign' class is present in the data.
+
+SUGGESTED_FIX:  
+Inspect the train.csv file to confirm the presence of the 'benign' class. Update the data preprocessing step to either filter out rows with the 'benign' label or map 'benign' to 'non-neoplastic' or another appropriate class, depending on the intended binary classification task. Ensure that after preprocessing, the label column contains only 'malignant' and 'non-neoplastic' before proceeding with model training and assertions.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions: "validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes", causing all model training to be skipped and a final RuntimeError: "No models were trained successfully during fit()".
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output so that the full UNIX socket path stays under 107 bytes. Move your working/output directories (e.g., `/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_2/output`) to a location with a much shorter absolute path (such as `/tmp/ag/` or `/scratch/ag/`), and update all relevant script variables and environment settings to use the new, shorter paths before rerunning the training.
+
+ERROR_SUMMARY: The error occurs because the version of LightGBM installed in your environment does not support the early_stopping_rounds parameter directly in the LGBMClassifier.fit() method. This leads to a TypeError when the script attempts to pass early_stopping_rounds as a keyword argument to fit(), causing model training to fail.
+
+SUGGESTED_FIX:  
+Check the installed LightGBM version (run pip show lightgbm) and either upgrade to at least version 3.0.0 (where early_stopping_rounds is supported in fit()), or remove the early_stopping_rounds argument from the fit() call and implement early stopping using the callbacks parameter instead. After making the appropriate change, rerun the script to ensure model training completes successfully.
+
+ERROR_SUMMARY: The error occurs because the fit() method of LGBMClassifier does not accept a verbose keyword argument in recent LightGBM versions. Verbosity should be controlled via the callbacks parameter or by setting the verbose parameter in the LGBMClassifier constructor, not in fit().
+
+SUGGESTED_FIX:  
+Remove the verbose=100 argument from the clf.fit() call. If you want logging, set verbose in the LGBMClassifier constructor or rely on the verbosity provided by the callbacks parameter (e.g., lgb.early_stopping(..., verbose=True)).
+
+ERROR_SUMMARY: The error occurs because the MultiModalPredictor constructor in AutoGluon does not accept a seed argument. Passing seed as a keyword argument to MultiModalPredictor.__init__() results in a TypeError, as seed is not a recognized parameter for this method.
+
+SUGGESTED_FIX:  
+Remove the seed=RANDOM_SEED argument from the MultiModalPredictor constructor. If reproducibility is required, set the random seed using numpy, random, and any relevant framework-specific seed-setting functions before model creation, but do not pass seed directly to MultiModalPredictor.
+
+### Tutorials for Reference
+### Condensed: ```python
+# Condensed: ```python
+
+Summary: This tutorial demonstrates image classification using AutoGluon MultiModal, covering implementation of a complete workflow from setup to deployment. It teaches how to: load image data (both file paths and bytearrays), train classification models with minimal code using MultiModalPredictor, evaluate model performance, make predictions on new images, extract feature embeddings for transfer learning, and save/load models. Key features include time-constrained training, handling multiple input formats, probability-based predictions, and feature extraction capabilities - all with AutoGluon's simplified API that abstracts away complex deep learning implementation details.
+
+*This is a condensed version that preserves essential implementation details and context.*
+
+# Image Classification with AutoGluon MultiModal
+
+## Setup and Data Loading
+
+```python
+!pip install autogluon.multimodal
+
+import warnings
+warnings.filterwarnings('ignore')
+import pandas as pd
+
+from autogluon.multimodal.utils.misc import shopee_dataset
+download_dir = './ag_automm_tutorial_imgcls'
+train_data_path, test_data_path = shopee_dataset(download_dir)
+```
+
+AutoGluon supports both image paths and bytearrays:
+
+```python
+# Load dataset with bytearrays
+train_data_byte, test_data_byte = shopee_dataset(download_dir, is_bytearray=True)
+```
+
+## Training a Model
+
+```python
+from autogluon.multimodal import MultiModalPredictor
+import uuid
+model_path = f"./tmp/{uuid.uuid4().hex}-automm_shopee"
+predictor = MultiModalPredictor(label="label", path=model_path)
+predictor.fit(
+    train_data=train_data_path,
+    time_limit=30, # seconds
+)
+```
+
+Key parameters:
+- `label`: Column name containing target variable
+- `path`: Directory for saving models and outputs
+- `time_limit`: Training time in seconds
+
+## Evaluation
+
+```python
+# Evaluate with image paths
+scores = predictor.evaluate(test_data_path, metrics=["accuracy"])
+print('Top-1 test acc: %.3f' % scores["accuracy"])
+
+# Evaluate with bytearrays
+scores = predictor.evaluate(test_data_byte, metrics=["accuracy"])
+print('Top-1 test acc: %.3f' % scores["accuracy"])
+```
+
+## Prediction
+
+```python
+# Predict label for a single image
+image_path = test_data_path.iloc[0]['image']
+predictions = predictor.predict({'image': [image_path]})
+
+# Get class probabilities
+proba = predictor.predict_proba({'image': [image_path]})
+
+# Works with bytearrays too
+image_byte = test_data_byte.iloc[0]['image']
+predictions = predictor.predict({'image': [image_byte]})
+proba = predictor.predict_proba({'image': [image_byte]})
+```
+
+## Feature Extraction
+
+```python
+# Extract embeddings from images
+feature = predictor.extract_embedding({'image': [image_path]})
+print(feature[0].shape)  # N-dimensional feature vector (typically 512-2048)
+
+# Works with bytearrays too
+feature = predictor.extract_embedding({'image': [image_byte]})
+```
+
+## Save and Load
+
+```python
+# Model is automatically saved during fit()
+loaded_predictor = MultiModalPredictor.load(model_path)
+load_proba = loaded_predictor.predict_proba({'image': [image_path]})
+```
+
+⚠️ **Warning**: `MultiModalPredictor.load()` uses `pickle` module which can be insecure. Only load models from trusted sources.
+
+For customization options, refer to the "Customize AutoMM" documentation.
+
+
+### Condensed: Create Dataset
+# Condensed: Create Dataset
+
+Summary: This tutorial demonstrates implementing focal loss in AutoGluon for handling imbalanced image classification datasets. It covers techniques for calculating class weights, configuring focal loss parameters (alpha, gamma, reduction), and integrating them into MultiModalPredictor. The tutorial helps with training computer vision models on skewed data distributions by showing how to properly weight underrepresented classes. Key functionalities include creating imbalanced datasets, configuring focal loss hyperparameters, comparing models with and without focal loss, and using Swin Transformer architecture for image classification tasks.
+
+*This is a condensed version that preserves essential implementation details and context.*
+
+# Using Focal Loss for Imbalanced Data in AutoGluon
+
+## Dataset Preparation
+
+```python
+from autogluon.multimodal.utils.misc import shopee_dataset
+import numpy as np
+import pandas as pd
+
+# Download dataset
+download_dir = "./ag_automm_tutorial_imgcls_focalloss"
+train_data, test_data = shopee_dataset(download_dir)
+
+# Create imbalanced dataset for demonstration
+ds = 1
+imbalanced_train_data = []
+for lb in range(4):
+    class_data = train_data[train_data.label == lb]
+    sample_index = np.random.choice(np.arange(len(class_data)), size=int(len(class_data) * ds), replace=False)
+    ds /= 3  # downsample 1/3 each time for each class
+    imbalanced_train_data.append(class_data.iloc[sample_index])
+imbalanced_train_data = pd.concat(imbalanced_train_data)
+
+# Calculate class weights for focal loss
+weights = []
+for lb in range(4):
+    class_data = imbalanced_train_data[imbalanced_train_data.label == lb]
+    weights.append(1 / (class_data.shape[0] / imbalanced_train_data.shape[0]))
+    print(f"class {lb}: num samples {len(class_data)}")
+weights = list(np.array(weights) / np.sum(weights))
+```
+
+## Training with Focal Loss
+
+```python
+import uuid
+from autogluon.multimodal import MultiModalPredictor
+
+model_path = f"./tmp/{uuid.uuid4().hex}-automm_shopee_focal"
+
+predictor = MultiModalPredictor(label="label", problem_type="multiclass", path=model_path)
+
+predictor.fit(
+    hyperparameters={
+        "model.mmdet_image.checkpoint_name": "swin_tiny_patch4_window7_224",
+        "env.num_gpus": 1,
+        "optim.loss_func": "focal_loss",
+        "optim.focal_loss.alpha": weights,  # Class weights
+        "optim.focal_loss.gamma": 1.0,      # Controls focus on hard samples
+        "optim.focal_loss.reduction": "sum", # How to aggregate loss
+        "optim.max_epochs": 10,
+    },
+    train_data=imbalanced_train_data,
+) 
+
+predictor.evaluate(test_data, metrics=["acc"])
+```
+
+## Training without Focal Loss (for comparison)
+
+```python
+model_path = f"./tmp/{uuid.uuid4().hex}-automm_shopee_non_focal"
+
+predictor2 = MultiModalPredictor(label="label", problem_type="multiclass", path=model_path)
+
+predictor2.fit(
+    hyperparameters={
+        "model.mmdet_image.checkpoint_name": "swin_tiny_patch4_window7_224",
+        "env.num_gpus": 1,
+        "optim.max_epochs": 10,
+    },
+    train_data=imbalanced_train_data,
+)
+
+predictor2.evaluate(test_data, metrics=["acc"])
+```
+
+## Key Focal Loss Parameters
+
+- **optim.loss_func**: Set to "focal_loss" to enable focal loss
+- **optim.focal_loss.alpha**: List of per-class weights (must match number of classes)
+- **optim.focal_loss.gamma**: Controls focus on hard samples (higher = more focus)
+- **optim.focal_loss.reduction**: How to aggregate loss ("mean" or "sum")
+
+**Best Practice**: When dealing with imbalanced datasets, focal loss can significantly improve model performance by focusing on hard-to-classify examples and properly weighting underrepresented classes.
+
+
+### Condensed: ```python
+# Condensed: ```python
+
+Summary: This tutorial demonstrates AutoGluon MultiModal for multimodal machine learning, focusing on image-text classification with the PetFinder dataset. It covers implementation techniques for preparing multimodal data (handling image paths and text features), training a MultiModalPredictor with automatic modality detection and model selection, and making predictions. Key functionalities include automatic problem type inference, multimodal feature handling, time-constrained training, classification prediction, probability estimation, and performance evaluation using metrics like ROC-AUC. This knowledge helps with tasks requiring combined processing of images and tabular data for classification problems.
+
+*This is a condensed version that preserves essential implementation details and context.*
+
+# AutoGluon MultiModal Quickstart Tutorial
+
+## Setup
+
+```python
+!python -m pip install --upgrade pip
+!python -m pip install autogluon
+
+import os
+import warnings
+import numpy as np
+
+warnings.filterwarnings('ignore')
+np.random.seed(123)
+```
+
+## Data Preparation
+
+Download and prepare the PetFinder dataset (simplified version with binary adoption speed):
+
+```python
+from autogluon.core.utils.loaders import load_zip
+import pandas as pd
+
+# Download dataset
+download_dir = './ag_multimodal_tutorial'
+zip_file = 'https://automl-mm-bench.s3.amazonaws.com/petfinder_for_tutorial.zip'
+load_zip.unzip(zip_file, unzip_dir=download_dir)
+
+# Load data
+dataset_path = f'{download_dir}/petfinder_for_tutorial'
+train_data = pd.read_csv(f'{dataset_path}/train.csv', index_col=0)
+test_data = pd.read_csv(f'{dataset_path}/test.csv', index_col=0)
+label_col = 'AdoptionSpeed'
+
+# Process image paths (take only first image per record)
+image_col = 'Images'
+train_data[image_col] = train_data[image_col].apply(lambda ele: ele.split(';')[0])
+test_data[image_col] = test_data[image_col].apply(lambda ele: ele.split(';')[0])
+
+# Expand image paths to absolute paths
+def path_expander(path, base_folder):
+    path_l = path.split(';')
+    return ';'.join([os.path.abspath(os.path.join(base_folder, path)) for path in path_l])
+
+train_data[image_col] = train_data[image_col].apply(lambda ele: path_expander(ele, base_folder=dataset_path))
+test_data[image_col] = test_data[image_col].apply(lambda ele: path_expander(ele, base_folder=dataset_path))
+```
+
+## Training
+
+Train the MultiModalPredictor with a time limit:
+
+```python
+from autogluon.multimodal import MultiModalPredictor
+
+predictor = MultiModalPredictor(label=label_col).fit(
+    train_data=train_data,
+    time_limit=120  # 2 minutes time limit for quick demo
+)
+```
+
+Key features:
+- Automatically infers problem type (classification/regression)
+- Detects feature modalities
+- Selects appropriate models
+- Adds late-fusion model (MLP or transformer) for multiple backbones
+
+## Prediction
+
+Make predictions on test data:
+
+```python
+# Class predictions
+predictions = predictor.predict(test_data.drop(columns=label_col))
+
+# Probability predictions
+probs = predictor.predict_proba(test_data.drop(columns=label_col))
+```
+
+## Evaluation
+
+Evaluate model performance:
+
+```python
+scores = predictor.evaluate(test_data, metrics=["roc_auc"])
+```
+
+This tutorial demonstrates basic functionality - see in-depth tutorials for advanced features like embedding extraction, distillation, model fine-tuning, and semantic matching.
+
+
+### Condensed: ```python
+# Condensed: ```python
+
+Summary: This tutorial explains AutoGluon MultiModal's problem types for code implementation, covering classification (binary and multiclass), regression, object detection, semantic segmentation, similarity matching, NER, and feature extraction. It helps with implementing models that handle various data modalities (text, image, numerical, categorical) and specifies which problem types support training vs. zero-shot prediction. The tutorial details evaluation metrics for each problem type and provides implementation context for working with multimodal data. It's valuable for coding tasks involving multimodal machine learning, particularly when working with mixed data types and needing automated model training across different problem domains.
+
+*This is a condensed version that preserves essential implementation details and context.*
+
+# AutoGluon MultiModal Problem Types
+
+## Installation and Setup
+
+```python
+!pip install autogluon.multimodal
+import warnings
+warnings.filterwarnings('ignore')
+```
+
+## Problem Types Overview
+
+### Classification
+
+AutoGluon supports two types of classification:
+
+**Binary Classification (2 classes)**
+- Supported modalities: image, numerical, text, categorical, tabular
+- Evaluation metrics: accuracy, balanced_accuracy, f1, mcc, roc_auc (default)
+- Supports training and zero-shot prediction
+
+**Multiclass Classification (3+ classes)**
+- Supported modalities: image, numerical, text, categorical, tabular
+- Evaluation metrics: accuracy (default), balanced_accuracy, f1, log_loss
+- Supports training and zero-shot prediction
+
+### Regression
+
+- Supported modalities: image, numerical, text, categorical, tabular
+- Evaluation metrics: mse, rmse (default), r2, mae, mape
+- Supports training and zero-shot prediction
+
+### Object Detection
+
+- Supported modalities: image
+- Evaluation metrics: map (default)
+- Supports training but not zero-shot prediction
+
+### Semantic Segmentation
+
+- Supported modalities: image
+- Evaluation metrics: overall_accuracy, mean_accuracy, mean_iou (default), weighted_iou
+- Supports training but not zero-shot prediction
+
+### Similarity Matching Problems
+
+**Text Similarity**
+- Input requirements: text
+- Supports zero-shot prediction
+
+**Image Similarity**
+- Input requirements: image
+- Supports zero-shot prediction
+
+**Image-Text Similarity**
+- Input requirements: image, text
+- Supports zero-shot prediction
+
+### Named Entity Recognition (NER)
+
+- Supported modalities: text
+- Evaluation metrics: overall_f1 (default)
+- Supports training but not zero-shot prediction
+
+### Feature Extraction
+
+- Supported modalities: image, numerical, text, categorical, tabular
+- Supports training and zero-shot prediction
+
+### Few-shot Classification
+
+- Supported modalities: image, text
+- Evaluation metrics: accuracy (default)
+- Supports training and zero-shot prediction
+
+## Additional Resources
+- For more examples: [AutoMM Examples](https://github.com/autogluon/autogluon/tree/master/examples/automm)
+- For customization: [Customize AutoMM](../advanced_topics/customization.ipynb)
+- For similarity matching: [Matching Tutorials](../semantic_matching/index.md)
+
+
+### Condensed: ```python
+# Condensed: ```python
+
+Summary: This tutorial demonstrates hyperparameter optimization (HPO) for multimodal models using AutoGluon's MultiModalPredictor. It covers implementing Ray Tune-based HPO for image classification tasks by defining search spaces for learning rates, optimizers, epochs, and model architectures. Key features include configuring search strategies (random/Bayesian), schedulers (FIFO/ASHA), and trial management. The tutorial shows how to compare regular training with HPO approaches, evaluate model performance, and efficiently tune hyperparameters to improve accuracy. This knowledge helps with implementing automated hyperparameter tuning for computer vision tasks, particularly when working with limited training data.
+
+*This is a condensed version that preserves essential implementation details and context.*
+
+# AutoGluon MultiModal Hyperparameter Optimization Tutorial
+
+## Setup and Data Preparation
+
+```python
+!pip install autogluon.multimodal
+
+import warnings
+warnings.filterwarnings('ignore')
+from datetime import datetime
+from autogluon.multimodal.utils.misc import shopee_dataset
+
+# Load and prepare dataset
+download_dir = './ag_automm_tutorial_hpo'
+train_data, test_data = shopee_dataset(download_dir)
+train_data = train_data.sample(frac=0.5)  # 400 data points total
+```
+
+The dataset contains image paths in the `image` column and class labels in the `label` column.
+
+## Basic Model Training
+
+```python
+from autogluon.multimodal import MultiModalPredictor
+
+predictor_regular = MultiModalPredictor(label="label")
+start_time = datetime.now()
+predictor_regular.fit(
+    train_data=train_data,
+    hyperparameters={"model.timm_image.checkpoint_name": "ghostnet_100"}
+)
+end_time = datetime.now()
+elapsed_seconds = (end_time - start_time).total_seconds()
+print("Total fitting time: ", f"{int(elapsed_seconds//60)}m{int(elapsed_seconds%60)}s")
+
+# Evaluate model
+scores = predictor_regular.evaluate(test_data, metrics=["accuracy"])
+print('Top-1 test acc: %.3f' % scores["accuracy"])
+```
+
+## Hyperparameter Optimization (HPO)
+
+AutoGluon uses Ray Tune for HPO with the following key configuration options:
+
+1. **Search Space Definition**:
+   ```python
+   hyperparameters = {
+       "optim.lr": tune.uniform(0.00005, 0.005),
+       "optim.optim_type": tune.choice(["adamw", "sgd"]),
+       "optim.max_epochs": tune.choice(["10", "20"]),
+       "model.timm_image.checkpoint_name": tune.choice(["swin_base_patch4_window7_224", "convnext_base_in22ft1k"])
+   }
+   ```
+
+2. **HPO Configuration**:
+   - `"searcher"`: Search strategy (`"random"` or `"bayes"`)
+   - `"scheduler"`: Job scheduling method (`"FIFO"` or `"ASHA"`)
+   - `"num_trials"`: Number of HPO trials to run
+   - `"num_to_keep"`: Number of checkpoints to keep per trial (must be ≥ 1)
+
+### Example HPO Implementation
+
+```python
+from ray import tune
+
+predictor_hpo = MultiModalPredictor(label="label")
+
+hyperparameters = {
+    "optim.lr": tune.uniform(0.00005, 0.001),
+    "model.timm_image.checkpoint_name": tune.choice([
+        "ghostnet_100",
+        "mobilenetv3_large_100"
+    ])
+}
+
+hyperparameter_tune_kwargs = {
+    "searcher": "bayes",
+    "scheduler": "ASHA",
+    "num_trials": 2,
+    "num_to_keep": 3,
+}
+
+start_time_hpo = datetime.now()
+predictor_hpo.fit(
+    train_data=train_data,
+    hyperparameters=hyperparameters,
+    hyperparameter_tune_kwargs=hyperparameter_tune_kwargs,
+)
+end_time_hpo = datetime.now()
+elapsed_seconds_hpo = (end_time_hpo - start_time_hpo).total_seconds()
+print("Total fitting time: ", f"{int(elapsed_seconds_hpo//60)}m{int(elapsed_seconds_hpo%60)}s")
+
+# Evaluate HPO model
+scores_hpo = predictor_hpo.evaluate(test_data, metrics=["accuracy"])
+print('Top-1 test acc: %.3f' % scores_hpo["accuracy"])
+```
+
+During training, you'll see the best trial information in the logs:
+```
+Current best trial: 47aef96a with val_accuracy=0.862500011920929 and parameters={'optim.lr': 0.0007195214018085505, 'model.timm_image.checkpoint_name': 'ghostnet_100'}
+```
+
+Even with just 2 trials, HPO can improve performance by finding better hyperparameter combinations compared to default settings.
+
+## Additional Resources
+- More examples: [AutoMM Examples](https://github.com/autogluon/autogluon/tree/master/examples/automm)
+- For customization: See [Customize AutoMM](customization.ipynb)
+

@@ -1,0 +1,5 @@
+ERROR_SUMMARY:  
+The error occurs because the MultiModalPredictor constructor in AutoGluon does not accept a seed argument. Passing seed as a keyword argument to MultiModalPredictor.__init__() results in a TypeError, as seed is not a recognized parameter for this method.
+
+SUGGESTED_FIX:  
+Remove the seed=RANDOM_SEED argument from the MultiModalPredictor constructor. If reproducibility is required, set the random seed using numpy, random, and any relevant framework-specific seed-setting functions before model creation, but do not pass seed directly to MultiModalPredictor.

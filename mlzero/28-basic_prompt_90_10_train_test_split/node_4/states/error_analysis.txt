@@ -1,0 +1,4 @@
+ERROR_SUMMARY: The error occurs because the fit() method of LGBMClassifier does not accept a verbose keyword argument in recent LightGBM versions. Verbosity should be controlled via the callbacks parameter or by setting the verbose parameter in the LGBMClassifier constructor, not in fit().
+
+SUGGESTED_FIX:  
+Remove the verbose=100 argument from the clf.fit() call. If you want logging, set verbose in the LGBMClassifier constructor or rely on the verbosity provided by the callbacks parameter (e.g., lgb.early_stopping(..., verbose=True)).

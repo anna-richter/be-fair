@@ -1,0 +1,381 @@
+
+As an AutoML Agent, you will be given a folder containing data and description files. Please generate Python code using machine learning to train a predictor and make predictions on test data. Follow these specifications:
+
+ONLY save files to the working directory: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_4/output.
+
+1. Data preprocessing:
+   - Remove training data samples without valid labels (drop NA values from training dataset ONLY, NOT from test dataset) unless explicitly instructed otherwise.
+   - Remove the unneccesary index column (if applicable)
+
+2. Model training:
+   - Use machine learning with appropriate parameters for the task
+   - If a model is trained, save it in a folder with random timestamp within /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_4/output
+
+3. Prediction:
+   - Make predictions on the ENTIRE test set, preserving ORIGINAL INDICES to maintain exact row correspondence. NEVER drop any test rows for any reason (including missing values), and ensure the output has the exact same number of rows as the test set.
+   - Save the predicted results to /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_4/output, result file name should be "results", the format and extension should be same as the test data file
+   - Output column names must exactly match those in the training or sample submission files without adding "predicted_" prefixes or creating any new columns.
+   - IMPORTANT: At the end, implement validation checks that assert the prediction file maintains exact test data indices, verify correct column names match requirements, confirm proper output format, verify the number of predictions equals the number of test samples, and if applicable, sanity check output predictions are valid and correct.
+
+4. Documentation:
+   - Add a brief docstring at the beginning of the script explaining its purpose
+   - Include additional installation steps with comments at the beginning of the script
+   - Include comments explaining any complex operations or design decisions
+
+5. Others:
+   - To avoid DDP errors, wrap the code in: if __name__ == "__main__":
+   - Ensure errors are propagated up and not silently caught - do not use try/except blocks unless you explicitly re-raise the exception.
+
+6. Validation (only when there is labeled training data):
+   - If there is training and but no validation data is given, hold out a validation dataset (10 percent of the data) at the start, train only on the remaining data.
+   - At the end compute and print the final evaluation metric score on the validation set.
+   - Use a try-except block for the validation step - if validation fails, it's acceptable to continue.
+
+
+In the bash script, install all necessary packages.
+
+### Previous Code to Improve
+```python
+"""
+Skin Lesion Malignancy Probability Prediction Script
+
+This script trains a machine learning model to predict the probability that a skin lesion image is malignant.
+It uses a transfer learning pipeline (ResNet50 feature extraction + LightGBM) to handle image classification.
+The script:
+- Loads and preprocesses the data (removes NA labels, drops index columns, handles label mapping).
+- Extracts features from images using a pretrained ResNet50 CNN.
+- Trains a LightGBM classifier on the extracted features (with 10% held out for validation).
+- Predicts malignancy probability for the test set, preserving original indices and output format.
+- Saves the trained model and prediction results to the specified output directory.
+- Performs validation checks to ensure output correctness.
+- Prints AUROC on the held-out validation set.
+
+Installation requirements (run in bash before running this script):
+    pip install pandas numpy scikit-learn lightgbm pillow tqdm torch torchvision
+
+Usage:
+    Place this script in any location and run it. It expects the following files:
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/*.jpg
+
+Outputs:
+    - Model directory: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_1/output/<random_timestamp>_ml_model/
+    - Prediction file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_1/output/results.csv (format matches test.csv)
+"""
+
+# Installation steps (run in bash before running this script)
+# pip install pandas numpy scikit-learn lightgbm pillow tqdm torch torchvision
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+from tqdm import tqdm
+from PIL import Image
+
+import torch
+import torchvision.transforms as transforms
+import torchvision.models as models
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+import lightgbm as lgb
+import joblib
+
+RANDOM_SEED = 42
+np.random.seed(RANDOM_SEED)
+random.seed(RANDOM_SEED)
+
+def extract_resnet50_features(image_paths, batch_size=32, device='cuda' if torch.cuda.is_available() else 'cpu'):
+    """
+    Extracts 2048-dim features from images using pretrained ResNet50 (avgpool output).
+    Returns a numpy array of shape (len(image_paths), 2048).
+    """
+    model = models.resnet50(pretrained=True)
+    model = torch.nn.Sequential(*(list(model.children())[:-1]))  # Remove FC layer
+    model.eval()
+    model.to(device)
+
+    preprocess = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        # Normalization for ImageNet
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+
+    features = []
+    with torch.no_grad():
+        for i in tqdm(range(0, len(image_paths), batch_size), desc="Extracting features"):
+            batch_paths = image_paths[i:i+batch_size]
+            imgs = []
+            for p in batch_paths:
+                try:
+                    img = Image.open(p).convert('RGB')
+                except Exception:
+                    # If image is missing or corrupt, use a black image
+                    img = Image.fromarray(np.zeros((224,224,3), dtype=np.uint8))
+                imgs.append(preprocess(img))
+            imgs = torch.stack(imgs).to(device)
+            feats = model(imgs).squeeze(-1).squeeze(-1)  # shape: (batch, 2048, 1, 1) -> (batch, 2048)
+            features.append(feats.cpu().numpy())
+    features = np.concatenate(features, axis=0)
+    return features
+
+if __name__ == "__main__":
+    # Paths
+    DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data"
+    IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+    TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+    TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+    OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_1/output"
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    # 1. Data Loading and Preprocessing
+    train = pd.read_csv(TRAIN_CSV)
+    test = pd.read_csv(TEST_CSV)
+
+    # Remove unnecessary index column if present
+    for col in ['Unnamed: 0', 'index']:
+        if col in train.columns:
+            train = train.drop(columns=[col])
+        if col in test.columns:
+            test = test.drop(columns=[col])
+
+    # Remove training samples without valid labels (drop NA in label column)
+    train = train.dropna(subset=['label'])
+
+    # Only keep columns needed for modeling
+    train = train[['image_name', 'label']].copy()
+    test_cols = test.columns.tolist()
+    test = test.copy()
+
+    # Handle label mapping: map 'benign' to 'non-neoplastic' if present
+    train['label'] = train['label'].replace({'benign': 'non-neoplastic'})
+
+    # Only keep 'malignant' and 'non-neoplastic'
+    train = train[train['label'].isin(['malignant', 'non-neoplastic'])].reset_index(drop=True)
+
+    # Add absolute image path column
+    def image_path_fn(img_name):
+        return os.path.abspath(os.path.join(IMAGE_DIR, img_name if img_name.endswith('.jpg') else img_name + '.jpg'))
+
+    train['image_path'] = train['image_name'].apply(image_path_fn)
+    test['image_path'] = test['image_name'].apply(image_path_fn)
+
+    # 2. Hold out 10% validation set (stratified)
+    train_data, val_data = train_test_split(
+        train,
+        test_size=0.1,
+        stratify=train['label'],
+        random_state=RANDOM_SEED,
+    )
+    train_data = train_data.reset_index(drop=True)
+    val_data = val_data.reset_index(drop=True)
+
+    # 3. Feature Extraction (ResNet50)
+    # Extract features for train, val, and test
+    print("Extracting features for training set...")
+    X_train = extract_resnet50_features(train_data['image_path'].tolist())
+    print("Extracting features for validation set...")
+    X_val = extract_resnet50_features(val_data['image_path'].tolist())
+    print("Extracting features for test set...")
+    X_test = extract_resnet50_features(test['image_path'].tolist())
+
+    # Encode labels: 'malignant' = 1, 'non-neoplastic' = 0
+    y_train = (train_data['label'] == 'malignant').astype(int).values
+    y_val = (val_data['label'] == 'malignant').astype(int).values
+
+    # 4. Model Training (LightGBM)
+    timestamp = int(time.time()) + random.randint(0, 99999)
+    model_dir = os.path.join(OUTPUT_DIR, f"{timestamp}_ml_model")
+    os.makedirs(model_dir, exist_ok=True)
+
+    clf = lgb.LGBMClassifier(
+        n_estimators=100,
+        random_state=RANDOM_SEED,
+        class_weight='balanced'
+    )
+    clf.fit(X_train, y_train)
+
+    # Save model
+    joblib.dump(clf, os.path.join(model_dir, "lgbm_model.joblib"))
+
+    # 5. Prediction on Test Set
+    # Predict probability of 'malignant' (class 1)
+    test_proba = clf.predict_proba(X_test)[:, 1]
+
+    # Prepare output DataFrame: must match test.csv format and row order
+    results_df = test.copy()
+    results_df['malignant'] = test_proba
+
+    # Save results with same format/extension as test.csv
+    results_path = os.path.join(OUTPUT_DIR, "results.csv")
+    results_df_out = results_df[['malignant']]
+    results_df_out.to_csv(results_path, index=False)
+
+    # 6. Validation checks
+    # a) Check number of predictions matches test set
+    assert len(results_df_out) == len(test), f"Number of predictions ({len(results_df_out)}) does not match test set ({len(test)})"
+    # b) Check output columns
+    assert list(results_df_out.columns) == ['malignant'], f"Output columns {list(results_df_out.columns)} do not match required ['malignant']"
+    # c) Check output format (CSV)
+    assert results_path.endswith('.csv'), "Output file must be CSV"
+    # d) Check indices preserved (row order matches test set)
+    assert all(results_df_out.index == test.index), "Output indices do not match test set indices"
+    # e) Check probabilities are floats in [0,1]
+    assert np.all((results_df_out['malignant'] >= 0) & (results_df_out['malignant'] <= 1)), "Malignancy probabilities are not all in [0,1]"
+
+    # 7. Validation metric on held-out validation set
+    try:
+        val_pred_proba = clf.predict_proba(X_val)[:, 1]
+        val_score = roc_auc_score(y_val, val_pred_proba)
+        print(f"Validation AUROC: {val_score:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    print(f"Model saved to: {model_dir}")
+    print(f"Predictions saved to: {results_path}")
+```
+Please prioritize model architecture improvements and training optimization to enhance performance. Feature engineering may also be applied but with lower priority.
+
+
+Please provide the complete Python script that accomplishes these tasks, ensuring it's ready to run given the appropriate data inputs.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification)
+- **Input format:** RGB JPEG images of skin lesions (e.g., image_12962.jpg), referenced by image_name in the data files.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1) indicating the likelihood that the lesion is malignant.
+- **Training data:** Provided in train.csv, which includes image_name and a label column with values 'malignant' or 'non-neoplastic'.
+- **Test data:** Provided in test.csv, which lists image_name values for which predictions are required.
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+
+### Data Structure
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          3                      3            NaN      malignant image_14703
+          1          4                      4            NaN non-neoplastic  image_7458
+          2          2                      1            NaN non-neoplastic  image_6473
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+Text preview:
+ ,image_name
+0,image_10025
+1,image_14107
+2,image_4000
+3,image_3166
+4,image_15680
+5,image_10360
+6,image_5562
+7,image_701
+8,image_7126
+9,image_3911
+10,image_9385
+11,image_7196
+12,image_10681
+13,image_3394
+14,image_5863
+15,image_12134
+16,image_12854
+17,image_9598
+18,image_6276
+19,image_14212
+20,image_6867
+21,image_7253
+22,image_2459
+23,image_7804
+24,image_4101
+25,image_1211
+26,image_14146
+27,image_11273
+28,image_5944
+29,image_2096
+30,image_4170
+31,image_20
+32,image_6445
+33,image_11104
+34,image_14064
+35,image_16555
+36,image_14260
+37,image_8102
+38,image_9007
+39,image_16229
+40,image_10491
+41,image_14702
+42,image_8289
+43,image_4343
+44,image_12036
+45,image_13577
+46,image_11731
+47,image_10108
+48,image_2405
+49,ima...
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_12962.jpg
+Content:
+File: image_12962.jpg
+Size_MB: 0.49
+Format: JPEG
+Mode: RGB
+Dimensions: (1415, 884)
+
+----------
+
+
+### User Instruction
+
+
+### Previous Errors
+These errors were encountered across different implementation approaches and may not be directly related to your current implementation. Use them as reference material to identify potential pitfalls and avoid similar mistakes in your implementation.
+ERROR_SUMMARY: The AssertionError occurs because the training data's label column contains three classes: 'benign', 'malignant', and 'non-neoplastic', but the code expects only 'malignant' and 'non-neoplastic'. This mismatch causes the assertion `assert set(classes) == {'malignant', 'non-neoplastic'}` to fail, as the unexpected 'benign' class is present in the data.
+
+SUGGESTED_FIX:  
+Inspect the train.csv file to confirm the presence of the 'benign' class. Update the data preprocessing step to either filter out rows with the 'benign' label or map 'benign' to 'non-neoplastic' or another appropriate class, depending on the intended binary classification task. Ensure that after preprocessing, the label column contains only 'malignant' and 'non-neoplastic' before proceeding with model training and assertions.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions: "validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes", causing all model training to be skipped and a final RuntimeError: "No models were trained successfully during fit()".
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output so that the full UNIX socket path stays under 107 bytes. Move your working/output directories (e.g., `/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_2/output`) to a location with a much shorter absolute path (such as `/tmp/ag/` or `/scratch/ag/`), and update all relevant script variables and environment settings to use the new, shorter paths before rerunning the training.
+
+ERROR_SUMMARY: The error occurs because the version of LightGBM installed in your environment does not support the early_stopping_rounds parameter directly in the LGBMClassifier.fit() method. This leads to a TypeError when the script attempts to pass early_stopping_rounds as a keyword argument to fit(), causing model training to fail.
+
+SUGGESTED_FIX:  
+Check the installed LightGBM version (run pip show lightgbm) and either upgrade to at least version 3.0.0 (where early_stopping_rounds is supported in fit()), or remove the early_stopping_rounds argument from the fit() call and implement early stopping using the callbacks parameter instead. After making the appropriate change, rerun the script to ensure model training completes successfully.
+
+### Tutorials for Reference
+### Condensed: Intro to Use Machine Learning or Deep Learning algorithms
+# Condensed: Intro to Use Machine Learning or Deep Learning algorithms
+
+Summary: You can use any machine learning or deep learning algorithms to complete the tasks. Make sure you have them installed in bash script.
+
+# Intro to Use Machine Learning or Deep Learning algorithms
+
+You can use any machine learning or deep learning algorithms to complete the tasks. Make sure you have them installed in bash script.
+
+

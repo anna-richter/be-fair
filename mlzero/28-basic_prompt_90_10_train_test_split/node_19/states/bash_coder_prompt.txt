@@ -1,0 +1,240 @@
+Generate a minimal bash script that will:
+
+Create and configure a conda environment in "conda_env" folder under /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_19:
+ - Python version: 3.11
+ - Activate the environment
+ - pip install uv
+ - Install required packages from /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt and /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt using uv pip install -r /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt --prerelease=allow -r /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt
+ - Only install the exact packages specified in the requirements files with their dependencies.
+ - Do NOT upgrade or reinstall autogluon.multimodal if it's already at the correct version specified in the requirements.
+Execute the Python script: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_19/generated_code.py
+
+### Python code in the script:
+"""
+Skin Lesion Malignancy Prediction Script using AutoGluon MultiModal
+
+This script trains an image classification model to predict the probability of malignancy for skin lesion images.
+It uses AutoGluon's MultiModalPredictor for binary classification, following these steps:
+- Loads and preprocesses the data (removes NA labels from train, drops index columns, maps 'benign' to 'non-neoplastic').
+- Trains a model on the training set (with 10% held out for validation if no validation set is provided).
+- Predicts malignancy probabilities for the test set, preserving original indices and output format.
+- Saves the trained model and prediction results to the specified output directory.
+- Performs validation checks to ensure output correctness.
+- Prints AUROC on the held-out validation set.
+
+Installation requirements (run if needed):
+    pip install --upgrade pip
+    pip install autogluon.multimodal
+
+Usage:
+    Place this script in any location and run it. It expects the following files:
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/*.jpg
+
+Outputs:
+    - Model directory: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_18/output/<random_timestamp>_automm_model/
+    - Prediction file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_18/output/results.csv (format matches test.csv)
+"""
+
+# Installation steps (uncomment if running in a new environment)
+# import sys
+# !{sys.executable} -m pip install --upgrade pip
+# !{sys.executable} -m pip install autogluon.multimodal
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+from autogluon.multimodal import MultiModalPredictor
+from sklearn.metrics import roc_auc_score
+
+# Set random seed for reproducibility
+RANDOM_SEED = 42
+np.random.seed(RANDOM_SEED)
+random.seed(RANDOM_SEED)
+
+if __name__ == "__main__":
+    # Paths
+    DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data"
+    IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+    TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+    TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+    OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_18/output"
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    # 1. Data Loading and Preprocessing
+    train = pd.read_csv(TRAIN_CSV)
+    test = pd.read_csv(TEST_CSV)
+
+    # Remove unnecessary index column if present
+    for col in ['Unnamed: 0', 'index']:
+        if col in train.columns:
+            train = train.drop(columns=[col])
+        if col in test.columns:
+            test = test.drop(columns=[col])
+
+    # Remove training samples without valid labels (drop NA in label column)
+    train = train.dropna(subset=['label'])
+
+    # Map 'benign' to 'non-neoplastic' if present
+    train['label'] = train['label'].replace({'benign': 'non-neoplastic'})
+
+    # Only keep 'malignant' and 'non-neoplastic'
+    train = train[train['label'].isin(['malignant', 'non-neoplastic'])].reset_index(drop=True)
+
+    # Only keep columns needed for modeling
+    train = train[['image_name', 'label']].copy()
+    test = test.copy()
+
+    # Add absolute image path column for AutoGluon
+    def image_path_fn(img_name):
+        return os.path.abspath(os.path.join(IMAGE_DIR, img_name if img_name.endswith('.jpg') else img_name + '.jpg'))
+
+    train['image_path'] = train['image_name'].apply(image_path_fn)
+    test['image_path'] = test['image_name'].apply(image_path_fn)
+
+    # 2. Hold out 10% validation set (stratified)
+    from sklearn.model_selection import train_test_split
+    train_data, val_data = train_test_split(
+        train,
+        test_size=0.1,
+        stratify=train['label'],
+        random_state=RANDOM_SEED,
+    )
+    train_data = train_data.reset_index(drop=True)
+    val_data = val_data.reset_index(drop=True)
+
+    # 3. Prepare data for AutoGluon
+    # AutoGluon expects the image column to be named 'image'
+    train_data_ag = train_data.rename(columns={'image_path': 'image'})
+    val_data_ag = val_data.rename(columns={'image_path': 'image'})
+    test_data_ag = test.rename(columns={'image_path': 'image'})
+
+    # 4. Model Training
+    # Save model to a random timestamped folder in OUTPUT_DIR
+    timestamp = int(time.time()) + random.randint(0, 99999)
+    model_dir = os.path.join(OUTPUT_DIR, f"{timestamp}_automm_model")
+    os.makedirs(model_dir, exist_ok=True)
+
+    # Use a stronger backbone for better performance (e.g., Swin Transformer)
+    predictor = MultiModalPredictor(
+        label='label',
+        problem_type="binary",
+        path=model_dir,
+    )
+    # Use a better backbone and more epochs for improved performance
+    predictor.fit(
+        train_data=train_data_ag[['image', 'label']],
+        hyperparameters={
+            "model.timm_image.checkpoint_name": "swin_base_patch4_window7_224",
+            "env.num_gpus": 1,
+            "optim.max_epochs": 15,
+        }
+    )
+
+    # 5. Prediction on Test Set
+    # Predict_proba returns a DataFrame with columns for each class
+    proba_df = predictor.predict_proba(test_data_ag[['image']])
+
+    # The probability of 'malignant' is needed (float between 0 and 1)
+    if 'malignant' in proba_df.columns:
+        malignancy_proba = proba_df['malignant'].values
+    else:
+        raise ValueError(f"'malignant' class not found in prediction columns: {proba_df.columns}")
+
+    # Prepare output DataFrame: must match test.csv format and row order
+    results_df = test.copy()
+    results_df['malignant'] = malignancy_proba
+
+    # Save results with same format/extension as test.csv
+    results_path = os.path.join(OUTPUT_DIR, "results.csv")
+    results_df_out = results_df[['malignant']]
+    results_df_out.to_csv(results_path, index=False)
+
+    # 6. Validation checks
+    # a) Check number of predictions matches test set
+    assert len(results_df_out) == len(test), f"Number of predictions ({len(results_df_out)}) does not match test set ({len(test)})"
+    # b) Check output columns
+    assert list(results_df_out.columns) == ['malignant'], f"Output columns {list(results_df_out.columns)} do not match required ['malignant']"
+    # c) Check output format (CSV)
+    assert results_path.endswith('.csv'), "Output file must be CSV"
+    # d) Check indices preserved (row order matches test set)
+    assert all(results_df_out.index == test.index), "Output indices do not match test set indices"
+    # e) Check probabilities are floats in [0,1]
+    assert np.all((results_df_out['malignant'] >= 0) & (results_df_out['malignant'] <= 1)), "Malignancy probabilities are not all in [0,1]"
+
+    # 7. Validation metric on held-out validation set
+    try:
+        val_pred_proba = predictor.predict_proba(val_data_ag[['image']])
+        if 'malignant' in val_pred_proba.columns:
+            val_malignant_proba = val_pred_proba['malignant'].values
+        else:
+            raise ValueError(f"'malignant' class not found in validation prediction columns: {val_pred_proba.columns}")
+        # Convert labels to binary: 'malignant' = 1, 'non-neoplastic' = 0
+        val_true = (val_data_ag['label'] == 'malignant').astype(int).values
+        val_score = roc_auc_score(val_true, val_malignant_proba)
+        print(f"Validation AUROC: {val_score:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    print(f"Model saved to: {model_dir}")
+    print(f"Predictions saved to: {results_path}")
+
+### Previous Error
+ERROR_SUMMARY: The AssertionError occurs because the training data's label column contains three classes: 'benign', 'malignant', and 'non-neoplastic', but the code expects only 'malignant' and 'non-neoplastic'. This mismatch causes the assertion `assert set(classes) == {'malignant', 'non-neoplastic'}` to fail, as the unexpected 'benign' class is present in the data.
+
+SUGGESTED_FIX:  
+Inspect the train.csv file to confirm the presence of the 'benign' class. Update the data preprocessing step to either filter out rows with the 'benign' label or map 'benign' to 'non-neoplastic' or another appropriate class, depending on the intended binary classification task. Ensure that after preprocessing, the label column contains only 'malignant' and 'non-neoplastic' before proceeding with model training and assertions.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions: "validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes", causing all model training to be skipped and a final RuntimeError: "No models were trained successfully during fit()".
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output so that the full UNIX socket path stays under 107 bytes. Move your working/output directories (e.g., `/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_2/output`) to a location with a much shorter absolute path (such as `/tmp/ag/` or `/scratch/ag/`), and update all relevant script variables and environment settings to use the new, shorter paths before rerunning the training.
+
+ERROR_SUMMARY: The error occurs because the version of LightGBM installed in your environment does not support the early_stopping_rounds parameter directly in the LGBMClassifier.fit() method. This leads to a TypeError when the script attempts to pass early_stopping_rounds as a keyword argument to fit(), causing model training to fail.
+
+SUGGESTED_FIX:  
+Check the installed LightGBM version (run pip show lightgbm) and either upgrade to at least version 3.0.0 (where early_stopping_rounds is supported in fit()), or remove the early_stopping_rounds argument from the fit() call and implement early stopping using the callbacks parameter instead. After making the appropriate change, rerun the script to ensure model training completes successfully.
+
+ERROR_SUMMARY: The error occurs because the fit() method of LGBMClassifier does not accept a verbose keyword argument in recent LightGBM versions. Verbosity should be controlled via the callbacks parameter or by setting the verbose parameter in the LGBMClassifier constructor, not in fit().
+
+SUGGESTED_FIX:  
+Remove the verbose=100 argument from the clf.fit() call. If you want logging, set verbose in the LGBMClassifier constructor or rely on the verbosity provided by the callbacks parameter (e.g., lgb.early_stopping(..., verbose=True)).
+
+ERROR_SUMMARY: The error occurs because the MultiModalPredictor constructor in AutoGluon does not accept a seed argument. Passing seed as a keyword argument to MultiModalPredictor.__init__() results in a TypeError, as seed is not a recognized parameter for this method.
+
+SUGGESTED_FIX:  
+Remove the seed=RANDOM_SEED argument from the MultiModalPredictor constructor. If reproducibility is required, set the random seed using numpy, random, and any relevant framework-specific seed-setting functions before model creation, but do not pass seed directly to MultiModalPredictor.
+
+### Previous failed bash script:
+#!/bin/bash
+set -e
+
+# Paths
+ENV_DIR="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_11/conda_env"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_MM="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt"
+PY_SCRIPT="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_11/generated_code.py"
+
+# 1. Create conda environment with Python 3.11
+conda create -y -p "$ENV_DIR" python=3.11
+
+# 2. Activate the environment
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_DIR"
+
+# 3. Install uv
+pip install uv
+
+# 4. Install requirements via uv (only exact packages and dependencies)
+uv pip install -r "$REQ_MM" --prerelease=allow -r "$REQ_COMMON"
+
+# 5. Run the Python script
+python "$PY_SCRIPT"
+
+Notes:
+- Generate a minimal, executable bash script
+- Focus on essential commands only
+- Handle environment and package only if asked or there were errors

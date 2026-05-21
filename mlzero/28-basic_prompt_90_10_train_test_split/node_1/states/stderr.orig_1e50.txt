@@ -1,0 +1,673 @@
+
+==> WARNING: A newer version of conda exists. <==
+    current version: 25.11.0
+    latest version: 26.5.0
+Please update conda by running
+    $ conda update -n base -c conda-forge conda
+warning: Requirements file `/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt` does not contain any dependencies
+Using Python 3.11.15 environment at: 28-basic_prompt/node_1/conda_env
+Resolved 79 packages in 750ms
+Downloading nvidia-nccl-cu13 (196.4MiB)
+Downloading torch (507.5MiB)
+Downloading nvidia-cudnn-cu13 (349.2MiB)
+Downloading nvidia-cublas (403.5MiB)
+Downloading nvidia-cufft (204.2MiB)
+Downloading triton (192.1MiB)
+Downloading nvidia-cusolver (191.6MiB)
+Downloading nvidia-cusparselt-cu13 (162.3MiB)
+Downloading nvidia-cuda-nvrtc (86.0MiB)
+Downloading nvidia-nvshmem-cu13 (57.6MiB)
+Downloading nvidia-curand (56.8MiB)
+Downloading numpy (16.1MiB)
+Downloading nvidia-cuda-runtime (2.1MiB)
+Downloading nvidia-cusparse (139.2MiB)
+Downloading pandas (10.8MiB)
+Downloading cuda-bindings (6.0MiB)
+Downloading pillow (6.8MiB)
+Downloading nvidia-nvjitlink (38.8MiB)
+Downloading nvidia-cuda-cupti (10.2MiB)
+Downloading torchvision (7.2MiB)
+Downloading pyarrow (46.6MiB)
+Downloading nvidia-cufile (1.2MiB)
+ Downloaded nvidia-cufile
+ Downloaded nvidia-cuda-runtime
+ Downloaded cuda-bindings
+ Downloaded pillow
+ Downloaded torchvision
+ Downloaded nvidia-cuda-cupti
+ Downloaded pandas
+ Downloaded numpy
+ Downloaded nvidia-nvjitlink
+ Downloaded nvidia-curand
+ Downloaded nvidia-nvshmem-cu13
+ Downloaded pyarrow
+ Downloaded nvidia-cuda-nvrtc
+ Downloaded nvidia-cusparse
+ Downloaded nvidia-cusparselt-cu13
+ Downloaded nvidia-cusolver
+ Downloaded nvidia-nccl-cu13
+ Downloaded nvidia-cufft
+ Downloaded triton
+ Downloaded nvidia-cudnn-cu13
+ Downloaded nvidia-cublas
+ Downloaded torch
+Prepared 34 packages in 1m 25s
+Uninstalled 1 package in 1.72s
+Installed 78 packages in 32.40s
+ + aiohappyeyeballs==2.6.1
+ + aiohttp==3.13.5
+ + aiosignal==1.4.0
+ + annotated-doc==0.0.4
+ + annotated-types==0.7.0
+ + anyio==4.13.0
+ + attrs==26.1.0
+ + certifi==2026.4.22
+ + chardet==7.4.3
+ + charset-normalizer==3.4.7
+ + click==8.4.0
+ + cuda-bindings==13.2.0
+ + cuda-pathfinder==1.5.4
+ + cuda-toolkit==13.0.2
+ + datasets==4.8.5
+ + dill==0.4.1
+ + filelock==3.29.0
+ + frozenlist==1.8.0
+ + fsspec==2026.2.0
+ + h11==0.16.0
+ + hf-xet==1.5.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + huggingface-hub==1.15.0
+ + idna==3.15
+ + jinja2==3.1.6
+ + markdown-it-py==4.2.0
+ + markupsafe==3.0.3
+ + mdurl==0.1.2
+ + mpmath==1.3.0
+ + multidict==6.7.1
+ + multiprocess==0.70.19
+ + networkx==3.6.1
+ + numpy==2.4.6
+ + nvidia-cublas==13.1.1.3
+ + nvidia-cuda-cupti==13.0.85
+ + nvidia-cuda-nvrtc==13.0.88
+ + nvidia-cuda-runtime==13.0.96
+ + nvidia-cudnn-cu13==9.20.0.48
+ + nvidia-cufft==12.0.0.61
+ + nvidia-cufile==1.15.1.6
+ + nvidia-curand==10.4.0.35
+ + nvidia-cusolver==12.0.4.66
+ + nvidia-cusparse==12.6.3.3
+ + nvidia-cusparselt-cu13==0.8.1
+ + nvidia-nccl-cu13==2.29.7
+ + nvidia-nvjitlink==13.0.88
+ + nvidia-nvshmem-cu13==3.4.5
+ + nvidia-nvtx==13.0.85
+ + opencv-python==4.13.0.92
+ + pandas==3.0.3
+ + pillow==12.2.0
+ + propcache==0.5.2
+ + pyarrow==24.0.0
+ + pydantic==2.13.4
+ + pydantic-core==2.46.4
+ + pygments==2.20.0
+ + python-calamine==0.6.2
+ + python-dateutil==2.9.0.post0
+ + pytz==2026.2
+ + pyyaml==6.0.3
+ + requests==2.34.2
+ + rich==15.0.0
+ - setuptools==82.0.1
+ + setuptools==81.0.0
+ + shellingham==1.5.4
+ + six==1.17.0
+ + sympy==1.14.0
+ + torch==2.12.0
+ + torchaudio==2.11.0
+ + torchvision==0.27.0
+ + tqdm==4.67.3
+ + triton==3.7.0
+ + typer==0.25.1
+ + typing-extensions==4.15.0
+ + typing-inspection==0.4.2
+ + urllib3==2.7.0
+ + xxhash==3.7.0
+ + yarl==1.24.2
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_1/conda_env/lib/python3.11/site-packages/torch/cuda/__init__.py:187: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12070). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_1/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_1/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+
+Extracting features:   0%|          | 0/420 [00:00<?, ?it/s]
+Extracting features:   0%|          | 1/420 [00:01<11:33,  1.65s/it]
+Extracting features:   0%|          | 2/420 [00:03<10:31,  1.51s/it]
+Extracting features:   1%|          | 3/420 [00:04<10:00,  1.44s/it]
+Extracting features:   1%|          | 4/420 [00:05<10:02,  1.45s/it]
+Extracting features:   1%|          | 5/420 [00:07<09:42,  1.40s/it]
+Extracting features:   1%|▏         | 6/420 [00:08<09:36,  1.39s/it]
+Extracting features:   2%|▏         | 7/420 [00:10<09:42,  1.41s/it]
+Extracting features:   2%|▏         | 8/420 [00:11<09:38,  1.40s/it]
+Extracting features:   2%|▏         | 9/420 [00:12<09:33,  1.39s/it]
+Extracting features:   2%|▏         | 10/420 [00:14<09:29,  1.39s/it]
+Extracting features:   3%|▎         | 11/420 [00:15<09:28,  1.39s/it]
+Extracting features:   3%|▎         | 12/420 [00:16<09:25,  1.38s/it]
+Extracting features:   3%|▎         | 13/420 [00:18<09:26,  1.39s/it]
+Extracting features:   3%|▎         | 14/420 [00:19<09:26,  1.39s/it]
+Extracting features:   4%|▎         | 15/420 [00:21<09:31,  1.41s/it]
+Extracting features:   4%|▍         | 16/420 [00:22<09:38,  1.43s/it]
+Extracting features:   4%|▍         | 17/420 [00:24<09:31,  1.42s/it]
+Extracting features:   4%|▍         | 18/420 [00:25<09:20,  1.39s/it]
+Extracting features:   5%|▍         | 19/420 [00:26<09:11,  1.38s/it]
+Extracting features:   5%|▍         | 20/420 [00:28<09:15,  1.39s/it]
+Extracting features:   5%|▌         | 21/420 [00:29<09:08,  1.37s/it]
+Extracting features:   5%|▌         | 22/420 [00:30<09:10,  1.38s/it]
+Extracting features:   5%|▌         | 23/420 [00:32<09:06,  1.38s/it]
+Extracting features:   6%|▌         | 24/420 [00:33<09:07,  1.38s/it]
+Extracting features:   6%|▌         | 25/420 [00:35<09:06,  1.38s/it]
+Extracting features:   6%|▌         | 26/420 [00:36<09:05,  1.39s/it]
+Extracting features:   6%|▋         | 27/420 [00:37<09:06,  1.39s/it]
+Extracting features:   7%|▋         | 28/420 [00:39<08:59,  1.38s/it]
+Extracting features:   7%|▋         | 29/420 [00:40<09:00,  1.38s/it]
+Extracting features:   7%|▋         | 30/420 [00:41<08:55,  1.37s/it]
+Extracting features:   7%|▋         | 31/420 [00:43<09:02,  1.39s/it]
+Extracting features:   8%|▊         | 32/420 [00:44<08:53,  1.37s/it]
+Extracting features:   8%|▊         | 33/420 [00:46<08:47,  1.36s/it]
+Extracting features:   8%|▊         | 34/420 [00:47<08:52,  1.38s/it]
+Extracting features:   8%|▊         | 35/420 [00:48<08:52,  1.38s/it]
+Extracting features:   9%|▊         | 36/420 [00:50<08:50,  1.38s/it]
+Extracting features:   9%|▉         | 37/420 [00:51<08:48,  1.38s/it]
+Extracting features:   9%|▉         | 38/420 [00:53<08:53,  1.40s/it]
+Extracting features:   9%|▉         | 39/420 [00:54<08:55,  1.40s/it]
+Extracting features:  10%|▉         | 40/420 [00:55<08:47,  1.39s/it]
+Extracting features:  10%|▉         | 41/420 [00:57<08:42,  1.38s/it]
+Extracting features:  10%|█         | 42/420 [00:58<08:47,  1.40s/it]
+Extracting features:  10%|█         | 43/420 [01:00<08:52,  1.41s/it]
+Extracting features:  10%|█         | 44/420 [01:01<08:47,  1.40s/it]
+Extracting features:  11%|█         | 45/420 [01:02<08:58,  1.44s/it]
+Extracting features:  11%|█         | 46/420 [01:04<08:52,  1.42s/it]
+Extracting features:  11%|█         | 47/420 [01:05<08:49,  1.42s/it]
+Extracting features:  11%|█▏        | 48/420 [01:07<08:41,  1.40s/it]
+Extracting features:  12%|█▏        | 49/420 [01:08<08:39,  1.40s/it]
+Extracting features:  12%|█▏        | 50/420 [01:09<08:36,  1.40s/it]
+Extracting features:  12%|█▏        | 51/420 [01:11<08:39,  1.41s/it]
+Extracting features:  12%|█▏        | 52/420 [01:12<08:33,  1.40s/it]
+Extracting features:  13%|█▎        | 53/420 [01:14<08:31,  1.39s/it]
+Extracting features:  13%|█▎        | 54/420 [01:15<08:28,  1.39s/it]
+Extracting features:  13%|█▎        | 55/420 [01:16<08:30,  1.40s/it]
+Extracting features:  13%|█▎        | 56/420 [01:18<08:28,  1.40s/it]
+Extracting features:  14%|█▎        | 57/420 [01:19<08:28,  1.40s/it]
+Extracting features:  14%|█▍        | 58/420 [01:21<08:20,  1.38s/it]
+Extracting features:  14%|█▍        | 59/420 [01:22<08:19,  1.38s/it]
+Extracting features:  14%|█▍        | 60/420 [01:23<08:14,  1.37s/it]
+Extracting features:  15%|█▍        | 61/420 [01:25<08:17,  1.39s/it]
+Extracting features:  15%|█▍        | 62/420 [01:26<08:15,  1.38s/it]
+Extracting features:  15%|█▌        | 63/420 [01:27<08:15,  1.39s/it]
+Extracting features:  15%|█▌        | 64/420 [01:29<08:19,  1.40s/it]
+Extracting features:  15%|█▌        | 65/420 [01:30<08:18,  1.40s/it]
+Extracting features:  16%|█▌        | 66/420 [01:32<08:20,  1.41s/it]
+Extracting features:  16%|█▌        | 67/420 [01:33<08:17,  1.41s/it]
+Extracting features:  16%|█▌        | 68/420 [01:35<08:19,  1.42s/it]
+Extracting features:  16%|█▋        | 69/420 [01:36<08:10,  1.40s/it]
+Extracting features:  17%|█▋        | 70/420 [01:37<08:13,  1.41s/it]
+Extracting features:  17%|█▋        | 71/420 [01:39<08:12,  1.41s/it]
+Extracting features:  17%|█▋        | 72/420 [01:40<08:15,  1.42s/it]
+Extracting features:  17%|█▋        | 73/420 [01:42<08:06,  1.40s/it]
+Extracting features:  18%|█▊        | 74/420 [01:43<08:11,  1.42s/it]
+Extracting features:  18%|█▊        | 75/420 [01:44<08:02,  1.40s/it]
+Extracting features:  18%|█▊        | 76/420 [01:46<07:58,  1.39s/it]
+Extracting features:  18%|█▊        | 77/420 [01:47<08:02,  1.41s/it]
+Extracting features:  19%|█▊        | 78/420 [01:49<08:03,  1.41s/it]
+Extracting features:  19%|█▉        | 79/420 [01:50<07:53,  1.39s/it]
+Extracting features:  19%|█▉        | 80/420 [01:51<07:52,  1.39s/it]
+Extracting features:  19%|█▉        | 81/420 [01:53<07:51,  1.39s/it]
+Extracting features:  20%|█▉        | 82/420 [01:54<07:46,  1.38s/it]
+Extracting features:  20%|█▉        | 83/420 [01:55<07:44,  1.38s/it]
+Extracting features:  20%|██        | 84/420 [01:57<07:41,  1.37s/it]
+Extracting features:  20%|██        | 85/420 [01:58<07:42,  1.38s/it]
+Extracting features:  20%|██        | 86/420 [02:00<07:39,  1.38s/it]
+Extracting features:  21%|██        | 87/420 [02:01<07:36,  1.37s/it]
+Extracting features:  21%|██        | 88/420 [02:02<07:34,  1.37s/it]
+Extracting features:  21%|██        | 89/420 [02:04<07:36,  1.38s/it]
+Extracting features:  21%|██▏       | 90/420 [02:05<07:33,  1.37s/it]
+Extracting features:  22%|██▏       | 91/420 [02:06<07:30,  1.37s/it]
+Extracting features:  22%|██▏       | 92/420 [02:08<07:26,  1.36s/it]
+Extracting features:  22%|██▏       | 93/420 [02:09<07:33,  1.39s/it]
+Extracting features:  22%|██▏       | 94/420 [02:11<07:34,  1.39s/it]
+Extracting features:  23%|██▎       | 95/420 [02:12<07:27,  1.38s/it]
+Extracting features:  23%|██▎       | 96/420 [02:13<07:24,  1.37s/it]
+Extracting features:  23%|██▎       | 97/420 [02:15<07:24,  1.37s/it]
+Extracting features:  23%|██▎       | 98/420 [02:16<07:22,  1.38s/it]
+Extracting features:  24%|██▎       | 99/420 [02:18<07:23,  1.38s/it]
+Extracting features:  24%|██▍       | 100/420 [02:19<07:21,  1.38s/it]
+Extracting features:  24%|██▍       | 101/420 [02:20<07:17,  1.37s/it]
+Extracting features:  24%|██▍       | 102/420 [02:22<07:16,  1.37s/it]
+Extracting features:  25%|██▍       | 103/420 [02:23<07:21,  1.39s/it]
+Extracting features:  25%|██▍       | 104/420 [02:24<07:21,  1.40s/it]
+Extracting features:  25%|██▌       | 105/420 [02:26<07:16,  1.39s/it]
+Extracting features:  25%|██▌       | 106/420 [02:27<07:13,  1.38s/it]
+Extracting features:  25%|██▌       | 107/420 [02:29<07:09,  1.37s/it]
+Extracting features:  26%|██▌       | 108/420 [02:30<07:05,  1.36s/it]
+Extracting features:  26%|██▌       | 109/420 [02:31<07:05,  1.37s/it]
+Extracting features:  26%|██▌       | 110/420 [02:33<07:05,  1.37s/it]
+Extracting features:  26%|██▋       | 111/420 [02:34<07:02,  1.37s/it]
+Extracting features:  27%|██▋       | 112/420 [02:35<06:59,  1.36s/it]
+Extracting features:  27%|██▋       | 113/420 [02:37<06:55,  1.35s/it]
+Extracting features:  27%|██▋       | 114/420 [02:38<06:54,  1.35s/it]
+Extracting features:  27%|██▋       | 115/420 [02:39<06:53,  1.36s/it]
+Extracting features:  28%|██▊       | 116/420 [02:41<06:54,  1.36s/it]
+Extracting features:  28%|██▊       | 117/420 [02:42<06:54,  1.37s/it]
+Extracting features:  28%|██▊       | 118/420 [02:43<06:51,  1.36s/it]
+Extracting features:  28%|██▊       | 119/420 [02:45<06:53,  1.37s/it]
+Extracting features:  29%|██▊       | 120/420 [02:46<06:50,  1.37s/it]
+Extracting features:  29%|██▉       | 121/420 [02:48<06:50,  1.37s/it]
+Extracting features:  29%|██▉       | 122/420 [02:49<06:55,  1.39s/it]
+Extracting features:  29%|██▉       | 123/420 [02:50<06:49,  1.38s/it]
+Extracting features:  30%|██▉       | 124/420 [02:52<06:48,  1.38s/it]
+Extracting features:  30%|██▉       | 125/420 [02:53<06:49,  1.39s/it]
+Extracting features:  30%|███       | 126/420 [02:55<06:44,  1.38s/it]
+Extracting features:  30%|███       | 127/420 [02:56<06:41,  1.37s/it]
+Extracting features:  30%|███       | 128/420 [02:57<06:45,  1.39s/it]
+Extracting features:  31%|███       | 129/420 [02:59<06:42,  1.38s/it]
+Extracting features:  31%|███       | 130/420 [03:00<06:36,  1.37s/it]
+Extracting features:  31%|███       | 131/420 [03:01<06:36,  1.37s/it]
+Extracting features:  31%|███▏      | 132/420 [03:03<06:33,  1.37s/it]
+Extracting features:  32%|███▏      | 133/420 [03:04<06:43,  1.41s/it]
+Extracting features:  32%|███▏      | 134/420 [03:06<06:40,  1.40s/it]
+Extracting features:  32%|███▏      | 135/420 [03:07<06:37,  1.39s/it]
+Extracting features:  32%|███▏      | 136/420 [03:08<06:31,  1.38s/it]
+Extracting features:  33%|███▎      | 137/420 [03:10<06:37,  1.41s/it]
+Extracting features:  33%|███▎      | 138/420 [03:11<06:34,  1.40s/it]
+Extracting features:  33%|███▎      | 139/420 [03:13<06:33,  1.40s/it]
+Extracting features:  33%|███▎      | 140/420 [03:14<06:28,  1.39s/it]
+Extracting features:  34%|███▎      | 141/420 [03:15<06:26,  1.38s/it]
+Extracting features:  34%|███▍      | 142/420 [03:17<06:20,  1.37s/it]
+Extracting features:  34%|███▍      | 143/420 [03:18<06:17,  1.36s/it]
+Extracting features:  34%|███▍      | 144/420 [03:19<06:16,  1.37s/it]
+Extracting features:  35%|███▍      | 145/420 [03:21<06:17,  1.37s/it]
+Extracting features:  35%|███▍      | 146/420 [03:22<06:18,  1.38s/it]
+Extracting features:  35%|███▌      | 147/420 [03:24<06:16,  1.38s/it]
+Extracting features:  35%|███▌      | 148/420 [03:25<06:14,  1.38s/it]
+Extracting features:  35%|███▌      | 149/420 [03:26<06:10,  1.37s/it]
+Extracting features:  36%|███▌      | 150/420 [03:28<06:06,  1.36s/it]
+Extracting features:  36%|███▌      | 151/420 [03:29<06:10,  1.38s/it]
+Extracting features:  36%|███▌      | 152/420 [03:30<06:13,  1.39s/it]
+Extracting features:  36%|███▋      | 153/420 [03:32<06:07,  1.38s/it]
+Extracting features:  37%|███▋      | 154/420 [03:33<06:06,  1.38s/it]
+Extracting features:  37%|███▋      | 155/420 [03:35<06:05,  1.38s/it]
+Extracting features:  37%|███▋      | 156/420 [03:36<06:04,  1.38s/it]
+Extracting features:  37%|███▋      | 157/420 [03:37<06:01,  1.37s/it]
+Extracting features:  38%|███▊      | 158/420 [03:39<05:59,  1.37s/it]
+Extracting features:  38%|███▊      | 159/420 [03:40<05:57,  1.37s/it]
+Extracting features:  38%|███▊      | 160/420 [03:41<05:57,  1.37s/it]
+Extracting features:  38%|███▊      | 161/420 [03:43<05:55,  1.37s/it]
+Extracting features:  39%|███▊      | 162/420 [03:44<05:59,  1.39s/it]
+Extracting features:  39%|███▉      | 163/420 [03:46<05:52,  1.37s/it]
+Extracting features:  39%|███▉      | 164/420 [03:47<05:53,  1.38s/it]
+Extracting features:  39%|███▉      | 165/420 [03:48<05:53,  1.39s/it]
+Extracting features:  40%|███▉      | 166/420 [03:50<05:54,  1.40s/it]
+Extracting features:  40%|███▉      | 167/420 [03:51<05:54,  1.40s/it]
+Extracting features:  40%|████      | 168/420 [03:53<05:52,  1.40s/it]
+Extracting features:  40%|████      | 169/420 [03:54<05:48,  1.39s/it]
+Extracting features:  40%|████      | 170/420 [03:55<05:48,  1.40s/it]
+Extracting features:  41%|████      | 171/420 [03:57<05:42,  1.38s/it]
+Extracting features:  41%|████      | 172/420 [03:58<05:40,  1.37s/it]
+Extracting features:  41%|████      | 173/420 [03:59<05:40,  1.38s/it]
+Extracting features:  41%|████▏     | 174/420 [04:01<05:36,  1.37s/it]
+Extracting features:  42%|████▏     | 175/420 [04:02<05:37,  1.38s/it]
+Extracting features:  42%|████▏     | 176/420 [04:04<05:32,  1.36s/it]
+Extracting features:  42%|████▏     | 177/420 [04:05<05:35,  1.38s/it]
+Extracting features:  42%|████▏     | 178/420 [04:06<05:29,  1.36s/it]
+Extracting features:  43%|████▎     | 179/420 [04:08<05:27,  1.36s/it]
+Extracting features:  43%|████▎     | 180/420 [04:09<05:23,  1.35s/it]
+Extracting features:  43%|████▎     | 181/420 [04:10<05:23,  1.35s/it]
+Extracting features:  43%|████▎     | 182/420 [04:12<05:21,  1.35s/it]
+Extracting features:  44%|████▎     | 183/420 [04:13<05:19,  1.35s/it]
+Extracting features:  44%|████▍     | 184/420 [04:14<05:18,  1.35s/it]
+Extracting features:  44%|████▍     | 185/420 [04:16<05:15,  1.34s/it]
+Extracting features:  44%|████▍     | 186/420 [04:17<05:22,  1.38s/it]
+Extracting features:  45%|████▍     | 187/420 [04:19<05:20,  1.37s/it]
+Extracting features:  45%|████▍     | 188/420 [04:20<05:18,  1.37s/it]
+Extracting features:  45%|████▌     | 189/420 [04:21<05:15,  1.36s/it]
+Extracting features:  45%|████▌     | 190/420 [04:23<05:10,  1.35s/it]
+Extracting features:  45%|████▌     | 191/420 [04:24<05:12,  1.37s/it]
+Extracting features:  46%|████▌     | 192/420 [04:25<05:09,  1.36s/it]
+Extracting features:  46%|████▌     | 193/420 [04:27<05:10,  1.37s/it]
+Extracting features:  46%|████▌     | 194/420 [04:28<05:08,  1.37s/it]
+Extracting features:  46%|████▋     | 195/420 [04:29<05:05,  1.36s/it]
+Extracting features:  47%|████▋     | 196/420 [04:31<05:08,  1.38s/it]
+Extracting features:  47%|████▋     | 197/420 [04:32<05:05,  1.37s/it]
+Extracting features:  47%|████▋     | 198/420 [04:34<05:02,  1.36s/it]
+Extracting features:  47%|████▋     | 199/420 [04:35<05:00,  1.36s/it]
+Extracting features:  48%|████▊     | 200/420 [04:36<05:02,  1.38s/it]
+Extracting features:  48%|████▊     | 201/420 [04:38<04:59,  1.37s/it]
+Extracting features:  48%|████▊     | 202/420 [04:39<04:57,  1.37s/it]
+Extracting features:  48%|████▊     | 203/420 [04:40<04:57,  1.37s/it]
+Extracting features:  49%|████▊     | 204/420 [04:42<04:58,  1.38s/it]
+Extracting features:  49%|████▉     | 205/420 [04:43<04:54,  1.37s/it]
+Extracting features:  49%|████▉     | 206/420 [04:44<04:52,  1.37s/it]
+Extracting features:  49%|████▉     | 207/420 [04:46<04:51,  1.37s/it]
+Extracting features:  50%|████▉     | 208/420 [04:47<04:53,  1.38s/it]
+Extracting features:  50%|████▉     | 209/420 [04:49<04:49,  1.37s/it]
+Extracting features:  50%|█████     | 210/420 [04:50<04:46,  1.37s/it]
+Extracting features:  50%|█████     | 211/420 [04:51<04:44,  1.36s/it]
+Extracting features:  50%|█████     | 212/420 [04:53<04:42,  1.36s/it]
+Extracting features:  51%|█████     | 213/420 [04:54<04:45,  1.38s/it]
+Extracting features:  51%|█████     | 214/420 [04:55<04:41,  1.36s/it]
+Extracting features:  51%|█████     | 215/420 [04:57<04:43,  1.38s/it]
+Extracting features:  51%|█████▏    | 216/420 [04:58<04:39,  1.37s/it]
+Extracting features:  52%|█████▏    | 217/420 [05:00<04:45,  1.41s/it]
+Extracting features:  52%|█████▏    | 218/420 [05:01<04:44,  1.41s/it]
+Extracting features:  52%|█████▏    | 219/420 [05:02<04:40,  1.39s/it]
+Extracting features:  52%|█████▏    | 220/420 [05:04<04:37,  1.39s/it]
+Extracting features:  53%|█████▎    | 221/420 [05:05<04:36,  1.39s/it]
+Extracting features:  53%|█████▎    | 222/420 [05:07<04:35,  1.39s/it]
+Extracting features:  53%|█████▎    | 223/420 [05:08<04:33,  1.39s/it]
+Extracting features:  53%|█████▎    | 224/420 [05:09<04:31,  1.38s/it]
+Extracting features:  54%|█████▎    | 225/420 [05:11<04:30,  1.39s/it]
+Extracting features:  54%|█████▍    | 226/420 [05:12<04:27,  1.38s/it]
+Extracting features:  54%|█████▍    | 227/420 [05:14<04:29,  1.40s/it]
+Extracting features:  54%|█████▍    | 228/420 [05:15<04:25,  1.38s/it]
+Extracting features:  55%|█████▍    | 229/420 [05:16<04:22,  1.37s/it]
+Extracting features:  55%|█████▍    | 230/420 [05:18<04:24,  1.39s/it]
+Extracting features:  55%|█████▌    | 231/420 [05:19<04:20,  1.38s/it]
+Extracting features:  55%|█████▌    | 232/420 [05:20<04:20,  1.39s/it]
+Extracting features:  55%|█████▌    | 233/420 [05:22<04:19,  1.39s/it]
+Extracting features:  56%|█████▌    | 234/420 [05:23<04:16,  1.38s/it]
+Extracting features:  56%|█████▌    | 235/420 [05:25<04:17,  1.39s/it]
+Extracting features:  56%|█████▌    | 236/420 [05:26<04:13,  1.38s/it]
+Extracting features:  56%|█████▋    | 237/420 [05:27<04:12,  1.38s/it]
+Extracting features:  57%|█████▋    | 238/420 [05:29<04:13,  1.39s/it]
+Extracting features:  57%|█████▋    | 239/420 [05:30<04:12,  1.39s/it]
+Extracting features:  57%|█████▋    | 240/420 [05:32<04:10,  1.39s/it]
+Extracting features:  57%|█████▋    | 241/420 [05:33<04:07,  1.38s/it]
+Extracting features:  58%|█████▊    | 242/420 [05:34<04:08,  1.40s/it]
+Extracting features:  58%|█████▊    | 243/420 [05:36<04:07,  1.40s/it]
+Extracting features:  58%|█████▊    | 244/420 [05:37<04:04,  1.39s/it]
+Extracting features:  58%|█████▊    | 245/420 [05:39<04:01,  1.38s/it]
+Extracting features:  59%|█████▊    | 246/420 [05:40<04:03,  1.40s/it]
+Extracting features:  59%|█████▉    | 247/420 [05:41<04:00,  1.39s/it]
+Extracting features:  59%|█████▉    | 248/420 [05:43<03:57,  1.38s/it]
+Extracting features:  59%|█████▉    | 249/420 [05:44<03:59,  1.40s/it]
+Extracting features:  60%|█████▉    | 250/420 [05:45<03:56,  1.39s/it]
+Extracting features:  60%|█████▉    | 251/420 [05:47<03:57,  1.41s/it]
+Extracting features:  60%|██████    | 252/420 [05:48<03:54,  1.40s/it]
+Extracting features:  60%|██████    | 253/420 [05:50<03:58,  1.43s/it]
+Extracting features:  60%|██████    | 254/420 [05:51<03:55,  1.42s/it]
+Extracting features:  61%|██████    | 255/420 [05:53<03:52,  1.41s/it]
+Extracting features:  61%|██████    | 256/420 [05:54<03:50,  1.40s/it]
+Extracting features:  61%|██████    | 257/420 [05:55<03:47,  1.40s/it]
+Extracting features:  61%|██████▏   | 258/420 [05:57<03:45,  1.39s/it]
+Extracting features:  62%|██████▏   | 259/420 [05:58<03:47,  1.41s/it]
+Extracting features:  62%|██████▏   | 260/420 [06:00<03:44,  1.40s/it]
+Extracting features:  62%|██████▏   | 261/420 [06:01<03:41,  1.39s/it]
+Extracting features:  62%|██████▏   | 262/420 [06:02<03:38,  1.38s/it]
+Extracting features:  63%|██████▎   | 263/420 [06:04<03:40,  1.40s/it]
+Extracting features:  63%|██████▎   | 264/420 [06:05<03:36,  1.39s/it]
+Extracting features:  63%|██████▎   | 265/420 [06:07<03:36,  1.40s/it]
+Extracting features:  63%|██████▎   | 266/420 [06:08<03:35,  1.40s/it]
+Extracting features:  64%|██████▎   | 267/420 [06:09<03:32,  1.39s/it]
+Extracting features:  64%|██████▍   | 268/420 [06:11<03:31,  1.39s/it]
+Extracting features:  64%|██████▍   | 269/420 [06:12<03:29,  1.39s/it]
+Extracting features:  64%|██████▍   | 270/420 [06:14<03:31,  1.41s/it]
+Extracting features:  65%|██████▍   | 271/420 [06:15<03:27,  1.40s/it]
+Extracting features:  65%|██████▍   | 272/420 [06:16<03:24,  1.38s/it]
+Extracting features:  65%|██████▌   | 273/420 [06:18<03:23,  1.38s/it]
+Extracting features:  65%|██████▌   | 274/420 [06:19<03:21,  1.38s/it]
+Extracting features:  65%|██████▌   | 275/420 [06:20<03:18,  1.37s/it]
+Extracting features:  66%|██████▌   | 276/420 [06:22<03:17,  1.37s/it]
+Extracting features:  66%|██████▌   | 277/420 [06:23<03:19,  1.40s/it]
+Extracting features:  66%|██████▌   | 278/420 [06:25<03:17,  1.39s/it]
+Extracting features:  66%|██████▋   | 279/420 [06:26<03:15,  1.38s/it]
+Extracting features:  67%|██████▋   | 280/420 [06:27<03:15,  1.40s/it]
+Extracting features:  67%|██████▋   | 281/420 [06:29<03:13,  1.39s/it]
+Extracting features:  67%|██████▋   | 282/420 [06:30<03:13,  1.40s/it]
+Extracting features:  67%|██████▋   | 283/420 [06:32<03:11,  1.40s/it]
+Extracting features:  68%|██████▊   | 284/420 [06:33<03:08,  1.38s/it]
+Extracting features:  68%|██████▊   | 285/420 [06:34<03:06,  1.38s/it]
+Extracting features:  68%|██████▊   | 286/420 [06:36<03:05,  1.39s/it]
+Extracting features:  68%|██████▊   | 287/420 [06:37<03:05,  1.39s/it]
+Extracting features:  69%|██████▊   | 288/420 [06:39<03:04,  1.40s/it]
+Extracting features:  69%|██████▉   | 289/420 [06:40<03:02,  1.39s/it]
+Extracting features:  69%|██████▉   | 290/420 [06:41<03:00,  1.39s/it]
+Extracting features:  69%|██████▉   | 291/420 [06:43<02:58,  1.38s/it]
+Extracting features:  70%|██████▉   | 292/420 [06:44<02:57,  1.39s/it]
+Extracting features:  70%|██████▉   | 293/420 [06:45<02:57,  1.40s/it]
+Extracting features:  70%|███████   | 294/420 [06:47<02:56,  1.40s/it]
+Extracting features:  70%|███████   | 295/420 [06:48<02:53,  1.39s/it]
+Extracting features:  70%|███████   | 296/420 [06:50<02:54,  1.40s/it]
+Extracting features:  71%|███████   | 297/420 [06:51<02:53,  1.41s/it]
+Extracting features:  71%|███████   | 298/420 [06:52<02:52,  1.41s/it]
+Extracting features:  71%|███████   | 299/420 [06:54<02:49,  1.40s/it]
+Extracting features:  71%|███████▏  | 300/420 [06:55<02:50,  1.42s/it]
+Extracting features:  72%|███████▏  | 301/420 [06:57<02:47,  1.40s/it]
+Extracting features:  72%|███████▏  | 302/420 [06:58<02:45,  1.40s/it]
+Extracting features:  72%|███████▏  | 303/420 [06:59<02:42,  1.39s/it]
+Extracting features:  72%|███████▏  | 304/420 [07:01<02:39,  1.38s/it]
+Extracting features:  73%|███████▎  | 305/420 [07:02<02:40,  1.40s/it]
+Extracting features:  73%|███████▎  | 306/420 [07:04<02:40,  1.41s/it]
+Extracting features:  73%|███████▎  | 307/420 [07:05<02:39,  1.41s/it]
+Extracting features:  73%|███████▎  | 308/420 [07:06<02:37,  1.40s/it]
+Extracting features:  74%|███████▎  | 309/420 [07:08<02:35,  1.41s/it]
+Extracting features:  74%|███████▍  | 310/420 [07:09<02:35,  1.42s/it]
+Extracting features:  74%|███████▍  | 311/420 [07:11<02:31,  1.39s/it]
+Extracting features:  74%|███████▍  | 312/420 [07:12<02:31,  1.41s/it]
+Extracting features:  75%|███████▍  | 313/420 [07:13<02:29,  1.39s/it]
+Extracting features:  75%|███████▍  | 314/420 [07:15<02:26,  1.39s/it]
+Extracting features:  75%|███████▌  | 315/420 [07:16<02:25,  1.39s/it]
+Extracting features:  75%|███████▌  | 316/420 [07:18<02:26,  1.41s/it]
+Extracting features:  75%|███████▌  | 317/420 [07:19<02:25,  1.41s/it]
+Extracting features:  76%|███████▌  | 318/420 [07:21<02:24,  1.42s/it]
+Extracting features:  76%|███████▌  | 319/420 [07:22<02:21,  1.40s/it]
+Extracting features:  76%|███████▌  | 320/420 [07:23<02:20,  1.41s/it]
+Extracting features:  76%|███████▋  | 321/420 [07:25<02:18,  1.40s/it]
+Extracting features:  77%|███████▋  | 322/420 [07:26<02:17,  1.40s/it]
+Extracting features:  77%|███████▋  | 323/420 [07:28<02:16,  1.40s/it]
+Extracting features:  77%|███████▋  | 324/420 [07:29<02:13,  1.39s/it]
+Extracting features:  77%|███████▋  | 325/420 [07:30<02:12,  1.40s/it]
+Extracting features:  78%|███████▊  | 326/420 [07:32<02:11,  1.40s/it]
+Extracting features:  78%|███████▊  | 327/420 [07:33<02:08,  1.38s/it]
+Extracting features:  78%|███████▊  | 328/420 [07:34<02:06,  1.37s/it]
+Extracting features:  78%|███████▊  | 329/420 [07:36<02:04,  1.37s/it]
+Extracting features:  79%|███████▊  | 330/420 [07:37<02:03,  1.38s/it]
+Extracting features:  79%|███████▉  | 331/420 [07:39<02:06,  1.42s/it]
+Extracting features:  79%|███████▉  | 332/420 [07:40<02:03,  1.41s/it]
+Extracting features:  79%|███████▉  | 333/420 [07:41<02:02,  1.41s/it]
+Extracting features:  80%|███████▉  | 334/420 [07:43<02:01,  1.41s/it]
+Extracting features:  80%|███████▉  | 335/420 [07:44<02:00,  1.42s/it]
+Extracting features:  80%|████████  | 336/420 [07:46<01:59,  1.42s/it]
+Extracting features:  80%|████████  | 337/420 [07:47<01:57,  1.41s/it]
+Extracting features:  80%|████████  | 338/420 [07:49<01:55,  1.40s/it]
+Extracting features:  81%|████████  | 339/420 [07:50<01:52,  1.39s/it]
+Extracting features:  81%|████████  | 340/420 [07:51<01:52,  1.40s/it]
+Extracting features:  81%|████████  | 341/420 [07:53<01:50,  1.40s/it]
+Extracting features:  81%|████████▏ | 342/420 [07:54<01:48,  1.39s/it]
+Extracting features:  82%|████████▏ | 343/420 [07:55<01:47,  1.40s/it]
+Extracting features:  82%|████████▏ | 344/420 [07:57<01:46,  1.40s/it]
+Extracting features:  82%|████████▏ | 345/420 [07:58<01:45,  1.41s/it]
+Extracting features:  82%|████████▏ | 346/420 [08:00<01:43,  1.40s/it]
+Extracting features:  83%|████████▎ | 347/420 [08:01<01:42,  1.40s/it]
+Extracting features:  83%|████████▎ | 348/420 [08:02<01:40,  1.39s/it]
+Extracting features:  83%|████████▎ | 349/420 [08:04<01:38,  1.39s/it]
+Extracting features:  83%|████████▎ | 350/420 [08:05<01:36,  1.38s/it]
+Extracting features:  84%|████████▎ | 351/420 [08:07<01:34,  1.37s/it]
+Extracting features:  84%|████████▍ | 352/420 [08:08<01:33,  1.37s/it]
+Extracting features:  84%|████████▍ | 353/420 [08:09<01:31,  1.36s/it]
+Extracting features:  84%|████████▍ | 354/420 [08:11<01:33,  1.42s/it]
+Extracting features:  85%|████████▍ | 355/420 [08:12<01:31,  1.40s/it]
+Extracting features:  85%|████████▍ | 356/420 [08:14<01:30,  1.42s/it]
+Extracting features:  85%|████████▌ | 357/420 [08:15<01:28,  1.41s/it]
+Extracting features:  85%|████████▌ | 358/420 [08:16<01:26,  1.39s/it]
+Extracting features:  85%|████████▌ | 359/420 [08:18<01:25,  1.40s/it]
+Extracting features:  86%|████████▌ | 360/420 [08:19<01:23,  1.40s/it]
+Extracting features:  86%|████████▌ | 361/420 [08:21<01:21,  1.39s/it]
+Extracting features:  86%|████████▌ | 362/420 [08:22<01:20,  1.39s/it]
+Extracting features:  86%|████████▋ | 363/420 [08:23<01:19,  1.40s/it]
+Extracting features:  87%|████████▋ | 364/420 [08:25<01:17,  1.38s/it]
+Extracting features:  87%|████████▋ | 365/420 [08:26<01:15,  1.38s/it]
+Extracting features:  87%|████████▋ | 366/420 [08:27<01:14,  1.37s/it]
+Extracting features:  87%|████████▋ | 367/420 [08:29<01:13,  1.39s/it]
+Extracting features:  88%|████████▊ | 368/420 [08:30<01:12,  1.39s/it]
+Extracting features:  88%|████████▊ | 369/420 [08:32<01:10,  1.39s/it]
+Extracting features:  88%|████████▊ | 370/420 [08:33<01:09,  1.39s/it]
+Extracting features:  88%|████████▊ | 371/420 [08:34<01:07,  1.39s/it]
+Extracting features:  89%|████████▊ | 372/420 [08:36<01:06,  1.39s/it]
+Extracting features:  89%|████████▉ | 373/420 [08:37<01:04,  1.38s/it]
+Extracting features:  89%|████████▉ | 374/420 [08:39<01:03,  1.38s/it]
+Extracting features:  89%|████████▉ | 375/420 [08:40<01:01,  1.37s/it]
+Extracting features:  90%|████████▉ | 376/420 [08:41<01:00,  1.38s/it]
+Extracting features:  90%|████████▉ | 377/420 [08:43<00:59,  1.37s/it]
+Extracting features:  90%|█████████ | 378/420 [08:44<00:58,  1.39s/it]
+Extracting features:  90%|█████████ | 379/420 [08:46<00:57,  1.41s/it]
+Extracting features:  90%|█████████ | 380/420 [08:47<00:56,  1.40s/it]
+Extracting features:  91%|█████████ | 381/420 [08:48<00:54,  1.40s/it]
+Extracting features:  91%|█████████ | 382/420 [08:50<00:52,  1.39s/it]
+Extracting features:  91%|█████████ | 383/420 [08:51<00:51,  1.40s/it]
+Extracting features:  91%|█████████▏| 384/420 [08:52<00:50,  1.40s/it]
+Extracting features:  92%|█████████▏| 385/420 [08:54<00:48,  1.39s/it]
+Extracting features:  92%|█████████▏| 386/420 [08:55<00:46,  1.38s/it]
+Extracting features:  92%|█████████▏| 387/420 [08:57<00:45,  1.38s/it]
+Extracting features:  92%|█████████▏| 388/420 [08:58<00:44,  1.38s/it]
+Extracting features:  93%|█████████▎| 389/420 [08:59<00:42,  1.38s/it]
+Extracting features:  93%|█████████▎| 390/420 [09:01<00:41,  1.39s/it]
+Extracting features:  93%|█████████▎| 391/420 [09:02<00:39,  1.38s/it]
+Extracting features:  93%|█████████▎| 392/420 [09:03<00:38,  1.38s/it]
+Extracting features:  94%|█████████▎| 393/420 [09:05<00:36,  1.37s/it]
+Extracting features:  94%|█████████▍| 394/420 [09:06<00:35,  1.37s/it]
+Extracting features:  94%|█████████▍| 395/420 [09:08<00:34,  1.38s/it]
+Extracting features:  94%|█████████▍| 396/420 [09:09<00:33,  1.38s/it]
+Extracting features:  95%|█████████▍| 397/420 [09:10<00:31,  1.37s/it]
+Extracting features:  95%|█████████▍| 398/420 [09:12<00:29,  1.36s/it]
+Extracting features:  95%|█████████▌| 399/420 [09:13<00:28,  1.38s/it]
+Extracting features:  95%|█████████▌| 400/420 [09:15<00:27,  1.39s/it]
+Extracting features:  95%|█████████▌| 401/420 [09:16<00:26,  1.37s/it]
+Extracting features:  96%|█████████▌| 402/420 [09:17<00:24,  1.36s/it]
+Extracting features:  96%|█████████▌| 403/420 [09:19<00:23,  1.36s/it]
+Extracting features:  96%|█████████▌| 404/420 [09:20<00:21,  1.34s/it]
+Extracting features:  96%|█████████▋| 405/420 [09:21<00:20,  1.33s/it]
+Extracting features:  97%|█████████▋| 406/420 [09:22<00:18,  1.32s/it]
+Extracting features:  97%|█████████▋| 407/420 [09:24<00:17,  1.33s/it]
+Extracting features:  97%|█████████▋| 408/420 [09:25<00:15,  1.33s/it]
+Extracting features:  97%|█████████▋| 409/420 [09:26<00:14,  1.33s/it]
+Extracting features:  98%|█████████▊| 410/420 [09:28<00:13,  1.34s/it]
+Extracting features:  98%|█████████▊| 411/420 [09:29<00:11,  1.33s/it]
+Extracting features:  98%|█████████▊| 412/420 [09:30<00:10,  1.33s/it]
+Extracting features:  98%|█████████▊| 413/420 [09:32<00:09,  1.35s/it]
+Extracting features:  99%|█████████▊| 414/420 [09:33<00:08,  1.34s/it]
+Extracting features:  99%|█████████▉| 415/420 [09:34<00:06,  1.33s/it]
+Extracting features:  99%|█████████▉| 416/420 [09:36<00:05,  1.33s/it]
+Extracting features:  99%|█████████▉| 417/420 [09:37<00:03,  1.32s/it]
+Extracting features: 100%|█████████▉| 418/420 [09:38<00:02,  1.32s/it]
+Extracting features: 100%|█████████▉| 419/420 [09:40<00:01,  1.31s/it]
+Extracting features: 100%|██████████| 420/420 [09:40<00:00,  1.15s/it]
+Extracting features: 100%|██████████| 420/420 [09:40<00:00,  1.38s/it]
+
+Extracting features:   0%|          | 0/47 [00:00<?, ?it/s]
+Extracting features:   2%|▏         | 1/47 [00:01<01:04,  1.40s/it]
+Extracting features:   4%|▍         | 2/47 [00:02<01:01,  1.38s/it]
+Extracting features:   6%|▋         | 3/47 [00:04<01:00,  1.37s/it]
+Extracting features:   9%|▊         | 4/47 [00:05<00:59,  1.38s/it]
+Extracting features:  11%|█         | 5/47 [00:06<00:57,  1.38s/it]
+Extracting features:  13%|█▎        | 6/47 [00:08<00:55,  1.36s/it]
+Extracting features:  15%|█▍        | 7/47 [00:09<00:54,  1.35s/it]
+Extracting features:  17%|█▋        | 8/47 [00:11<00:54,  1.39s/it]
+Extracting features:  19%|█▉        | 9/47 [00:12<00:52,  1.39s/it]
+Extracting features:  21%|██▏       | 10/47 [00:13<00:51,  1.38s/it]
+Extracting features:  23%|██▎       | 11/47 [00:15<00:49,  1.38s/it]
+Extracting features:  26%|██▌       | 12/47 [00:16<00:48,  1.38s/it]
+Extracting features:  28%|██▊       | 13/47 [00:17<00:46,  1.37s/it]
+Extracting features:  30%|██▉       | 14/47 [00:19<00:44,  1.36s/it]
+Extracting features:  32%|███▏      | 15/47 [00:20<00:43,  1.36s/it]
+Extracting features:  34%|███▍      | 16/47 [00:22<00:42,  1.38s/it]
+Extracting features:  36%|███▌      | 17/47 [00:23<00:41,  1.39s/it]
+Extracting features:  38%|███▊      | 18/47 [00:24<00:40,  1.40s/it]
+Extracting features:  40%|████      | 19/47 [00:26<00:39,  1.40s/it]
+Extracting features:  43%|████▎     | 20/47 [00:27<00:37,  1.38s/it]
+Extracting features:  45%|████▍     | 21/47 [00:28<00:35,  1.38s/it]
+Extracting features:  47%|████▋     | 22/47 [00:30<00:34,  1.40s/it]
+Extracting features:  49%|████▉     | 23/47 [00:31<00:33,  1.39s/it]
+Extracting features:  51%|█████     | 24/47 [00:33<00:31,  1.38s/it]
+Extracting features:  53%|█████▎    | 25/47 [00:34<00:30,  1.36s/it]
+Extracting features:  55%|█████▌    | 26/47 [00:35<00:28,  1.36s/it]
+Extracting features:  57%|█████▋    | 27/47 [00:37<00:27,  1.36s/it]
+Extracting features:  60%|█████▉    | 28/47 [00:38<00:26,  1.37s/it]
+Extracting features:  62%|██████▏   | 29/47 [00:39<00:24,  1.38s/it]
+Extracting features:  64%|██████▍   | 30/47 [00:41<00:23,  1.38s/it]
+Extracting features:  66%|██████▌   | 31/47 [00:42<00:21,  1.37s/it]
+Extracting features:  68%|██████▊   | 32/47 [00:43<00:20,  1.36s/it]
+Extracting features:  70%|███████   | 33/47 [00:45<00:19,  1.37s/it]
+Extracting features:  72%|███████▏  | 34/47 [00:46<00:17,  1.36s/it]
+Extracting features:  74%|███████▍  | 35/47 [00:48<00:16,  1.35s/it]
+Extracting features:  77%|███████▋  | 36/47 [00:49<00:14,  1.35s/it]
+Extracting features:  79%|███████▊  | 37/47 [00:50<00:13,  1.34s/it]
+Extracting features:  81%|████████  | 38/47 [00:52<00:12,  1.36s/it]
+Extracting features:  83%|████████▎ | 39/47 [00:53<00:10,  1.36s/it]
+Extracting features:  85%|████████▌ | 40/47 [00:54<00:09,  1.36s/it]
+Extracting features:  87%|████████▋ | 41/47 [00:56<00:08,  1.39s/it]
+Extracting features:  89%|████████▉ | 42/47 [00:57<00:06,  1.37s/it]
+Extracting features:  91%|█████████▏| 43/47 [00:58<00:05,  1.37s/it]
+Extracting features:  94%|█████████▎| 44/47 [01:00<00:04,  1.36s/it]
+Extracting features:  96%|█████████▌| 45/47 [01:01<00:02,  1.36s/it]
+Extracting features:  98%|█████████▊| 46/47 [01:03<00:01,  1.36s/it]
+Extracting features: 100%|██████████| 47/47 [01:03<00:00,  1.21s/it]
+Extracting features: 100%|██████████| 47/47 [01:03<00:00,  1.36s/it]
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_1/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_1/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Extracting features:   0%|          | 0/52 [00:00<?, ?it/s]
+Extracting features:   2%|▏         | 1/52 [00:01<01:09,  1.35s/it]
+Extracting features:   4%|▍         | 2/52 [00:02<01:07,  1.35s/it]
+Extracting features:   6%|▌         | 3/52 [00:04<01:06,  1.35s/it]
+Extracting features:   8%|▊         | 4/52 [00:05<01:05,  1.36s/it]
+Extracting features:  10%|▉         | 5/52 [00:06<01:04,  1.36s/it]
+Extracting features:  12%|█▏        | 6/52 [00:08<01:03,  1.37s/it]
+Extracting features:  13%|█▎        | 7/52 [00:09<01:01,  1.38s/it]
+Extracting features:  15%|█▌        | 8/52 [00:10<01:00,  1.37s/it]
+Extracting features:  17%|█▋        | 9/52 [00:12<00:58,  1.36s/it]
+Extracting features:  19%|█▉        | 10/52 [00:13<00:56,  1.35s/it]
+Extracting features:  21%|██        | 11/52 [00:14<00:55,  1.35s/it]
+Extracting features:  23%|██▎       | 12/52 [00:16<00:54,  1.36s/it]
+Extracting features:  25%|██▌       | 13/52 [00:17<00:53,  1.37s/it]
+Extracting features:  27%|██▋       | 14/52 [00:19<00:51,  1.36s/it]
+Extracting features:  29%|██▉       | 15/52 [00:20<00:49,  1.35s/it]
+Extracting features:  31%|███       | 16/52 [00:21<00:48,  1.35s/it]
+Extracting features:  33%|███▎      | 17/52 [00:23<00:47,  1.35s/it]
+Extracting features:  35%|███▍      | 18/52 [00:24<00:45,  1.35s/it]
+Extracting features:  37%|███▋      | 19/52 [00:25<00:44,  1.34s/it]
+Extracting features:  38%|███▊      | 20/52 [00:27<00:42,  1.34s/it]
+Extracting features:  40%|████      | 21/52 [00:28<00:42,  1.36s/it]
+Extracting features:  42%|████▏     | 22/52 [00:29<00:40,  1.36s/it]
+Extracting features:  44%|████▍     | 23/52 [00:31<00:39,  1.38s/it]
+Extracting features:  46%|████▌     | 24/52 [00:32<00:38,  1.38s/it]
+Extracting features:  48%|████▊     | 25/52 [00:34<00:37,  1.38s/it]
+Extracting features:  50%|█████     | 26/52 [00:35<00:36,  1.39s/it]
+Extracting features:  52%|█████▏    | 27/52 [00:36<00:34,  1.39s/it]
+Extracting features:  54%|█████▍    | 28/52 [00:38<00:33,  1.38s/it]
+Extracting features:  56%|█████▌    | 29/52 [00:39<00:31,  1.37s/it]
+Extracting features:  58%|█████▊    | 30/52 [00:40<00:29,  1.35s/it]
+Extracting features:  60%|█████▉    | 31/52 [00:42<00:28,  1.34s/it]
+Extracting features:  62%|██████▏   | 32/52 [00:43<00:26,  1.34s/it]
+Extracting features:  63%|██████▎   | 33/52 [00:44<00:25,  1.35s/it]
+Extracting features:  65%|██████▌   | 34/52 [00:46<00:24,  1.35s/it]
+Extracting features:  67%|██████▋   | 35/52 [00:47<00:23,  1.37s/it]
+Extracting features:  69%|██████▉   | 36/52 [00:49<00:21,  1.36s/it]
+Extracting features:  71%|███████   | 37/52 [00:50<00:20,  1.37s/it]
+Extracting features:  73%|███████▎  | 38/52 [00:51<00:18,  1.35s/it]
+Extracting features:  75%|███████▌  | 39/52 [00:53<00:17,  1.36s/it]
+Extracting features:  77%|███████▋  | 40/52 [00:54<00:16,  1.34s/it]
+Extracting features:  79%|███████▉  | 41/52 [00:55<00:14,  1.35s/it]
+Extracting features:  81%|████████  | 42/52 [00:57<00:13,  1.36s/it]
+Extracting features:  83%|████████▎ | 43/52 [00:58<00:12,  1.36s/it]
+Extracting features:  85%|████████▍ | 44/52 [00:59<00:10,  1.37s/it]
+Extracting features:  87%|████████▋ | 45/52 [01:01<00:09,  1.37s/it]
+Extracting features:  88%|████████▊ | 46/52 [01:02<00:08,  1.36s/it]
+Extracting features:  90%|█████████ | 47/52 [01:03<00:06,  1.36s/it]
+Extracting features:  92%|█████████▏| 48/52 [01:05<00:05,  1.37s/it]
+Extracting features:  94%|█████████▍| 49/52 [01:06<00:04,  1.38s/it]
+Extracting features:  96%|█████████▌| 50/52 [01:08<00:02,  1.39s/it]
+Extracting features:  98%|█████████▊| 51/52 [01:09<00:01,  1.37s/it]
+Extracting features: 100%|██████████| 52/52 [01:10<00:00,  1.29s/it]
+Extracting features: 100%|██████████| 52/52 [01:10<00:00,  1.36s/it]
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_1/conda_env/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names

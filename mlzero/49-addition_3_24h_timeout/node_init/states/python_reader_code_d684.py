@@ -1,0 +1,23 @@
+import os
+from PIL import Image
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/image_5962.jpg"
+
+try:
+    file_size = os.path.getsize(file_path) / (1024 * 1024)
+except Exception as e:
+    file_size = None
+
+info = f"File: {os.path.basename(file_path)}\n"
+info += f"Type: JPEG Image\n"
+if file_size is not None:
+    info += f"Size: {file_size:.2f} MB\n"
+
+try:
+    with Image.open(file_path) as img:
+        info += f"Dimensions: {img.width}x{img.height}\n"
+        info += f"Mode: {img.mode}\n"
+except Exception as e:
+    info += "Could not open image file.\n"
+
+print(info[:768])
