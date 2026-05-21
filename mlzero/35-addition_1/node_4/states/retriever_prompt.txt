@@ -1,0 +1,90 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Type:** Image classification (binary classification)
+
+**Input Format:**  
+- Input images are RGB JPEG files located in the folder `/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/`.  
+- For training, image file names are provided in the `image_name` column of `train.csv`.
+
+**Prediction Output Format:**  
+- For each input image, output a malignancy probability (a float between 0 and 1), representing the probability that the lesion is malignant.
+
+**Additional Details:**  
+- The model should be trained to classify skin lesion images as malignant or benign.
+- The evaluation metric is Area under the Receiver Operator Curve (AUROC).
+- The model should be fair towards skin tone.
+- A function is required that takes a folder path of new images and returns a malignancy probability for each image.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  super_label  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0 inflammatory          1                      1            NaN non-neoplastic  image_9385
+          1 inflammatory          3                      3            NaN non-neoplastic  image_7196
+          2 inflammatory          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_12560.jpg
+Content:
+File: image_12560.jpg
+Type: JPEG Image
+Size: 0.01 MB
+Image format: JPEG
+Image mode: RGB
+Image size (WxH): (293, 192)
+
+----------
+
+
+### User Instruction
+
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the trained AutoGluon Tabular model expects the same feature columns at prediction time as were present during training. Specifically, columns ['super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion'] were present in the training data but are missing from the test data, resulting in a KeyError during feature transformation.
+
+SUGGESTED_FIX:  
+Ensure that the test (and any prediction) DataFrame passed to the predictor contains all feature columns used during training, even if their values are unknown. Add the missing columns to the test DataFrame with default or placeholder values (e.g., NaN or a neutral value) before calling `predict_proba`. This will align the test data schema with the training data and prevent the KeyError.
+
+ERROR_SUMMARY: The error occurs because the hyperparameters model.late_fusion and model.late_fusion_model are not recognized by the current version of AutoGluon MultiModal. These keys are not present in the configuration schema, resulting in a KeyError when the model attempts to apply them as overrides during training.
+
+SUGGESTED_FIX:  
+Remove the model.late_fusion and model.late_fusion_model entries from the hyperparameters dictionary. Rerun the script with only supported hyperparameters (such as model.timm_image.checkpoint_name, optim.loss_func, and related loss parameters) to resolve the configuration error and allow model training to proceed.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

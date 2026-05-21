@@ -1,0 +1,216 @@
+```python
+"""
+Skin Lesion Malignancy Probability Prediction Script (EfficientNetB0 + LightGBM, improved)
+
+This script trains a machine learning model to predict the probability that a skin lesion image is malignant.
+It uses a transfer learning pipeline with EfficientNet-B0 for feature extraction and LightGBM for classification.
+Key improvements:
+- Uses EfficientNet-B0 (better than ResNet50 for many medical tasks) for feature extraction.
+- Handles LightGBM early stopping in a version-compatible way (using callbacks).
+- Optimized LightGBM parameters for better performance.
+- Robust data preprocessing and validation checks.
+
+Installation requirements (run in bash before running this script):
+    pip install pandas numpy scikit-learn lightgbm pillow tqdm torch torchvision efficientnet_pytorch
+
+Usage:
+    Place this script in any location and run it. It expects the following files:
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+        - /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/*.jpg
+
+Outputs:
+    - Model directory: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_4/output/<random_timestamp>_ml_model/
+    - Prediction file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_4/output/results.csv (format matches test.csv)
+"""
+
+# Installation steps (run in bash before running this script)
+# pip install pandas numpy scikit-learn lightgbm pillow tqdm torch torchvision efficientnet_pytorch
+
+import os
+import random
+import time
+import pandas as pd
+import numpy as np
+from tqdm import tqdm
+from PIL import Image
+
+import torch
+import torchvision.transforms as transforms
+from efficientnet_pytorch import EfficientNet
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+import lightgbm as lgb
+import joblib
+
+RANDOM_SEED = 42
+np.random.seed(RANDOM_SEED)
+random.seed(RANDOM_SEED)
+
+def extract_efficientnet_features(image_paths, batch_size=32, device='cuda' if torch.cuda.is_available() else 'cpu'):
+    """
+    Extracts 1280-dim features from images using pretrained EfficientNet-B0 (avgpool output).
+    Returns a numpy array of shape (len(image_paths), 1280).
+    """
+    model = EfficientNet.from_pretrained('efficientnet-b0')
+    model.eval()
+    model.to(device)
+
+    preprocess = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        # EfficientNet normalization
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+
+    features = []
+    with torch.no_grad():
+        for i in tqdm(range(0, len(image_paths), batch_size), desc="Extracting features (EffNetB0)"):
+            batch_paths = image_paths[i:i+batch_size]
+            imgs = []
+            for p in batch_paths:
+                try:
+                    img = Image.open(p).convert('RGB')
+                except Exception:
+                    # If image is missing or corrupt, use a black image
+                    img = Image.fromarray(np.zeros((224,224,3), dtype=np.uint8))
+                imgs.append(preprocess(img))
+            imgs = torch.stack(imgs).to(device)
+            feats = model.extract_features(imgs)  # shape: (batch, 1280, 7, 7)
+            # Global average pooling
+            feats = torch.nn.functional.adaptive_avg_pool2d(feats, 1).squeeze(-1).squeeze(-1)  # (batch, 1280)
+            features.append(feats.cpu().numpy())
+    features = np.concatenate(features, axis=0)
+    return features
+
+if __name__ == "__main__":
+    # Paths
+    DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data"
+    IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+    TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+    TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+    OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_4/output"
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    # 1. Data Loading and Preprocessing
+    train = pd.read_csv(TRAIN_CSV)
+    test = pd.read_csv(TEST_CSV)
+
+    # Remove unnecessary index column if present
+    for col in ['Unnamed: 0', 'index']:
+        if col in train.columns:
+            train = train.drop(columns=[col])
+        if col in test.columns:
+            test = test.drop(columns=[col])
+
+    # Remove training samples without valid labels (drop NA in label column)
+    train = train.dropna(subset=['label'])
+
+    # Only keep columns needed for modeling
+    train = train[['image_name', 'label']].copy()
+    test_cols = test.columns.tolist()
+    test = test.copy()
+
+    # Handle label mapping: map 'benign' to 'non-neoplastic' if present
+    train['label'] = train['label'].replace({'benign': 'non-neoplastic'})
+
+    # Only keep 'malignant' and 'non-neoplastic'
+    train = train[train['label'].isin(['malignant', 'non-neoplastic'])].reset_index(drop=True)
+
+    # Add absolute image path column
+    def image_path_fn(img_name):
+        return os.path.abspath(os.path.join(IMAGE_DIR, img_name if img_name.endswith('.jpg') else img_name + '.jpg'))
+
+    train['image_path'] = train['image_name'].apply(image_path_fn)
+    test['image_path'] = test['image_name'].apply(image_path_fn)
+
+    # 2. Hold out 10% validation set (stratified)
+    train_data, val_data = train_test_split(
+        train,
+        test_size=0.1,
+        stratify=train['label'],
+        random_state=RANDOM_SEED,
+    )
+    train_data = train_data.reset_index(drop=True)
+    val_data = val_data.reset_index(drop=True)
+
+    # 3. Feature Extraction (EfficientNet-B0)
+    print("Extracting features for training set...")
+    X_train = extract_efficientnet_features(train_data['image_path'].tolist())
+    print("Extracting features for validation set...")
+    X_val = extract_efficientnet_features(val_data['image_path'].tolist())
+    print("Extracting features for test set...")
+    X_test = extract_efficientnet_features(test['image_path'].tolist())
+
+    # Encode labels: 'malignant' = 1, 'non-neoplastic' = 0
+    y_train = (train_data['label'] == 'malignant').astype(int).values
+    y_val = (val_data['label'] == 'malignant').astype(int).values
+
+    # 4. Model Training (LightGBM, with version-compatible early stopping)
+    timestamp = int(time.time()) + random.randint(0, 99999)
+    model_dir = os.path.join(OUTPUT_DIR, f"{timestamp}_ml_model")
+    os.makedirs(model_dir, exist_ok=True)
+
+    clf = lgb.LGBMClassifier(
+        n_estimators=1000,
+        learning_rate=0.01,
+        num_leaves=64,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        random_state=RANDOM_SEED,
+        class_weight='balanced',
+        n_jobs=-1
+    )
+
+    # Use callbacks for early stopping (compatible with all LightGBM versions)
+    callbacks = [lgb.early_stopping(stopping_rounds=50, verbose=True)]
+
+    clf.fit(
+        X_train, y_train,
+        eval_set=[(X_val, y_val)],
+        eval_metric='auc',
+        callbacks=callbacks,
+        verbose=100
+    )
+
+    # Save model
+    joblib.dump(clf, os.path.join(model_dir, "lgbm_model.joblib"))
+
+    # 5. Prediction on Test Set
+    # Predict probability of 'malignant' (class 1)
+    test_proba = clf.predict_proba(X_test)[:, 1]
+
+    # Prepare output DataFrame: must match test.csv format and row order
+    results_df = test.copy()
+    results_df['malignant'] = test_proba
+
+    # Save results with same format/extension as test.csv
+    results_path = os.path.join(OUTPUT_DIR, "results.csv")
+    results_df_out = results_df[['malignant']]
+    results_df_out.to_csv(results_path, index=False)
+
+    # 6. Validation checks
+    # a) Check number of predictions matches test set
+    assert len(results_df_out) == len(test), f"Number of predictions ({len(results_df_out)}) does not match test set ({len(test)})"
+    # b) Check output columns
+    assert list(results_df_out.columns) == ['malignant'], f"Output columns {list(results_df_out.columns)} do not match required ['malignant']"
+    # c) Check output format (CSV)
+    assert results_path.endswith('.csv'), "Output file must be CSV"
+    # d) Check indices preserved (row order matches test set)
+    assert all(results_df_out.index == test.index), "Output indices do not match test set indices"
+    # e) Check probabilities are floats in [0,1]
+    assert np.all((results_df_out['malignant'] >= 0) & (results_df_out['malignant'] <= 1)), "Malignancy probabilities are not all in [0,1]"
+
+    # 7. Validation metric on held-out validation set
+    try:
+        val_pred_proba = clf.predict_proba(X_val)[:, 1]
+        val_score = roc_auc_score(y_val, val_pred_proba)
+        print(f"Validation AUROC: {val_score:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    print(f"Model saved to: {model_dir}")
+    print(f"Predictions saved to: {results_path}")
+```

@@ -1,0 +1,1 @@
+AutoGluon failed to train any models due to OSError: "validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes" (socket path too long). As a result, no models were trained and a RuntimeError was raised: "No models were trained successfully during fit()".

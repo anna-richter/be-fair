@@ -1,0 +1,13 @@
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with fairness towards skin tone as an important consideration. The evaluation metric is AUROC, and the output should be a malignancy probability for each image. The model must be able to process image data, and ideally, allow for fairness-aware modeling or at least support for custom metrics and data columns (e.g., skin tone).
+
+Let's analyze the available libraries:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for this task.
+- machine learning: This is a generic reference to ML/DL algorithms, not an actual implementation. It should only be considered if no other suitable library is available.
+- wav2vec2: This is an audio model, not applicable to image data.
+- qwen3: This is a text generation model, not applicable to image data.
+- autogluon.tabular: This library is designed for tabular data and does not support image-based tasks.
+- autogluon.multimodal: This library is specifically designed for multimodal tasks, including image classification. It supports image classification, can handle tabular metadata (such as skin tone), and is likely to provide state-of-the-art performance with minimal code. It also supports fairness-aware modeling by allowing the inclusion of sensitive attributes (like skin tone) as additional features, which can be used for fairness evaluation or mitigation.
+- autogluon.timeseries: This is for time series forecasting, not image classification.
+
+Given these considerations, autogluon.multimodal is the clear first choice, as it is designed for image classification and can incorporate tabular metadata (such as skin tone) for fairness-aware modeling. The generic "machine learning" reference is the fallback if no specialized library is available. autogluon.tabular, while not supporting images, is more relevant than the other libraries (audio/text/retrieval) and could be used if images were preprocessed into features, but this is suboptimal.

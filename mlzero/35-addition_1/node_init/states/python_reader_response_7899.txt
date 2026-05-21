@@ -1,0 +1,45 @@
+```python
+import os
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt"
+
+def print_truncated_lines(lines, max_chars=768):
+    out = ''
+    for line in lines:
+        if len(out) + len(line) > max_chars:
+            out += line[:max_chars - len(out)]
+            break
+        out += line
+    print(out)
+
+def analyze_file(fp):
+    try:
+        import pandas as pd
+        _, ext = os.path.splitext(fp)
+        if ext.lower() in ['.csv', '.tsv']:
+            df = pd.read_csv(fp, sep='\t' if ext=='.tsv' else ',', dtype=str, nrows=3)
+        elif ext.lower() in ['.xlsx', '.xls']:
+            df = pd.read_excel(fp, dtype=str, nrows=3)
+        elif ext.lower() == '.parquet':
+            df = pd.read_parquet(fp)
+            df = df.astype(str).head(3)
+        else:
+            raise Exception
+        cols = list(df.columns)
+        if len(cols) > 20:
+            cols_disp = cols[:10] + ['...'] + cols[-10:]
+        else:
+            cols_disp = cols
+        print("Columns:", cols_disp)
+        def trunc(x): return str(x)[:50] + ('...' if len(str(x)) > 50 else '')
+        print(df.applymap(trunc).to_string(index=False))
+    except Exception:
+        try:
+            with open(fp, 'r', encoding='utf-8', errors='ignore') as f:
+                lines = f.readlines()
+            print_truncated_lines(lines)
+        except Exception:
+            print("File type not supported or unreadable.")
+
+analyze_file(file_path)
+```

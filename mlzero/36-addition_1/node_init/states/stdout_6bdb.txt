@@ -1,0 +1,5 @@
+File: image_7470.jpg
+Format: JPEG
+Mode: RGB
+Size (pixels): (455, 390)
+File Size (MB): 0.06

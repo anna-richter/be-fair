@@ -1,0 +1,92 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Type:** Image classification (binary classification)
+
+**Input Format:**  
+- Input images are RGB JPEG files located in /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/, referenced by image_name in the CSV files.
+
+**Prediction Output Format:**  
+- For each input image, output a malignancy probability (a float between 0 and 1) indicating the likelihood that the lesion is malignant.
+
+**Additional Details:**  
+- The model is trained to classify skin lesion images as malignant or benign.
+- The evaluation metric is Area Under the Receiver Operator Curve (AUROC).
+- The model should be fair towards skin tone.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'super_label', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+Unnamed: 0  super_label skin_tone alternative_skin_tone expert_opinion          label  image_name
+         0 inflammatory         1                     1            NaN non-neoplastic  image_9385
+         1 inflammatory         3                     3            NaN non-neoplastic  image_7196
+         2 inflammatory         1                     1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved  and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+               ...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_7470.jpg
+Content:
+File: image_7470.jpg
+Format: JPEG
+Mode: RGB
+Size (pixels): (455, 390)
+File Size (MB): 0.06
+
+----------
+
+
+### User Instruction
+
+
+### Previous Error Analysis
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain socket files with paths longer than the system limit (107 bytes). This resulted in repeated OSError exceptions: "AF_UNIX path length cannot exceed 107 bytes," causing all model training attempts to fail and ultimately raising a RuntimeError: "No models were trained successfully during fit()". The root cause is that the temporary directory path (e.g., /sc-scratch/sc-scratch-ikim-guidlight/tmp/ray/session_.../sockets/plasma_store) is too long for UNIX socket limitations.
+
+SUGGESTED_FIX:  
+Shorten the base directory path used for temporary files and model output—move your working directory and all relevant paths (including /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/...) to a location with a much shorter absolute path (ideally under /tmp or a similarly short directory). Ensure that the TMPDIR, TEMP, and TMP environment variables are set to a short path before running your script, and re-run the training. This will allow Ray and AutoGluon to create socket files with paths within the UNIX limit, resolving the OSError and enabling successful model training.
+
+ERROR_SUMMARY: The error occurs during model training when passing class weights (alpha) to the FocalLoss in AutoGluon. Specifically, a ValueError: "too many dimensions 'str'" is raised because the alpha parameter is being constructed or passed as a list containing string types, or with an unexpected shape, rather than as a list/array of floats or a numeric torch tensor. This likely results from the compute_class_weights function or the way labels are processed, causing the focal loss implementation to receive an invalid type or shape for alpha.
+
+SUGGESTED_FIX:  
+Check the output of compute_class_weights to ensure it returns a list or numpy array of floats (not strings or objects), and verify that the labels used for class weight computation are strictly integers (0 and 1). Before passing class_weights to the predictor, print and inspect its type and contents; if necessary, explicitly convert it to a list of floats (e.g., [float(w) for w in weights]). Also, confirm that the label column in your training data contains only numeric binary values (0 and 1), not strings like "malignant" or "benign".
+
+ERROR_SUMMARY: The error occurred because the test DataFrame passed to `predictor.predict_proba()` was missing required columns: `['alternative_skin_tone', 'skin_tone', 'super_label']`. AutoGluon MultiModal expects the test input to have the same set of columns (except the label) as the training data, including all tabular features used during training.
+
+SUGGESTED_FIX:  
+Modify your test DataFrame before prediction to include the missing columns (`'alternative_skin_tone'`, `'skin_tone'`, and `'super_label'`). You can fill these columns with placeholder values (e.g., the mode or a default value from the training set) if the true values are unavailable, ensuring the test DataFrame matches the training feature structure required by the trained model.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

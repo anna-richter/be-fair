@@ -1,0 +1,19 @@
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with fairness towards skin tone as an important consideration. The evaluation metric is AUROC, and the output is a malignancy probability per image. The data consists of image files and CSVs referencing image names and labels, including skin tone information.
+
+Let's analyze each available library:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for training or inference on image classification problems.
+
+- machine learning: This is a generic reference to machine learning or deep learning algorithms. It is not a specific library or framework, but could be considered as a fallback if no other specialized library is suitable.
+
+- wav2vec2: This library is designed for audio data, specifically for speech recognition and audio classification. It is not applicable to image data.
+
+- qwen3: This is a text generation model, focused on dialogue and reasoning tasks. It is not designed for image classification.
+
+- autogluon.tabular: This library automates ML for tabular data only. It does not support image-based tasks, so it is not suitable for this problem.
+
+- autogluon.multimodal: This library is designed for multimodal classification tasks, including image classification. It supports image data and can handle tabular metadata (such as skin tone) alongside images, which is highly relevant for fairness considerations. It is not for generative or audio tasks, but those are not required here. This library is the best fit for the task.
+
+- autogluon.timeseries: This library is for time series forecasting, not for image classification.
+
+Based on the above, autogluon.multimodal is the only library that directly supports image classification and can incorporate tabular metadata (like skin tone) to help address fairness. The generic "machine learning" reference is a fallback, and autogluon.tabular could be considered if the task were tabular-only, but it is not suitable for images.

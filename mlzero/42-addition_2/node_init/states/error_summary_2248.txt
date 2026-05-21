@@ -1,0 +1,1 @@
+The code printed the entire CSV header and many rows as raw CSV text, not as a formatted DataFrame. It also included an extra index column ('Unnamed: 0') that should be hidden if not in the original data. Only the first 2-3 rows should be shown, with cell content truncated to 50 chars, and no extra index column.

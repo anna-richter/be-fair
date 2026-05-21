@@ -1,0 +1,6 @@
+File: image_5962.jpg
+Type: JPEG Image
+Size: 0.04 MB
+Dimensions: 457x270
+Mode: RGB
+

@@ -1,0 +1,31 @@
+```python
+import os
+import pandas as pd
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt"
+
+def print_truncated(df, n=3, width=50):
+    def trunc(val):
+        return str(val)[:width] + ('...' if len(str(val)) > width else '')
+    pd.set_option('display.max_colwidth', width)
+    display_df = df.head(n).copy()
+    for col in display_df.columns:
+        display_df[col] = display_df[col].apply(trunc)
+    print(display_df.to_string(index=False))
+
+try:
+    df = pd.read_csv(file_path, sep=None, engine='python')
+    cols = list(df.columns)
+    if len(cols) > 20:
+        print("Columns:", cols[:10], "...", cols[-10:])
+    else:
+        print("Columns:", cols)
+    print_truncated(df)
+except Exception:
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read(768)
+            print("Text preview:\n", content)
+    except Exception as e:
+        print(f"Could not read file: {e}")
+```

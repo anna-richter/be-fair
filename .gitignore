@@ -218,3 +218,4 @@ aide/workspaces/3-basic_prompt/lgb_model.txt
 */conda_env/*
 conda_env/
 *.ckpt
+*tfevents*
