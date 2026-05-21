@@ -24,6 +24,7 @@ srun mlzero \
 	--input /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data \
 	--config /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/conf.yaml \
 	--max-iterations 20 \
+	--initial-instruction "Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined." \
 	--output /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-addition_1 \
 	--continuous_improvement \
 	--remove-iteration-folders
