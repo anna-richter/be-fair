@@ -1,0 +1,6 @@
+file_path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/image_6056.jpg
+file_size_MB: 0.04
+file_type: JPEG Image
+format: JPEG
+mode: RGB
+size: (382, 592)

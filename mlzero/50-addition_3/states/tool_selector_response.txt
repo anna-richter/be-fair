@@ -1,0 +1,27 @@
+---
+EXPLANATION:  
+The task is binary image classification (malignant vs. benign skin lesions) using JPEG RGB images, with fairness constraints regarding skin tone (minimizing AUROC gap between light and dark skin tones). The input data consists of images and a CSV file with metadata, including skin tone and labels. The output is a malignancy probability for each image.
+
+Let's analyze each available library:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for training or evaluating image classifiers, nor does it provide tools for fairness-aware classification.
+
+- machine learning: This is a generic reference to machine learning or deep learning algorithms. It is not a specific library, but if no other library is suitable, it could be considered as a fallback for implementing custom solutions.
+
+- wav2vec2: This library is designed for audio data (ASR, audio classification) and is not applicable to image data.
+
+- qwen3: This is a text generation model, not suitable for image classification tasks.
+
+- autogluon.tabular: This library is optimized for tabular data (numerical/categorical), not for image or multimodal data. It cannot process images directly.
+
+- autogluon.multimodal: This library is designed for multimodal classification tasks, including image classification. It can handle image data and tabular metadata together, which is highly relevant here since the task involves both images and metadata (skin tone, etc.). It also supports fairness-aware training via group reweighting or upsampling, which aligns with the requirement to minimize AUROC gap between skin tones.
+
+- autogluon.timeseries: This library is for time series forecasting and is not applicable to image classification.
+
+Given these considerations, autogluon.multimodal is the best fit for this task, as it is specifically designed for multimodal classification (images + tabular data), supports fairness-aware techniques, and can output probabilities for binary classification. The next best option is machine learning as a generic fallback, and autogluon.tabular as a distant third (if one were to attempt to extract features from images and use tabular methods, though this is suboptimal).
+
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

@@ -1,0 +1,26 @@
+---
+EXPLANATION: The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with a fairness requirement regarding skin tone. The input is image files, and the output is a malignancy probability per image. The evaluation metric is AUROC, with a focus on minimizing the AUROC gap between light and dark skin tones.
+
+Let's analyze each available library:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for training or evaluating image classifiers.
+
+- machine learning: This is a generic reference to machine learning or deep learning algorithms. It is not a specific implementation or framework, but could be considered if no other specialized tool is available.
+
+- wav2vec2: This library is designed for audio data (ASR, audio classification) and is not applicable to image data.
+
+- qwen3: This is a text generation model, not suitable for image classification tasks.
+
+- autogluon.tabular: This library is optimized for tabular data (numerical/categorical), not for image or multimodal data. It cannot process image files directly.
+
+- autogluon.multimodal: This library is designed for multimodal classification tasks, including image classification. It can handle image inputs and tabular metadata, and supports classification/regression. It is not for generative or audio tasks, but is well-suited for this image classification problem. Additionally, it can incorporate tabular features (such as skin_tone) to help address fairness requirements, for example by using group reweighting or upsampling.
+
+- autogluon.timeseries: This is for time series forecasting, not for image classification.
+
+Based on the above, autogluon.multimodal is the most appropriate library for this task, as it is specifically designed for multimodal classification and can handle both image and tabular data, which is useful for fairness-aware modeling. The next best option is the generic "machine learning" reference, which could be used if no specialized library is available. As a third option, autogluon.tabular could be considered, but it is not designed for image data and would require significant workarounds.
+
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

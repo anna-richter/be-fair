@@ -1,0 +1,101 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data structure and description files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB JPEG images of skin lesions (e.g., /MyImages/image_XXXX.jpg)
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1)
+- **Training data:** Provided in train.csv, which includes image_name (corresponding to image files), and a label column indicating the class ("malignant" or "benign" as described; in the sample, "non-neoplastic" is shown, but the description specifies malignant/benign)
+- **Test data:** test.csv lists image_name for images to predict on
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)
+- **Fairness requirement:** Minimize AUROC gap between light and dark skin tones
+
+No assumptions or unstated information have been added.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance. To improve fairness across skin tones', ' you may apply techniques such as filtering', ' upsampling', ' group reweighting in the loss function', ' or any other appropriate methods.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/image_6056.jpg
+Content:
+file_path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/image_6056.jpg
+file_size_MB: 0.04
+file_type: JPEG Image
+format: JPEG
+mode: RGB
+size: (382, 592)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The process was forcibly terminated after exceeding the 1-hour (3600 seconds) wall-clock time limit. Although model training was progressing and validation AUROC scores were being logged, the script did not finish all required steps, including final output validation and saving of prediction results. As a result, there is no guarantee that the output file was written or that all output checks passed.
+
+SUGGESTED_FIX:  
+Reduce the total runtime by limiting the number of training epochs (e.g., set `"optim.max_epochs"` to a smaller value such as 2–4), lowering model complexity (e.g., use a lighter backbone or smaller batch size), or setting a strict `time_limit` parameter in `predictor.fit()` (e.g., `time_limit=3400`). Ensure that the script always saves predictions and performs output validation as soon as possible after training, even if training is interrupted or time-constrained.
+
+ERROR_SUMMARY: The error occurs because the code attempts to load pretrained weights for the model 'efficientnetv2_s' using timm, but these weights are not available in the current timm installation. As a result, timm raises a RuntimeError instructing to use `pretrained=False` for random initialization or to choose a model for which pretrained weights exist.
+
+SUGGESTED_FIX:  
+Modify the model creation line in your code to set `pretrained=False` when calling `timm.create_model('efficientnetv2_s', ...)`, or select a different model architecture that has available pretrained weights in your timm version. After making this change, rerun your script to proceed with random initialization or with a supported pretrained model.
+
+ERROR_SUMMARY: The error occurs because the test set does not contain the columns ['skin_tone', 'alternative_skin_tone', 'expert_opinion'], but the code tries to select these columns from the test DataFrame (`test[feature_cols]`). This results in a KeyError, as only 'Unnamed: 0' and 'image_name' are present in test.csv.
+
+SUGGESTED_FIX:  
+Update the code to avoid referencing tabular features that do not exist in the test set. Instead, use only the columns available in test.csv (e.g., 'image_name') and ensure that the model is trained and predicts using features that are present in both train and test sets. For image-based tasks, switch to a multimodal or image-only approach (e.g., AutoGluon Multimodal), where the image file paths are used as input features, and do not expect tabular features in the test set.
+
+ERROR_SUMMARY: The root cause of the error is that PyTorch's distributed training backend (torch.distributed) failed to initialize because the required TCP port (20621) was already in use (EADDRINUSE). This prevented the distributed process group from starting, which is necessary when using multiple GPUs (env.num_gpus=2). As a result, model training could not proceed, and subsequent errors (such as _pickle.UnpicklingError and OSError: Device or resource busy) occurred as cascading failures from the initial distributed setup problem.
+
+SUGGESTED_FIX:  
+Set "env.num_gpus" to 1 in your AutoGluon hyperparameters to disable distributed training, or explicitly specify a different, unused port for distributed initialization if multi-GPU is required. Before rerunning, ensure no other processes are occupying the target port, or restart the environment to clear any stale distributed training processes. If you do not require multi-GPU training, using a single GPU will avoid this class of errors entirely.
+
+ERROR_SUMMARY: The main error is that the process was killed after exceeding the 1-hour (3600 seconds) wall-clock time limit, resulting in incomplete training (only 3 out of 4 epochs finished) and no evidence of completed test predictions or output validation. Additionally, there are repeated OSError: [Errno 16] Device or resource busy errors when attempting to delete temporary files (likely NFS-related), and warnings about excessive DataLoader worker processes (16 used, but only 2 recommended for the system).
+
+SUGGESTED_FIX:  
+Reduce the number of DataLoader workers to 2 or fewer to avoid resource contention and potential slowness/freezing. Lower the batch size and/or the number of training epochs to ensure the script completes within the 1-hour time limit. Monitor and, if possible, explicitly close or release file handles before deletion to mitigate the "device or resource busy" errors with NFS temporary files.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

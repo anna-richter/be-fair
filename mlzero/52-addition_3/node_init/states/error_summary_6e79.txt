@@ -1,0 +1,1 @@
+The file is a plain text file, but the code incorrectly attempted to read it as a CSV, resulting in the entire text being treated as column headers and a single row. This led to an awkward display of "Columns" and a row with the full text, rather than simply showing the first few lines as required for text files.

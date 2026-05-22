@@ -1,0 +1,22 @@
+```python
+import os
+from PIL import Image
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/image_16412.jpg"
+
+def analyze_image(file_path):
+    info = {}
+    try:
+        size_bytes = os.path.getsize(file_path)
+        info['File Size (KB)'] = round(size_bytes / 1024, 2)
+        with Image.open(file_path) as img:
+            info['Format'] = img.format
+            info['Mode'] = img.mode
+            info['Dimensions'] = img.size
+    except Exception as e:
+        info['Error'] = str(e)
+    for k, v in info.items():
+        print(f"{k}: {v}")
+
+analyze_image(file_path)
+```

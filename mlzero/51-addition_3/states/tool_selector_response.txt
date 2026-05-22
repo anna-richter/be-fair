@@ -1,0 +1,35 @@
+---
+EXPLANATION:  
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with fairness considerations across skin tones. The input data consists of images and a CSV file with metadata, including skin tone and labels. The output is a malignancy probability per image, and the evaluation metric is AUROC, with a focus on minimizing the AUROC gap between light and dark skin tones.
+
+Let's analyze each available library:
+
+1. **FlagEmbedding (v1.3.4):**  
+   This library specializes in retrieval and reranking tasks, not in image classification. It is not designed for training or evaluating image classifiers, nor does it provide tools for fairness-aware modeling in classification tasks.
+
+2. **machine learning (v0.1.0):**  
+   This is a general reference for machine learning or deep learning algorithms. While it is not a specific implementation, it can be considered as a fallback if no other specialized library is suitable. However, it lacks direct support for image classification pipelines, data loading, or fairness-aware modeling.
+
+3. **wav2vec2 (v0.0.0):**  
+   This library is designed for audio data, specifically for speech recognition and audio classification. It is not applicable to image data and cannot be used for image classification tasks.
+
+4. **qwen3 (v0.0.0):**  
+   Qwen3 is a text generation model, not designed for image classification or multimodal tasks. It is not suitable for this task.
+
+5. **autogluon.tabular (v1.4.0.dev):**  
+   This library is optimized for tabular data and does not support image-based tasks. It cannot be used for image classification.
+
+6. **autogluon.multimodal (v1.4.0.dev):**  
+   This library is specifically designed for multimodal classification tasks, including image classification. It supports combining image and tabular metadata (such as skin tone) for fairness-aware modeling. It allows for custom loss functions or group reweighting, which can help minimize AUROC gaps between groups. It is the most appropriate and powerful library for this task.
+
+7. **autogluon.timeseries (v1.4.0.dev):**  
+   This library is for time series forecasting and is not applicable to image classification.
+
+Given the above, **autogluon.multimodal** is the clear first choice, as it is designed for multimodal classification (images + tabular data), supports fairness-aware modeling, and is suitable for the task requirements. The general "machine learning" reference is a distant second, as it is only useful if no specialized library is available. The third choice is "autogluon.tabular," but it is not suitable for image data; it is included only to fulfill the requirement of ranking at least three libraries.
+
+---
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

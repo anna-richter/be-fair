@@ -1,0 +1,11 @@
+**Task Description (based only on provided data structure and description files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB JPEG images of skin lesions (e.g., /MyImages/image_XXXX.jpg)
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1)
+- **Training data:** Provided in train.csv, which includes image_name (corresponding to image files), and a label column indicating the class ("malignant" or "benign" as described; in the sample, "non-neoplastic" is shown, but the description specifies malignant/benign)
+- **Test data:** test.csv lists image_name for images to predict on
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)
+- **Fairness requirement:** Minimize AUROC gap between light and dark skin tones
+
+No assumptions or unstated information have been added.

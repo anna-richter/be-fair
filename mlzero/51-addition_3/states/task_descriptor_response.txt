@@ -1,0 +1,13 @@
+**Task Type:** Image classification (binary classification)
+
+**Input Format:**  
+- Input images are RGB JPEG files (e.g., image_16412.jpg) located in a folder.
+- For training, metadata is provided in train.csv, which includes columns: 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', and 'image_name'.
+
+**Prediction Output Format:**  
+- For each input image, output a malignancy probability (a float between 0 and 1) indicating the likelihood that the lesion is malignant.
+
+**Additional Details:**  
+- The model should classify skin lesion images as malignant or benign.
+- The evaluation metric is Area Under the Receiver Operator Curve (AUROC).
+- The model should minimize the AUROC gap between light and dark skin tones.

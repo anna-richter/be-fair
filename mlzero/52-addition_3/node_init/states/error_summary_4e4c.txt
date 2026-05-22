@@ -1,0 +1,1 @@
+The code displays an extra index column ('Unnamed: 0') that is not part of the original data, likely due to a saved index in the CSV. The requirements specify not to show an additional index column if it's not in the original table. The code should check for and remove such columns before displaying.

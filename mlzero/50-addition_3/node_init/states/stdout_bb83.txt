@@ -1,0 +1,5 @@
+File: image_3701.jpg
+Format: JPEG
+Mode: RGB
+Size (pixels): (458, 328)
+File Size (KB): 74.05

@@ -1,0 +1,31 @@
+```python
+import os
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/descriptions.txt"
+
+def display_text_file(fp, max_chars=768):
+    with open(fp, 'r', encoding='utf-8', errors='replace') as f:
+        content = f.read(max_chars)
+        print(content)
+
+def main():
+    try:
+        import pandas as pd
+        try:
+            df = pd.read_csv(file_path, sep=None, engine='python', nrows=3)
+            cols = list(df.columns)
+            ncols = len(cols)
+            if ncols > 20:
+                display_cols = cols[:10] + cols[-10:]
+            else:
+                display_cols = cols
+            print("Columns:", display_cols)
+            def trunc(x): return str(x)[:50] + ('...' if len(str(x)) > 50 else '')
+            print(df.applymap(trunc).to_string(index=False))
+        except Exception:
+            display_text_file(file_path)
+    except Exception:
+        display_text_file(file_path)
+
+main()
+```

@@ -1,0 +1,97 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Type:** Image classification (binary classification)
+
+**Input Format:**  
+- Input images are in JPEG format (RGB), located in a folder (e.g., /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/).  
+- For training, metadata is provided in train.csv, which includes columns: 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', and 'image_name'.
+
+**Prediction Output Format:**  
+- For each input image, output a malignancy probability (a float between 0 and 1).
+
+**Additional Requirements:**  
+- The model should classify skin lesion images as malignant or benign (malignancy probability).
+- The model should minimize the AUROC gap between light and dark skin tones, while maintaining overall performance.
+- Evaluation metric is AUROC.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance. To improve fairness across skin tones', ' you may apply techniques such as filtering', ' upsampling', ' group reweighting in the loss function', ' or any other appropriate methods.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/image_3701.jpg
+Content:
+File: image_3701.jpg
+Format: JPEG
+Mode: RGB
+Size (pixels): (458, 328)
+File Size (KB): 74.05
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the test DataFrame passed to `predictor.predict_proba()` only contains the columns `['image_name', 'image']`, while the model was trained using additional tabular metadata columns: `['skin_tone', 'alternative_skin_tone', 'expert_opinion', 'skin_tone', 'image', 'label', 'image_name']`. AutoGluon MultiModal requires all non-label columns used during training (except the label itself) to be present at prediction time, so it raises a ValueError when the test set is missing `['alternative_skin_tone', 'expert_opinion', 'skin_tone']`.
+
+SUGGESTED_FIX:  
+Modify your test DataFrame before prediction to include the missing columns (`'skin_tone'`, `'alternative_skin_tone'`, `'expert_opinion'`). Add these columns to the test DataFrame with placeholder values (e.g., `np.nan` or a default value), ensuring the column names and order match those used in training. This will allow AutoGluon to process the test data without error, even if the metadata is unavailable at inference time.
+
+ERROR_SUMMARY: The error occurs because the symbol `TabularBlock` is used in the `build_dataloaders` and `build_test_dl` functions, but it is not imported or defined anywhere in the script. This results in a `NameError` at runtime, preventing the construction of the fastai `DataBlock` for combining image and tabular data.
+
+SUGGESTED_FIX:  
+Add `from fastai.tabular.all import TabularBlock` to the import section near the top of your script, ensuring that `TabularBlock` is available in the namespace before it is used in the `DataBlock` definitions. After adding this import, rerun your script to verify that the error is resolved.
+
+ERROR_SUMMARY: AutoGluon Tabular failed to train any models because the Ray backend attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes ("AF_UNIX path length cannot exceed 107 bytes"). This is due to excessively long temporary directory paths (e.g., /sc-scratch/sc-scratch-ikim-guidlight/tmp/ray/session_.../sockets/plasma_store), causing OSError during model training and resulting in no models being fit.
+
+SUGGESTED_FIX:  
+Shorten the base directory path used for temporary files and model outputs to ensure all UNIX socket paths remain under 107 bytes. Move your working directory (including data, output, and conda environment) to a location with a much shorter absolute path (e.g., /tmp/mlzero or /scratch/mlzero), and update all relevant path variables in your scripts and environment setup accordingly. Then, rerun the pipeline to allow Ray and AutoGluon to create sockets within the allowed path length.
+
+ERROR_SUMMARY: The error occurs during model training with AutoGluon MultiModal using a Swin Transformer backbone and torch.compile (PyTorch 2.x). The root cause is an incompatibility between torch.compile (with CUDA graphs enabled) and the Swin Transformer model, leading to a RuntimeError: "accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run." This is likely due to in-place tensor modifications or lack of proper tensor cloning in the model or data pipeline, which torch.compile with CUDA graphs cannot safely handle.
+
+SUGGESTED_FIX:  
+Disable torch.compile by setting `"env.compile.turn_on": False` in your hyperparameters when calling `predictor.fit()`. This will avoid the use of CUDA graphs and prevent the tensor overwrite error. If you require compilation for speed, consider using a different backbone (e.g., ResNet) or wait for upstream fixes in PyTorch/AutoGluon that improve compatibility with Swin Transformer and torch.compile.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

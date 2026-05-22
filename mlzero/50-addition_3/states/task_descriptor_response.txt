@@ -1,0 +1,13 @@
+**Task Type:** Image classification (binary classification)
+
+**Input Format:**  
+- Input images are in JPEG format (RGB), located in a folder (e.g., /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/).  
+- For training, metadata is provided in train.csv, which includes columns: 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', and 'image_name'.
+
+**Prediction Output Format:**  
+- For each input image, output a malignancy probability (a float between 0 and 1).
+
+**Additional Requirements:**  
+- The model should classify skin lesion images as malignant or benign (malignancy probability).
+- The model should minimize the AUROC gap between light and dark skin tones, while maintaining overall performance.
+- Evaluation metric is AUROC.
