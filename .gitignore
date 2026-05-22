@@ -220,4 +220,6 @@ conda_env/
 *.ckpt
 *tfevents*
 
-*/mlzero/45-addition_2/debugging_logs.txt
+/mlzero/45-addition_2/debugging_logs.txt
+/mlzero/35-addition_1/debugging_logs.txt
+/mlzero/35-addition_1/detail_logs.txt
