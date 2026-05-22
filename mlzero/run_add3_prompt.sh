@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #SBATCH --time=47:59:59
-#SBATCH --gres=gpu:1 
+#SBATCH --gres=gpu:2 
 #SBATCH --job-name=%a_add3
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem-per-cpu=40G
-#SBATCH --partition=gpu
+#SBATCH --partition=pgpu
 #SBATCH --account=sc-users
 #SBATCH --output=%a_add3.o%j 
 #SBATCH --error=%a_add3.e%j
