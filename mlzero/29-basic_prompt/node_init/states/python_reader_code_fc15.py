@@ -1,0 +1,21 @@
+import os
+from PIL import Image
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_1964.jpg"
+
+def analyze_image(fp):
+    try:
+        with Image.open(fp) as img:
+            info = {
+                "File": os.path.basename(fp),
+                "Format": img.format,
+                "Mode": img.mode,
+                "Size (WxH)": img.size,
+                "File Size (KB)": round(os.path.getsize(fp)/1024,2)
+            }
+            for k,v in info.items():
+                print(f"{k}: {v}")
+    except Exception as e:
+        print(f"Could not open image: {e}")
+
+analyze_image(file_path)

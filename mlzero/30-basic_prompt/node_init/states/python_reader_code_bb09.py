@@ -1,0 +1,30 @@
+import os
+import pandas as pd
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/descriptions.txt"
+
+def print_truncated(s, maxlen=50):
+    s = str(s)
+    return s if len(s) <= maxlen else s[:maxlen-3] + "..."
+
+def show_tabular(df):
+    cols = list(df.columns)
+    if len(cols) > 20:
+        display_cols = cols[:10] + cols[-10:]
+    else:
+        display_cols = cols
+    print("Columns:", display_cols)
+    rows = df[display_cols].head(3)
+    for _, row in rows.iterrows():
+        print([print_truncated(row[c]) for c in display_cols])
+
+def show_text(fp):
+    with open(fp, 'r', encoding='utf-8', errors='ignore') as f:
+        content = f.read(768)
+    print(content)
+
+try:
+    df = pd.read_csv(file_path, sep=None, engine='python')
+    show_tabular(df)
+except Exception:
+    show_text(file_path)

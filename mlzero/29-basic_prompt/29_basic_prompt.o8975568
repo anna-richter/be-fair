@@ -1,0 +1,81 @@
+BRIEF Analyzing folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data
+BRIEF Found 16580 files
+BRIEF Grouped into 3 patterns
+BRIEF Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+BRIEF Planner decision: SUCCESS
+BRIEF Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+BRIEF Planner decision: SUCCESS
+BRIEF Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/descriptions.txt
+BRIEF Planner decision: FIX
+BRIEF Reading example file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_1964.jpg
+BRIEF Planner decision: SUCCESS
+BRIEF Starting MCTS iteration 1/20
+WARNING Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+BRIEF Planner decision: FIX
+BRIEF Starting MCTS iteration 2/20
+BRIEF Planner decision: FIX
+BRIEF Starting MCTS iteration 3/20
+BRIEF Planner decision: FIX
+BRIEF Starting MCTS iteration 4/20
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 0: 1/3
+BRIEF Starting MCTS iteration 5/20
+WARNING Could not parse validation score: 0.9161 (last reported Val AUROC before interruption)
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 1: 1/3
+BRIEF Starting MCTS iteration 6/20
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 0: 2/3
+BRIEF Starting MCTS iteration 7/20
+WARNING Could not parse validation score: 0.9161 (last reported Val AUROC before termination)
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 1: 2/3
+BRIEF Starting MCTS iteration 8/20
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 2: 1/3
+BRIEF Starting MCTS iteration 9/20
+WARNING Could not parse validation score: 0.93118 (best val_roc_auc during training, as reported in stderr)
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 3: 2/3
+BRIEF Starting MCTS iteration 10/20
+WARNING Node 9 has reached the maximum debug depth (3). Marking as terminal.
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 5: 3/3
+WARNING Parent node 5 has reached the maximum debug depth. Marking as terminal.
+BRIEF Starting MCTS iteration 11/20
+WARNING Could not parse validation score: 0.9161 (last reported Val AUROC before termination)
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 4: 2/3
+BRIEF Starting MCTS iteration 12/20
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 2: 2/3
+BRIEF Starting MCTS iteration 13/20
+WARNING Node 12 has reached the maximum debug depth (3). Marking as terminal.
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 3: 3/3
+WARNING Parent node 3 has reached the maximum debug depth. Marking as terminal.
+BRIEF Starting MCTS iteration 14/20
+WARNING Node 13 has reached the maximum debug depth (3). Marking as terminal.
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 13 with validation score 0.9176
+BRIEF Starting MCTS iteration 15/20
+WARNING Node 14 has reached the maximum debug depth (3). Marking as terminal.
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 11: 3/3
+WARNING Parent node 11 has reached the maximum debug depth. Marking as terminal.
+BRIEF Starting MCTS iteration 16/20
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 7: 2/3
+BRIEF Starting MCTS iteration 17/20
+WARNING Node 16 has reached the maximum debug depth (3). Marking as terminal.
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 7: 3/3
+WARNING Parent node 7 has reached the maximum debug depth. Marking as terminal.
+BRIEF Starting MCTS iteration 18/20
+BRIEF Stopping search - all nodes are terminal.
+BRIEF Total tokens — input: 2251625, output: 44004, sum: 2295629
+BRIEF MCTS search completed in 27954.85 seconds
+BRIEF Total nodes explored: 17
+BRIEF Best validation score: 0.9176
+BRIEF Tools used: autogluon.tabular, autogluon.multimodal, machine learning
+BRIEF Output saved in /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/29-basic_prompt

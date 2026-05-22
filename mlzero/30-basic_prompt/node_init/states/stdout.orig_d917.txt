@@ -1,0 +1,6 @@
+File: image_16320.jpg
+Type: JPEG Image
+Size: 0.06 MB
+Dimensions: 438x471
+Mode: RGB
+

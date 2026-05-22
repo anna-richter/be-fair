@@ -1,0 +1,3 @@
+DECISION: FIX  
+ERROR_SUMMARY: The file is a text file, but the code incorrectly treats it as a tabular file and displays the entire first line as a column name, resulting in an incorrect output. The code should have detected that the file is not tabular and shown the first few lines as text instead.  
+VALIDATION_SCORE: None

@@ -1,0 +1,5 @@
+File: image_1964.jpg
+Format: JPEG
+Mode: RGB
+Size (WxH): (666, 771)
+File Size (KB): 91.76

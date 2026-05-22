@@ -1,0 +1,1 @@
+Output includes an extra index column (',image_name') not present in the original table, violating the requirement to not show an additional index column if it's not in the original table. Also, the output shows more than 3 rows, exceeding the specified limit.

@@ -1,0 +1,94 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** RGB JPEG images of skin lesions (e.g., image_13853.jpg), referenced by image_name in the CSV files.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+,image_name
+0,image_10025
+1,image_14107
+2,image_4000
+3,image_3166
+4,image_15680
+5,image_10360
+6,image_5562
+7,image_701
+8,image_7126
+9,image_3911
+
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.']
+Evaluation metric: Area under the receiver oper... NaN
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_13853.jpg
+Content:
+File: image_13853.jpg
+Size_MB: 0.033
+Type: JPEG
+Mode: RGB
+Size: (315, 542)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because AutoGluon MultiModalPredictor expects the test data to have the same columns as the training data (specifically: ['image_name', 'alternative_skin_tone', 'expert_opinion', 'skin_tone']), but the provided test set only contains the 'image_name' column. As a result, a ValueError is raised during prediction, indicating the missing columns.
+
+SUGGESTED_FIX:  
+Modify your test data preparation so that the DataFrame passed to `predict_proba` includes all columns required by the model: 'image_name', 'alternative_skin_tone', 'expert_opinion', and 'skin_tone'. For columns not available in the test set, add them with placeholder values (e.g., NaN or a default value) to match the training data schema before calling the predictor.
+
+ERROR_SUMMARY: The root cause is that the `predict_proba` function expects each batch from the DataLoader to be a tensor of images, but when used with a DataLoader created from a Dataset that returns `(image, label)` tuples (as in validation), each batch is actually a tuple `(images, labels)`. This leads to the error `'list' object has no attribute 'to'` because the code tries to call `.to(device)` on a tuple or list instead of a tensor. The repeated `OSError: [Errno 16] Device or resource busy` messages are related to the NFS filesystem and are not directly responsible for the model logic failure.
+
+SUGGESTED_FIX:  
+Update the `predict_proba` function to handle both cases: if the DataLoader yields a tuple `(images, labels)`, extract only the images before moving them to the device; if it yields just images, proceed as before. This can be done by checking the type or length of the batch in the prediction loop and unpacking accordingly.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions (`validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes`), causing all model training attempts to be skipped and ultimately raising a RuntimeError: "No models were trained successfully during fit()".
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output, especially those under `/sc-scratch/sc-scratch-ikim-guidlight/...`, to ensure that all UNIX socket paths (including Ray's plasma_store sockets) remain under 107 characters. Move your working directory, data, and output/model directories to a location with a much shorter absolute path (e.g., `/tmp/agjob/`), and re-run the script. If using a cluster or scratch space, create a symlink from a short path to your working directory to avoid long socket paths.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

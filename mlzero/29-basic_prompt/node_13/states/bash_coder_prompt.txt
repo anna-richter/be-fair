@@ -1,0 +1,383 @@
+Generate a minimal bash script that will:
+
+Create and configure a conda environment in "conda_env" folder under /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/29-basic_prompt/node_13:
+ - Python version: 3.11
+ - Activate the environment
+ - pip install uv
+ - Install required packages from /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt and /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt using uv pip install -r /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt --prerelease=allow -r /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt
+ - Install any additional packages that are needed for the python script to run successfully
+Execute the Python script: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/29-basic_prompt/node_13/generated_code.py
+
+### Python code in the script:
+"""
+Skin Lesion Malignancy Probability Prediction Script
+
+This script trains a deep learning image classifier (EfficientNet) using PyTorch and timm to predict the probability of skin lesion malignancy from RGB JPEG images. It:
+- Loads and preprocesses the training data (removes NA labels, drops unnecessary index columns)
+- Maps string labels to binary (malignant=1, others=0)
+- Trains a binary classifier on images
+- Saves the trained model to a timestamped folder in the specified output directory
+- Predicts malignancy probabilities for the test set, preserving original indices and output format
+- Saves predictions to a file named "results" with the same extension as the test file in the output directory
+- Performs validation checks to ensure output integrity
+- If training data is available, holds out 10% for validation and prints AUROC on the validation set
+
+Installation requirements (run in bash before running this script):
+    pip install torch torchvision timm pandas scikit-learn tqdm pillow
+
+Usage:
+    Place this script in an environment with access to the data and run as __main__.
+"""
+
+import os
+import time
+import random
+import pandas as pd
+import numpy as np
+
+from PIL import Image
+from tqdm import tqdm
+
+import torch
+import torch.nn as nn
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
+import timm
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+
+# Constants
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data"
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/29-basic_prompt/node_13/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+IMAGES_DIR = os.path.join(DATA_DIR, "MyImages")
+
+# Use all CPUs for dataloader, 1 GPU for training
+NUM_WORKERS = min(8, os.cpu_count())  # Reduce workers for NFS stability and wall-clock
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+def get_image_path(image_name):
+    """Returns absolute path to image file given image_name (without extension)."""
+    return os.path.join(IMAGES_DIR, f"{image_name}.jpg")
+
+def map_label_to_binary(label):
+    """Maps string label to binary: malignant=1, others=0."""
+    return 1 if str(label).strip().lower() == "malignant" else 0
+
+class SkinLesionDataset(Dataset):
+    """Custom Dataset for skin lesion images."""
+    def __init__(self, df, img_col='image', label_col=None, transform=None):
+        self.df = df.reset_index(drop=True)
+        self.img_col = img_col
+        self.label_col = label_col
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        img_path = self.df.loc[idx, self.img_col]
+        image = Image.open(img_path).convert("RGB")
+        if self.transform:
+            image = self.transform(image)
+        if self.label_col is not None:
+            label = self.df.loc[idx, self.label_col]
+            return image, label
+        else:
+            return image
+
+def seed_everything(seed=42):
+    """Set random seed for reproducibility."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+def main():
+    # Ensure output directory exists
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    seed_everything(42)
+
+    # 1. Data Loading and Preprocessing
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # Remove unnecessary index column if present
+    for df in [train_df, test_df]:
+        if 'Unnamed: 0' in df.columns:
+            df.drop(columns=['Unnamed: 0'], inplace=True)
+
+    # Drop NA labels from training data only
+    train_df = train_df.dropna(subset=['label'])
+
+    # Map string labels to binary (malignant=1, others=0)
+    train_df['label'] = train_df['label'].apply(map_label_to_binary)
+
+    # Add absolute image paths for training and test data
+    train_df['image'] = train_df['image_name'].apply(get_image_path)
+    test_df['image'] = test_df['image_name'].apply(get_image_path)
+
+    # Only keep columns needed for training
+    train_data = train_df[['image', 'label']].copy()
+    test_data = test_df[['image_name', 'image']].copy()
+    test_data_indices = test_df.index.copy()
+
+    # 2. Validation Split (if no separate validation set is provided)
+    if len(train_data) > 10:
+        train_data, val_data = train_test_split(
+            train_data, test_size=0.1, random_state=42, stratify=train_data['label']
+        )
+        has_validation = True
+    else:
+        val_data = None
+        has_validation = False
+
+    # 3. Model Training
+    # Use a random timestamp for model folder
+    timestamp = int(time.time()) + random.randint(0, 9999)
+    model_dir = os.path.join(OUTPUT_DIR, f"skin_model_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+    model_path = os.path.join(model_dir, "model.pth")
+
+    # Image transforms
+    img_size = 224
+    train_transform = transforms.Compose([
+        transforms.Resize((img_size, img_size)),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomVerticalFlip(),
+        transforms.ColorJitter(0.1, 0.1, 0.1, 0.05),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485,0.456,0.406],[0.229,0.224,0.225])
+    ])
+    val_transform = transforms.Compose([
+        transforms.Resize((img_size, img_size)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485,0.456,0.406],[0.229,0.224,0.225])
+    ])
+
+    # Datasets and loaders
+    train_dataset = SkinLesionDataset(train_data, img_col='image', label_col='label', transform=train_transform)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=NUM_WORKERS, pin_memory=True)
+    if has_validation:
+        val_dataset = SkinLesionDataset(val_data, img_col='image', label_col='label', transform=val_transform)
+        val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
+
+    # Model: EfficientNet-B0 (fast, accurate, small)
+    model = timm.create_model('efficientnet_b0', pretrained=True, num_classes=1)
+    model = model.to(DEVICE)
+
+    # Loss and optimizer
+    criterion = nn.BCEWithLogitsLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=2e-4)
+    # FIX: Remove verbose=True (not supported in some torch versions)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', patience=2, factor=0.5)
+
+    # Training loop (limit epochs to fit within 1 hour wall-clock)
+    max_epochs = 4  # Reduce epochs for wall-clock safety
+    best_val_auc = 0
+    for epoch in range(max_epochs):
+        model.train()
+        running_loss = 0.0
+        for images, labels in tqdm(train_loader, desc=f"Epoch {epoch+1}/{max_epochs}"):
+            images = images.to(DEVICE, non_blocking=True)
+            labels = labels.float().to(DEVICE, non_blocking=True).unsqueeze(1)
+            optimizer.zero_grad()
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            running_loss += loss.item() * images.size(0)
+        avg_loss = running_loss / len(train_loader.dataset)
+
+        # Validation
+        if has_validation:
+            model.eval()
+            val_preds = []
+            val_targets = []
+            with torch.no_grad():
+                for images, labels in val_loader:
+                    images = images.to(DEVICE, non_blocking=True)
+                    outputs = model(images)
+                    probs = torch.sigmoid(outputs).cpu().numpy().flatten()
+                    val_preds.extend(probs)
+                    val_targets.extend(labels.numpy())
+            try:
+                val_auc = roc_auc_score(val_targets, val_preds)
+                print(f"Epoch {epoch+1}: Train Loss={avg_loss:.4f}, Val AUROC={val_auc:.4f}")
+                scheduler.step(val_auc)
+                if val_auc > best_val_auc:
+                    best_val_auc = val_auc
+                    torch.save(model.state_dict(), model_path)
+            except Exception as e:
+                print(f"Validation failed: {e}")
+        else:
+            print(f"Epoch {epoch+1}: Train Loss={avg_loss:.4f}")
+
+    # Save final model if not already saved
+    if not os.path.exists(model_path):
+        torch.save(model.state_dict(), model_path)
+
+    # 4. Prediction on Test Set
+    # Use best model
+    model.load_state_dict(torch.load(model_path, map_location=DEVICE))
+    model.eval()
+
+    # Test dataset and loader
+    test_dataset = SkinLesionDataset(test_data, img_col='image', label_col=None, transform=val_transform)
+    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
+
+    test_probs = []
+    with torch.no_grad():
+        for images in tqdm(test_loader, desc="Predicting on test set"):
+            images = images.to(DEVICE, non_blocking=True)
+            outputs = model(images)
+            probs = torch.sigmoid(outputs).cpu().numpy().flatten()
+            test_probs.extend(probs)
+
+    # Prepare output DataFrame
+    results_df = pd.DataFrame({
+        "label": test_probs
+    }, index=test_data_indices)
+
+    # 5. Save Results
+    test_ext = os.path.splitext(TEST_CSV)[1]
+    results_path = os.path.join(OUTPUT_DIR, f"results{test_ext}")
+    results_df.to_csv(results_path, index=True, header=True)
+
+    # 6. Validation Checks
+    loaded_results = pd.read_csv(results_path, index_col=0)
+    assert len(loaded_results) == len(test_df), \
+        f"Number of predictions ({len(loaded_results)}) does not match test set ({len(test_df)})"
+    assert list(loaded_results.index) == list(test_df.index), \
+        "Prediction file indices do not match test set indices"
+    assert list(loaded_results.columns) == ["label"], \
+        f"Prediction file columns {list(loaded_results.columns)} do not match required ['label']"
+    assert results_path.endswith('.csv'), "Output file format does not match test file format"
+    assert np.all((loaded_results['label'] >= 0) & (loaded_results['label'] <= 1)), \
+        "Predicted probabilities are not all in [0, 1]"
+
+    # 7. Validation Metric (if applicable)
+    if has_validation:
+        try:
+            val_dataset = SkinLesionDataset(val_data, img_col='image', label_col='label', transform=val_transform)
+            val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
+            val_preds = []
+            val_targets = []
+            with torch.no_grad():
+                for images, labels in val_loader:
+                    images = images.to(DEVICE, non_blocking=True)
+                    outputs = model(images)
+                    probs = torch.sigmoid(outputs).cpu().numpy().flatten()
+                    val_preds.extend(probs)
+                    val_targets.extend(labels.numpy())
+            val_auc = roc_auc_score(val_targets, val_preds)
+            print(f"Final Validation AUROC: {val_auc:.4f}")
+        except Exception as e:
+            print(f"Validation failed: {e}")
+
+    print(f"Predictions saved to: {results_path}")
+    print(f"Model saved to: {model_path}")
+
+if __name__ == "__main__":
+    main()
+
+### Previous Error
+ERROR_SUMMARY: The training process was terminated because it exceeded the allowed wall-clock time limit of 3600 seconds (1 hour). As a result, the model did not complete training, and subsequent steps such as prediction and output file generation were not executed, leading to missing required output files.
+
+SUGGESTED_FIX:  
+Reduce the training time by setting the `time_limit` parameter in `predictor.fit()` to a value less than 3600 seconds (e.g., 3300–3500 seconds to allow time for data loading and inference). Additionally, consider using a faster preset (such as `"medium_quality_faster_train"`), reducing the number of epochs, or using a smaller model backbone to ensure the entire workflow (data loading, training, and prediction) completes within the time constraint.
+
+ERROR_SUMMARY: The error occurs because the 'verbose' argument is not supported in the version of PyTorch installed in your environment for the `ReduceLROnPlateau` learning rate scheduler. Passing this unsupported keyword argument causes a `TypeError` during initialization.
+
+SUGGESTED_FIX: Remove the `verbose=True` argument from the call to `torch.optim.lr_scheduler.ReduceLROnPlateau` in your script. After removing this argument, rerun your script to ensure compatibility with your current PyTorch version.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes, resulting in OSError: "validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes". This caused all model training attempts to fail, leading to a RuntimeError: "No models were trained successfully during fit()".
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output, especially the base working directory and any subdirectories created by your script or environment. Move your project and scratch directories to a location with a much shorter absolute path (e.g., /tmp/ml or /scratch/ml), and update all relevant path variables in your scripts and environment setup accordingly. Then rerun the training; this should allow Ray and AutoGluon to create socket files with paths under the 107-byte limit, resolving the error.
+
+ERROR_SUMMARY: The script failed with `ValueError: Unknown preset type: medium_quality_faster_train` during the call to `predictor.fit()`. This indicates that the string `"medium_quality_faster_train"` is not a recognized value for the `presets` argument in the installed version of AutoGluon MultiModal, likely because this preset does not exist or has been renamed/removed in your package version.
+
+SUGGESTED_FIX:  
+Check the available preset names for your installed version of AutoGluon MultiModal (e.g., by consulting the [official documentation](https://auto.gluon.ai/stable/tutorials/multimodal/index.html) or inspecting `autogluon.multimodal.utils.presets.AUTOMM_PRESETS`). Replace `"medium_quality_faster_train"` with a valid preset such as `"medium_quality_faster_inference"`, `"best_quality"`, `"medium_quality"`, or simply remove the `presets` argument to use the default. Then rerun the script.
+
+ERROR_SUMMARY: The script was terminated because it exceeded the 1-hour wall-clock time limit imposed by the environment. This caused the training process to be killed before all epochs completed, resulting in incomplete model training and missing final outputs. There were no explicit code errors, but the workflow could not finish due to insufficient time for the full training and inference pipeline.
+
+SUGGESTED_FIX:  
+Reduce the overall runtime by decreasing the number of training epochs, lowering the batch size, or using a smaller model architecture. Additionally, consider reducing the number of DataLoader workers, optimizing data loading, or performing early stopping based on validation performance to ensure the script completes within the 1-hour time limit.
+
+ERROR_SUMMARY: The error is an `OSError: [Errno 16] Device or resource busy` raised by Python's `shutil.rmtree` during the cleanup of temporary directories used by multiprocessing. This occurs because files with names like `.nfs*` are still open or locked by another process or thread (often on NFS-mounted filesystems), preventing their deletion at process exit. This is a known issue with NFS and does not affect the main training, prediction, or output generation, as all validation checks passed and the model was successfully created and saved.
+
+SUGGESTED_FIX:  
+You can safely ignore this error if your main outputs (model and predictions) are correct, as it only affects temporary file cleanup. To reduce or eliminate these warnings, ensure all file handles are properly closed before process exit, avoid using NFS for temp directories if possible, or set the `TMPDIR` environment variable to a local disk. If the warnings are disruptive, you may also suppress them by catching and ignoring `OSError` during cleanup, but this is not strictly necessary for correct results.
+
+ERROR_SUMMARY: The script was terminated before completion because it exceeded the 1-hour wall-clock time limit imposed on the process. This prevented the training from finishing all epochs and blocked subsequent steps such as final model saving, test set prediction, and output validation. There were no explicit code errors, but the workflow could not complete due to insufficient time for the combined data loading, training, and inference.
+
+SUGGESTED_FIX:  
+Reduce the total training time by lowering the number of training epochs, decreasing the model size (e.g., use a smaller or more efficient architecture), reducing the batch size, or limiting the number of DataLoader workers. Additionally, consider saving intermediate results and performing test set inference as soon as a reasonable model checkpoint is available, rather than waiting for all epochs to finish, to ensure that predictions and outputs are generated before the time limit is reached.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes, resulting in repeated OSError exceptions: "AF_UNIX path length cannot exceed 107 bytes". This caused all model training attempts to fail, leading to a RuntimeError: "No models were trained successfully during fit()".
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output, especially the scratch and output directories, so that the full UNIX socket paths remain under 107 bytes. Move your working directory (including data, output, and conda environment) to a location with a much shorter absolute path (e.g., /tmp/ml or /scratch/ml), and re-run the script to avoid exceeding the UNIX socket path length limit.
+
+ERROR_SUMMARY: The main code executed successfully, but during cleanup, multiple `OSError: [Errno 16] Device or resource busy` errors occurred when attempting to delete temporary files (with `.nfs*` filenames) on an NFS-mounted filesystem. This happens when files are still open by a process while being deleted, causing NFS to rename them instead of removing them, and subsequent deletion attempts fail because the files are still in use.
+
+SUGGESTED_FIX:  
+These errors are benign and do not affect model training or prediction results. To suppress them, ensure all file handles are properly closed before process exit, and avoid manual deletion of files still in use. If possible, run the script on a local filesystem or consult your system administrator to adjust NFS settings or cleanup policies for `.nfs*` files.
+
+ERROR_SUMMARY: The main error is an `OSError: [Errno 16] Device or resource busy` raised during the cleanup of temporary directories by Python's multiprocessing module. This occurs when the script attempts to delete files (with names like `.nfs*`) that are still open or in use, typically on NFS-mounted filesystems, after the main training and prediction tasks have completed successfully.
+
+SUGGESTED_FIX:  
+This error is generally benign and does not affect the correctness of your model or predictions. To suppress these warnings, ensure all file handles are properly closed before script exit, and avoid manual deletion of files that may still be in use. If possible, run your workflow on a local filesystem instead of NFS, or consult your system administrator to adjust NFS settings for handling deleted-but-open files.
+
+ERROR_SUMMARY: The process was terminated because it exceeded the 1-hour wall-clock time limit before completing all training epochs and subsequent prediction/saving steps. This was likely due to a combination of a large dataset, a relatively slow model (EfficientNet-B0), high batch size, and excessive DataLoader worker count, possibly exacerbated by an outdated NVIDIA GPU driver causing suboptimal CUDA performance.
+
+SUGGESTED_FIX:  
+Reduce the number of training epochs (e.g., from 8 to 3–4), lower the DataLoader batch size and number of workers (e.g., batch_size=32, num_workers=4–8), and consider using a faster or smaller model architecture (e.g., resnet18 or mobilenet_v2). Additionally, update the NVIDIA GPU driver to the latest version to ensure optimal CUDA performance, and monitor training time per epoch to ensure the script completes well within the 1-hour limit.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend attempted to create UNIX domain socket files with paths exceeding the 107-byte limit imposed by the AF_UNIX socket protocol. This resulted in repeated OSError exceptions (validate_socket_filename failed), causing all model training attempts to be skipped and ultimately raising a RuntimeError indicating that no models were successfully trained.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output, especially the scratch and output directories, so that the full socket file paths generated by Ray remain under 107 characters. Move your working directory (e.g., /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/29-basic_prompt/node_11/) to a location with a much shorter absolute path (such as /tmp/agrun or /scratch/agrun), update all relevant path variables in your scripts accordingly, and rerun the pipeline.
+
+ERROR_SUMMARY: The main error is an AttributeError: 'MultiModalPredictor' object has no attribute 'leaderboard', which occurs because the leaderboard() method is not available for MultiModalPredictor in the installed version of AutoGluon. Additionally, repeated OSError: [Errno 16] Device or resource busy errors related to .nfs* files are seen during temporary directory cleanup, which are common on NFS filesystems when files are still open by a process.
+
+SUGGESTED_FIX:  
+Remove or comment out the call to predictor.leaderboard(), as this method is not supported for MultiModalPredictor; use predictor.evaluate() instead to obtain validation metrics if needed. The OSError messages about .nfs* files can generally be ignored unless they cause disk space/resource issues, but if they are problematic, ensure all file handles are properly closed before cleanup or consult your system administrator for NFS tuning.
+
+### Previous failed bash script:
+#!/bin/bash
+set -e
+
+# Paths
+ENV_DIR="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/29-basic_prompt/node_6/conda_env"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_ML="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt"
+PY_SCRIPT="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/29-basic_prompt/node_6/generated_code.py"
+
+# 1. Create conda environment with Python 3.11
+conda create --yes --prefix "$ENV_DIR" python=3.11
+
+# 2. Activate the environment
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_DIR"
+
+# 3. Install uv
+pip install uv
+
+# 4. Install requirements via uv
+uv pip install --prerelease=allow -r "$REQ_ML" -r "$REQ_COMMON"
+
+# 5. Install additional required packages for the script
+pip install torch torchvision timm pandas scikit-learn tqdm pillow
+
+# 6. Run the Python script
+python "$PY_SCRIPT"
+
+Notes:
+- Generate a minimal, executable bash script
+- Focus on essential commands only
+- Handle environment and package only if asked or there were errors

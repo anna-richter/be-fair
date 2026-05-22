@@ -1,0 +1,5 @@
+File: image_13853.jpg
+Size_MB: 0.033
+Type: JPEG
+Mode: RGB
+Size: (315, 542)

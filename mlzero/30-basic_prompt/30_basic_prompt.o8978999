@@ -1,0 +1,78 @@
+BRIEF Analyzing folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data
+BRIEF Found 16580 files
+BRIEF Grouped into 3 patterns
+BRIEF Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+BRIEF Planner decision: SUCCESS
+BRIEF Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+BRIEF Planner decision: SUCCESS
+BRIEF Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/descriptions.txt
+BRIEF Planner decision: FIX
+BRIEF Reading example file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_16320.jpg
+BRIEF Planner decision: SUCCESS
+BRIEF Starting MCTS iteration 1/20
+WARNING Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 2/20
+BRIEF Planner decision: FIX
+BRIEF Starting MCTS iteration 3/20
+BRIEF Planner decision: FIX
+BRIEF Starting MCTS iteration 4/20
+BRIEF Planner decision: FIX
+BRIEF Starting MCTS iteration 5/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 6/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 7/20
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 1: 1/3
+BRIEF Starting MCTS iteration 8/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 9/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 10/20
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 1: 2/3
+BRIEF Starting MCTS iteration 11/20
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 2: 1/3
+BRIEF Starting MCTS iteration 12/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 13/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 14/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 15/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 16/20
+WARNING Node 15 has reached the maximum debug depth (3). Marking as terminal.
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 9: 3/3
+WARNING Parent node 9 has reached the maximum debug depth. Marking as terminal.
+BRIEF Starting MCTS iteration 17/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 18/20
+BRIEF Planner decision: FIX
+WARNING Debug attempt failed. Debug attempts on parent node 2: 2/3
+BRIEF Starting MCTS iteration 19/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+BRIEF Starting MCTS iteration 20/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 0 with validation score 0.96654
+WARNING [bold red]Warning: Reached maximum iterations (20)[/bold red]
+BRIEF Total tokens — input: 2869282, output: 50504, sum: 2919786
+BRIEF MCTS search completed in 20867.99 seconds
+BRIEF Total nodes explored: 20
+BRIEF Best validation score: 0.96654
+BRIEF Tools used: autogluon.multimodal, autogluon.tabular, machine learning
+BRIEF Output saved in /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/30-basic_prompt

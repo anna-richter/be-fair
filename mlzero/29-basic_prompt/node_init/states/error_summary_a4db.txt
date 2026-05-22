@@ -1,0 +1,1 @@
+The file is a text file, but the code attempted to read it as a tabular file, resulting in the entire first line being interpreted as a column name. This led to an incorrect display of "Columns" and a misleading tabular output. The code should have detected that the file is not tabular and shown the first few lines as text instead.
