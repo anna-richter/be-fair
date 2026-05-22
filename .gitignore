@@ -219,3 +219,5 @@ aide/workspaces/3-basic_prompt/lgb_model.txt
 conda_env/
 *.ckpt
 *tfevents*
+
+*/mlzero/45-addition_2/debugging_logs.txt
