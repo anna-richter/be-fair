@@ -1,0 +1,83 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** RGB JPEG images of skin lesions (e.g., 640x480), referenced by image_name in the dataset.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Training data:** Provided in train.csv, which includes image_name and label columns (label: 'malignant' or 'benign').
+- **Test data:** test.csv provides image_name for images to predict.
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+- **Additional requirement:** The model should minimize AUROC performance gap between light and dark skin tones.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of ...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/image_3748.jpg
+Content:
+File: image_3748.jpg
+Size_MB: 0.06
+Format: JPEG
+Mode: RGB
+Dimensions: (640, 480)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the string value provided to the `presets` argument in `MultiModalPredictor.fit()` ("medium_quality_faster_train") is not recognized by the installed version of AutoGluon MultiModal. The function expects a valid preset name, but "medium_quality_faster_train" is not among the supported options, resulting in a `ValueError: Unknown preset type: medium_quality_faster_train`.
+
+SUGGESTED_FIX:  
+Remove the `presets="medium_quality_faster_train"` argument from your `predictor.fit()` call, or replace it with a valid preset supported by your AutoGluon version (such as `"best_quality"`, `"high_quality"`, `"medium_quality"`, or `"fast_train"`). If you want to control training speed and quality, do so by adjusting the `hyperparameters` dictionary directly instead of using an unsupported preset string.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions (`validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes`), causing all model training attempts to be skipped and ultimately raising a RuntimeError due to no models being fit.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model checkpoints by moving your working/output directories to a location with a much shorter absolute path (e.g., `/tmp/ag_run` or `/scratch/ag_run`). Set the `output` and `MODEL_SAVE_DIR` variables accordingly before running AutoGluon. This will ensure that all UNIX socket paths generated by Ray remain under the 107-character limit and prevent the OSError.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

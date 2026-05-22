@@ -1,0 +1,28 @@
+import os
+import pandas as pd
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/train.csv"
+
+def show_columns(cols):
+    n = len(cols)
+    if n > 20:
+        return list(cols[:10]) + ["..."] + list(cols[-10:])
+    return list(cols)
+
+def truncate_cell(val):
+    s = str(val)
+    return s if len(s) <= 50 else s[:47] + "..."
+
+try:
+    df = pd.read_csv(file_path, dtype=str, low_memory=False)
+    cols = show_columns(df.columns)
+    print("Columns:", cols)
+    pd.set_option('display.max_colwidth', 50)
+    print(df.head(3).to_string(index=False))
+except Exception:
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read(768)
+            print(content)
+    except Exception as e:
+        print(f"Could not open file: {e}")

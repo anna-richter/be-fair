@@ -1,0 +1,5 @@
+File: image_3748.jpg
+Size_MB: 0.06
+Format: JPEG
+Mode: RGB
+Dimensions: (640, 480)

@@ -1,0 +1,21 @@
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with a requirement to minimize AUROC gap between light and dark skin tones while maintaining overall performance. The input is image data, and the output is a malignancy probability per image. The evaluation metric is AUROC, and fairness across skin tones is important.
+
+Let's analyze each available library:
+
+- **FlagEmbedding**: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for this task.
+
+- **machine learning**: This is a generic reference to machine learning or deep learning algorithms. It is a fallback option if no specialized library is available, but it does not provide any specific tools or automation for image classification.
+
+- **wav2vec2**: This library is designed for audio data (ASR, audio classification) and is not applicable to image data.
+
+- **qwen3**: This is a text generation model, not suitable for image classification.
+
+- **autogluon.tabular**: This library is optimized for tabular data (numerical/categorical), not for image or multimodal data. It cannot process images directly.
+
+- **autogluon.multimodal**: This library is designed for multimodal classification tasks, including image classification. It can handle image data and tabular metadata (such as skin_tone), making it well-suited for this task. It also supports fairness-aware modeling by allowing the inclusion of sensitive attributes (like skin_tone) as features, which can help minimize AUROC gaps between groups. It is not for generative or audio tasks, but that is not needed here.
+
+- **autogluon.timeseries**: This is for time series forecasting, not for image classification.
+
+Given the above, **autogluon.multimodal** is the best fit because it is specifically designed for multimodal classification tasks, can process both images and tabular metadata, and is likely to provide tools to address fairness concerns. The generic "machine learning" library is a fallback if nothing else is suitable. "autogluon.tabular" could be considered if only tabular data were used, but it cannot process images.
+
+---

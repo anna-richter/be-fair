@@ -1,0 +1,21 @@
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with a requirement for fairness across skin tones and AUROC as the evaluation metric. The input data consists of images and tabular metadata (skin_tone, label, etc.), and the output is a malignancy probability per image.
+
+Let's analyze each available library:
+
+- **FlagEmbedding**: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for this task.
+
+- **machine learning**: This is a generic reference to machine learning or deep learning algorithms. It could be used if no other specialized library fits, but it lacks automation and task-specific optimizations.
+
+- **wav2vec2**: This library is designed for audio data (ASR, audio classification) and is not applicable to image data.
+
+- **qwen3**: This is a text generation model, not suitable for image classification.
+
+- **autogluon.tabular**: This library is optimized for tabular data and does not support image-based tasks, so it is not suitable.
+
+- **autogluon.multimodal**: This library is designed for multimodal classification tasks, including image classification and combining image and tabular data. It is well-suited for this task, as it can handle both the image input and the skin_tone metadata for fairness-aware modeling. It also automates model selection and hyperparameter tuning, which is beneficial for maximizing AUROC and potentially minimizing fairness gaps.
+
+- **autogluon.timeseries**: This library is for time series forecasting and is not applicable to image classification.
+
+Given these considerations, **autogluon.multimodal** is the best fit, as it directly supports image classification and can incorporate tabular metadata (like skin_tone) to address fairness. The generic "machine learning" library is a fallback if automation or multimodal support is not available. "autogluon.tabular" could be considered if only tabular data were used, but it cannot process images.
+
+---

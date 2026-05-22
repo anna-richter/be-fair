@@ -1,0 +1,28 @@
+---
+EXPLANATION:  
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with a requirement to minimize AUROC performance gap between light and dark skin tones. The input is image data, and the output is a malignancy probability per image. The evaluation metric is AUROC, and fairness across skin tones is important.
+
+Let's analyze each available library:
+
+- **FlagEmbedding**: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for training or evaluating image classifiers.
+
+- **machine learning**: This is a generic reference to machine learning or deep learning algorithms. It is only recommended if no other specialized tool is available, as it does not provide specific implementations or optimizations for image data.
+
+- **wav2vec2**: This library is designed for audio data (ASR, audio classification) and is not applicable to image classification tasks.
+
+- **qwen3**: This is a text generation model, not suitable for image classification.
+
+- **autogluon.tabular**: This library is optimized for tabular data (numerical/categorical), not for image or multimodal data. It cannot process image files directly.
+
+- **autogluon.multimodal**: This library is designed for multimodal classification tasks, including image classification. It supports image inputs and can handle tabular metadata (such as skin_tone) alongside images, which is highly relevant for this task. This allows for the possibility of incorporating skin tone as an auxiliary input to help address fairness requirements. It is not for generative or audio tasks, but is well-suited for image classification.
+
+- **autogluon.timeseries**: This is for time series forecasting, not for image classification.
+
+Given the above, **autogluon.multimodal** is the most appropriate library for this task, as it is specifically designed for multimodal classification and can handle both image and tabular data, which is ideal for addressing the fairness requirement. The next best option is the generic **machine learning** reference, which could be used to implement a custom deep learning solution if necessary. **autogluon.tabular** is included as a distant third, but it cannot process images directly and would require extensive feature engineering (e.g., extracting features from images beforehand), making it suboptimal.
+
+---
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

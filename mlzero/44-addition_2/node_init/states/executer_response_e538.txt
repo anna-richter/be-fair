@@ -1,0 +1,3 @@
+DECISION: FIX  
+ERROR_SUMMARY: The code incorrectly treats a plain text file as a CSV, resulting in the entire first line being interpreted as column headers. This leads to misleading output for "Columns" and an unnecessary DataFrame preview. The code should first check if the file is tabular (e.g., by extension or sniffing), and otherwise treat it as text.  
+VALIDATION_SCORE: None
