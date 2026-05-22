@@ -1,0 +1,28 @@
+---
+EXPLANATION:  
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with fairness regarding skin tone as an explicit requirement. The model must output a malignancy probability for each image, and AUROC is the evaluation metric. The data consists of image files and a CSV with labels and skin tone information.
+
+Let's analyze each available library:
+
+- **FlagEmbedding**: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for training or deploying image classifiers.
+
+- **machine learning**: This is a generic reference to machine learning or deep learning algorithms. It is a fallback option if no specialized library is suitable, but it does not provide any specific tools or automation for image classification.
+
+- **wav2vec2**: This library is designed for audio data (ASR, audio classification) and is not applicable to image data.
+
+- **qwen3**: This is a text generation model, not suitable for image classification tasks.
+
+- **autogluon.tabular**: This library is optimized for tabular data (numerical/categorical), not for image or multimodal data. It cannot process images directly.
+
+- **autogluon.multimodal**: This library is designed for multimodal classification tasks, including image classification. It can handle image data and tabular data together, which is highly relevant here since the training CSV includes both image names and skin tone information. This allows for the possibility of building a fairer model by incorporating skin tone as an input feature or for fairness-aware evaluation. It is not for generative or audio tasks, but it is well-suited for image classification.
+
+- **autogluon.timeseries**: This is for time series forecasting, not for image classification.
+
+Given the above, **autogluon.multimodal** is the most appropriate library for this task, as it is specifically designed for multimodal classification and can handle both images and tabular features (such as skin tone), which is important for fairness. The generic "machine learning" library is a fallback if no specialized library is available. "autogluon.tabular" could be considered if only tabular data were used, but it cannot process images. The rest are not relevant.
+
+---
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

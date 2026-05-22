@@ -1,0 +1,20 @@
+---
+EXPLANATION: The task is binary image classification (malignant vs. benign) using RGB JPEG images of skin lesions, with fairness towards skin tone as an important consideration. The output should be a malignancy probability (float between 0 and 1) for each image, and the evaluation metric is AUROC. The dataset includes image files and CSVs referencing image names and labels, with additional metadata on skin tone.
+
+Analyzing the available libraries:
+
+- FlagEmbedding is specialized for retrieval and reranking, not for image classification or deep learning on images. It is not suitable for this task.
+- machine learning is a generic reference to ML/DL algorithms, but does not provide a concrete implementation or framework for image classification. It is a fallback if nothing else fits.
+- wav2vec2 is designed for audio data, specifically speech recognition and audio classification, and is not applicable to image data.
+- qwen3 is a text generation model, not suitable for image classification tasks.
+- autogluon.tabular is designed for tabular data and explicitly does not support image-based tasks, so it is not suitable here.
+- autogluon.multimodal is designed for multimodal classification, including image classification tasks. It supports image inputs and can handle additional tabular metadata (such as skin tone), which is relevant for fairness considerations. It is the most appropriate library for this task.
+- autogluon.timeseries is for time series forecasting and is not applicable to image classification.
+
+Therefore, autogluon.multimodal is the best fit, as it is designed for image classification and can incorporate tabular metadata (e.g., skin tone) to help address fairness. The generic machine learning library is a distant second, as it is only a reference and not a concrete implementation. autogluon.tabular is third, but it cannot process images and is not suitable, but is more relevant than the other libraries (audio/text/retrieval).
+
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

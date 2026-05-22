@@ -1,0 +1,6 @@
+**Task Description:**
+
+- **Problem Type:** Image classification (binary classification)
+- **Input Format:** RGB images of skin lesions in JPEG format, referenced by image names in the dataset.
+- **Prediction Output Format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Additional Details:** The model should classify lesions as malignant or benign, and fairness towards skin tone should be considered. The evaluation metric is Area under the receiver operator curve (AUROC).

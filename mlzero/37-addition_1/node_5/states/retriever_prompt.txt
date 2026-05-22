@@ -1,0 +1,84 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** RGB JPEG images of skin lesions (e.g., files like `image_4966.jpg`).
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Training data:** Provided in `train.csv`, which includes image names and a `label` column indicating lesion class.
+- **Test data:** Provided in `test.csv`, which includes image names for prediction.
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+- **Additional note:** Fairness with respect to skin tone is required.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.']
+Text preview:
+ I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_4966.jpg
+Content:
+File: image_4966.jpg
+Format: JPEG
+Mode: RGB
+Size (pixels): (1024, 768)
+File Size (MB): 0.06
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the test DataFrame provided to `predictor.predict_proba()` is missing required columns (`alternative_skin_tone` and `expert_opinion`) that were present in the training data. AutoGluon MultiModalPredictor expects the test data to have the same set of columns as the training data (except for the label), and will raise a ValueError if any are missing.
+
+SUGGESTED_FIX:  
+Modify the test DataFrame before prediction to include all columns used during training (`image`, `skin_tone`, `alternative_skin_tone`, `expert_opinion`). For columns not available in the test set, add them with placeholder values (e.g., `np.nan` or a default value), ensuring the column names and order match the training data schema. This will allow AutoGluon to process the test data without raising a missing columns error.
+
+ERROR_SUMMARY: The script failed with a ValueError because the .fit() method of AutoGluon TabularPredictor does not accept a seed argument. The random seed for reproducibility should be set in the TabularPredictor constructor, not in the .fit() call.
+
+SUGGESTED_FIX: Remove seed=SEED from the .fit() method call and instead pass seed=SEED as a parameter when constructing the TabularPredictor object. Ensure that all other .fit() arguments are valid according to the AutoGluon documentation.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

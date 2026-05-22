@@ -1,0 +1,168 @@
+```python
+"""
+Skin Lesion Malignancy Prediction Script using AutoGluon MultiModal
+
+This script performs binary image classification to predict the malignancy probability of skin lesions
+from RGB images, using AutoGluon MultiModal. It:
+- Loads and preprocesses the data (removes NA labels, drops index columns)
+- Trains a model (with 10% validation split if no validation set is provided)
+- Saves the trained model to a timestamped folder in the specified output directory
+- Predicts malignancy probabilities for the test set, preserving original indices and format
+- Saves predictions in the same format as the test file, with correct column names
+- Performs validation checks on the output
+- Prints AUROC on the held-out validation set (if possible)
+
+# Installation (uncomment if needed):
+# !pip install --upgrade pip
+# !pip install autogluon.multimodal
+
+Usage:
+- Place this script in an environment with access to the data and output folders.
+- Run as a standalone script: python script.py
+
+Author: AutoML Agent
+"""
+
+import os
+import sys
+import uuid
+import time
+import warnings
+
+import pandas as pd
+import numpy as np
+
+from autogluon.multimodal import MultiModalPredictor
+from sklearn.metrics import roc_auc_score
+
+warnings.filterwarnings('ignore')
+
+# Paths
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data"
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/35-addition_1/node_0/output"
+IMAGES_DIR = os.path.join(DATA_DIR, "MyImages")
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+RESULTS_PATH = os.path.join(OUTPUT_DIR, "results.csv")  # Will adjust extension if needed
+
+def get_timestamp():
+    # Generate a random timestamp for model folder naming
+    return str(int(time.time())) + "-" + uuid.uuid4().hex[:8]
+
+def map_label_to_binary(label):
+    # Map 'malignant' to 1, all else to 0
+    return 1 if str(label).strip().lower() == "malignant" else 0
+
+def main():
+    # 1. Data Loading and Preprocessing
+    train = pd.read_csv(TRAIN_CSV)
+    test = pd.read_csv(TEST_CSV)
+
+    # Remove unnecessary index column if present
+    for col in ['Unnamed: 0', 'index']:
+        if col in train.columns:
+            train = train.drop(columns=[col])
+        if col in test.columns:
+            test = test.drop(columns=[col])
+
+    # Remove training samples without valid labels (drop NA in label)
+    train = train.dropna(subset=['label'])
+
+    # Map label to binary: 'malignant' -> 1, all else -> 0
+    train['label'] = train['label'].apply(map_label_to_binary)
+
+    # Prepare image paths for train and test
+    train['image_path'] = train['image_name'].apply(lambda x: os.path.join(IMAGES_DIR, f"{x}.jpg"))
+    test['image_path'] = test['image_name'].apply(lambda x: os.path.join(IMAGES_DIR, f"{x}.jpg"))
+
+    # For fairness, you could add 'skin_tone' as a feature, but for now, we focus on image only.
+
+    # 2. Validation Split (if no validation set is provided)
+    VALIDATION_FRAC = 0.1
+    np.random.seed(42)
+    train_idx = np.arange(len(train))
+    val_size = int(len(train) * VALIDATION_FRAC)
+    val_indices = np.random.choice(train_idx, size=val_size, replace=False)
+    train_indices = np.setdiff1d(train_idx, val_indices)
+    train_data = train.iloc[train_indices].reset_index(drop=True)
+    val_data = train.iloc[val_indices].reset_index(drop=True)
+
+    # 3. Prepare DataFrames for AutoGluon
+    # Only keep columns needed: image_path, label
+    ag_train = train_data[['image_path', 'label']].copy()
+    ag_val = val_data[['image_path', 'label']].copy()
+    ag_test = test[['image_path']].copy()
+
+    # 4. Model Training
+    model_dir = os.path.join(OUTPUT_DIR, f"autogluon-model-{get_timestamp()}")
+    os.makedirs(model_dir, exist_ok=True)
+
+    predictor = MultiModalPredictor(
+        label="label",
+        problem_type="binary",
+        path=model_dir
+    )
+
+    # Use default presets for image classification
+    predictor.fit(
+        train_data=ag_train,
+        tuning_data=ag_val,
+        time_limit=3600 - 600,  # Leave time for inference and validation
+        presets="best_quality",
+        hyperparameters={
+            "env.num_gpus": 1,
+            # Optionally, you can add focal loss for fairness/imbalance, but not required
+        }
+    )
+
+    # 5. Prediction on Test Set
+    # Predict_proba returns a DataFrame with columns [0, 1] for binary classification
+    proba_df = predictor.predict_proba(ag_test)
+    # The probability of 'malignant' (class 1) is in column 1
+    malignancy_probs = proba_df[1].values
+
+    # Prepare results DataFrame
+    # The output format should match test.csv: keep all original columns, add the probability column
+    # But the instruction says: output a malignancy probability (a float between 0 and 1) for each input image,
+    # and output column names must match those in the training or sample submission files.
+    # Since test.csv has only 'image_name', we will output a CSV with 'image_name' and 'label' (probability).
+    results = test[['image_name']].copy()
+    results['label'] = malignancy_probs
+
+    # Save results in the same format/extension as test.csv
+    results_path = os.path.join(OUTPUT_DIR, "results.csv")
+    results.to_csv(results_path, index=False)
+
+    # 6. Validation Checks
+    # a) Check that the number of predictions equals the number of test samples
+    assert len(results) == len(test), f"Prediction rows ({len(results)}) != test rows ({len(test)})"
+    # b) Check that the indices are preserved (row order matches)
+    assert all(results['image_name'].values == test['image_name'].values), "Image names/order mismatch"
+    # c) Check that output columns are correct
+    assert list(results.columns) == ['image_name', 'label'], f"Output columns {list(results.columns)} are incorrect"
+    # d) Check that output is float between 0 and 1
+    assert np.all((results['label'] >= 0) & (results['label'] <= 1)), "Probabilities not in [0, 1]"
+
+    # e) Check output format (CSV)
+    assert results_path.endswith('.csv'), "Output file is not CSV"
+
+    print(f"Predictions saved to: {results_path}")
+
+    # 7. Validation Metric (AUROC on held-out validation set)
+    try:
+        val_pred_proba = predictor.predict_proba(ag_val)
+        val_auc = roc_auc_score(ag_val['label'], val_pred_proba[1])
+        print(f"Validation AUROC: {val_auc:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+if __name__ == "__main__":
+    main()
+```
+**Notes:**
+- The script assumes the test set does not have labels and only outputs the malignancy probability for each image.
+- The output file is always named `results.csv` and saved in the output directory.
+- The model is saved in a timestamped folder in the output directory.
+- Validation is performed on a 10% holdout from the training data, and AUROC is printed if possible.
+- All validation checks are performed at the end to ensure output integrity.
+- The script is ready to run as-is, provided the data and output directories exist and are writable.

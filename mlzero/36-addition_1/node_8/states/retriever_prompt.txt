@@ -1,0 +1,92 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB JPEG images of skin lesions (e.g., MyImages/image_XXXX.jpg)
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1)
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)
+- **Additional requirement:** The model should be fair towards skin tone.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.']
+Text preview:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+E...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_14146.jpg
+Content:
+File Size (MB): 0.13
+Format: JPEG
+Mode: RGB
+Dimensions: (1280, 960)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the `MultiModalPredictor.fit()` method in AutoGluon does not accept a `val_data` keyword argument. Passing `val_data=val_data` to `fit()` results in a `TypeError`. This indicates a mismatch between the code and the current AutoGluon API, which expects validation data to be provided using the `tuning_data` parameter instead.
+
+SUGGESTED_FIX:  
+Replace the `val_data=val_data` argument in the `predictor.fit()` call with `tuning_data=val_data`. This will correctly provide the validation set for early stopping and metric reporting according to the latest AutoGluon MultiModal API. Review the documentation for any other parameter name changes to ensure compatibility.
+
+ERROR_SUMMARY: The process exceeded the 1-hour (3600 seconds) wall-clock time limit before completing all required steps, including model training, prediction, and validation. This was primarily due to slow training epochs, likely caused by a combination of a large dataset, a relatively deep model (ResNet18), and possibly suboptimal data loading or hardware utilization. Additionally, there were repeated OSError: [Errno 16] Device or resource busy messages related to NFS file handling, but these did not directly terminate the process.
+
+SUGGESTED_FIX:  
+Reduce the overall runtime by decreasing the number of training epochs (e.g., from 10 to 3–5), lowering the model complexity (e.g., use a smaller model like ResNet10 or MobileNetV2), and/or reducing the image input size (e.g., from 224x224 to 128x128). Also, ensure that DataLoader parameters (batch size, num_workers, pin_memory) are tuned for your hardware, and consider profiling data loading to identify bottlenecks. If NFS file access remains slow or problematic, consider copying a subset of images to local storage for faster access during training.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths longer than the system's AF_UNIX limit (107 bytes). This resulted in repeated OSError exceptions: "validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes", causing all model training to be skipped and ultimately raising a RuntimeError due to no models being fit.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output, especially those under `/sc-scratch/sc-scratch-ikim-guidlight/tmp/ray/` and `/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/36-addition_1/node_2/`. Move your working, output, and temp directories to a location with a much shorter absolute path (e.g., `/tmp/ag/`), and set the `TMPDIR`, `TEMP`, and `TMP` environment variables to this shorter path before running your script. This will ensure all UNIX socket files created by Ray are within the allowed length, preventing the OSError and allowing model training to proceed.
+
+ERROR_SUMMARY: The error occurred because the test DataFrame passed to `predictor.predict_proba()` did not include the 'skin_tone' column, which was present in the training data and thus required by the trained AutoGluon MultiModalPredictor. As a result, the model raised a `ValueError` indicating that the required column 'skin_tone' was missing from the test data.
+
+SUGGESTED_FIX:  
+Before calling `predictor.predict_proba()` on the test set, ensure that the test DataFrame includes a 'skin_tone' column. If true skin tone values are unavailable for test samples, add the column with a placeholder value (e.g., `np.nan` or a default integer) so that the test DataFrame columns match those used during training. This will satisfy the model's input schema and allow prediction to proceed.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

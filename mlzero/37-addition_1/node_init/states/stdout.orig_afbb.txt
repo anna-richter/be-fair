@@ -1,0 +1,5 @@
+File: image_4966.jpg
+Format: JPEG
+Mode: RGB
+Size (pixels): (1024, 768)
+File Size (MB): 0.06

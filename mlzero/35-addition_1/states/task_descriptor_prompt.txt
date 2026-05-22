@@ -1,0 +1,67 @@
+
+Based ONLY on the information explicitly stated in the provided data structure and description files, provide a condensed and precise description of the data science task. Include only details that are directly mentioned in the source materials. Do not add assumptions or infer unstated information.
+
+Be very clear about the problem type (e.g. audio classification/image regression/seq-to-seq generation/etc.), input format, and prediction output format.
+
+### User Instruction
+
+
+### Data Structure:
+(IMPORTANT: The metadata of example files in Data Structure may not be representative - do not make assumptions about data statistics based on examples.)
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+Text preview:
+ ,image_name
+0,image_10025
+1,image_14107
+2,image_4000
+3,image_3166
+4,image_15680
+5,image_10360
+6,image_5562
+7,image_701
+8,image_7126
+9,image_3911
+
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.']
+File could not be read or is binary/empty.
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_14484.jpg
+Content:
+File Size (bytes): 28784
+Format: JPEG
+Mode: RGB
+Dimensions: (447, 407)
+
+----------
+
+
+### Description File Contents:
+File: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+Content: I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+Evaluation metric: Area under the receiver operator curve (AUROC)
