@@ -1,0 +1,336 @@
+"""
+Skin Lesion Malignancy Probability Prediction Script (Machine Learning Baseline, Improved)
+
+This script trains a machine learning model to predict the probability of malignancy (malignant vs. benign)
+for skin lesion images, using features extracted from the images and tabular metadata. It:
+- Loads and preprocesses the data (removes NA labels, drops index columns, constructs absolute image paths)
+- Extracts features from images using a pretrained CNN (EfficientNet-B3, GPU-accelerated if available)
+- Trains a LightGBM classifier (with class weights for fairness, optimized for AUROC)
+- Saves the trained model to a timestamped folder in the specified output directory
+- Predicts malignancy probabilities for the test set, preserving original indices and output format
+- Saves predictions in the same format as the test file, with correct column names and order
+- Performs validation (holdout 10% of training data) and prints AUROC on the validation set
+- Provides a function to predict malignancy probabilities for a folder of new images
+
+Installation requirements (run if needed):
+    # pip install --upgrade pip
+    # pip install pandas scikit-learn lightgbm torch torchvision pillow tqdm
+
+Usage:
+    Place this script in your working directory and run it. Ensure the data folder and images are accessible.
+
+Author: AutoML Agent
+"""
+
+import os
+import time
+import uuid
+import warnings
+import numpy as np
+import pandas as pd
+
+from tqdm import tqdm
+
+# ========== CONFIGURATION ==========
+# start change
+# DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data"  # original
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/evaluation_data/"
+# end change
+# start change
+# OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/55-addition_3/node_7/output"  # original
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/55-addition_3"
+# end change
+IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+MODEL_SAVE_DIR = os.path.join(
+    OUTPUT_DIR, f"ml_model_{int(time.time())}_{uuid.uuid4().hex[:8]}"
+)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+def get_absolute_image_path(image_name):
+    """Given an image_name (e.g., 'image_1234'), return its absolute path in the image directory."""
+    return os.path.abspath(os.path.join(IMAGE_DIR, f"{image_name}.jpg"))
+
+def map_label_to_binary(label):
+    """Map string label to binary: malignant=1, non-neoplastic=0."""
+    if label in [0, 1]:
+        return label
+    if isinstance(label, str):
+        label = label.strip().lower()
+        if label == "malignant":
+            return 1
+        elif label == "non-neoplastic":
+            return 0
+    return np.nan
+
+def compute_class_weights(y, skin_tones=None):
+    """
+    Compute class weights for binary classification, optionally reweighting by skin tone group
+    to help reduce AUROC gap between light and dark skin tones.
+    Returns a numpy array of weights [weight_for_0, weight_for_1].
+    """
+    from collections import Counter
+    counts = Counter(y)
+    total = sum(counts.values())
+    weights = {cls: total / (len(counts) * count) for cls, count in counts.items()}
+
+    # If skin_tones is provided, upweight underrepresented skin tone groups
+    if skin_tones is not None:
+        light_mask = skin_tones.isin([1, 2])
+        dark_mask = skin_tones.isin([3, 4])
+        n_light = light_mask.sum()
+        n_dark = dark_mask.sum()
+        if n_light > 0 and n_dark > 0:
+            w_light = 1.0 / n_light
+            w_dark = 1.0 / n_dark
+            w_sum = w_light * n_light + w_dark * n_dark
+            w_light /= w_sum
+            w_dark /= w_sum
+            sample_weights = np.where(light_mask, w_light, w_dark)
+            class0_weight = np.sum((y == 0) * sample_weights)
+            class1_weight = np.sum((y == 1) * sample_weights)
+            weights = {0: 1.0 / class0_weight, 1: 1.0 / class1_weight}
+    return np.array([weights.get(0, 1.0), weights.get(1, 1.0)], dtype=np.float32)
+
+def get_test_file_extension(test_csv_path):
+    """Return the extension of the test file (e.g., '.csv', '.parquet')."""
+    _, ext = os.path.splitext(test_csv_path)
+    return ext
+
+def save_results(df, path, ext):
+    """Save DataFrame to path with the correct extension."""
+    if ext == ".csv":
+        df.to_csv(path, index=False)
+    elif ext == ".parquet":
+        df.to_parquet(path, index=False)
+    else:
+        raise ValueError(f"Unsupported test file extension: {ext}")
+
+def extract_image_features(image_paths, batch_size=64, device="cuda"):
+    """
+    Extract image features using pretrained EfficientNet-B3 (better than B0).
+    Returns a numpy array of shape (len(image_paths), feature_dim).
+    """
+    import torch
+    import torchvision
+    from torchvision import transforms
+    from PIL import Image
+
+    # Use EfficientNet-B3, remove classifier head for better features
+    model = torchvision.models.efficientnet_b3(pretrained=True)
+    model.classifier = torch.nn.Identity()
+    model.eval()
+    model.to(device)
+
+    preprocess = transforms.Compose([
+        transforms.Resize(300),
+        transforms.CenterCrop(300),
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
+        ),
+    ])
+
+    features = []
+    n = len(image_paths)
+    with torch.no_grad():
+        for i in tqdm(range(0, n, batch_size), desc="Extracting image features (EffNetB3)"):
+            batch_paths = image_paths[i:i+batch_size]
+            batch_imgs = []
+            for p in batch_paths:
+                try:
+                    img = Image.open(p).convert("RGB")
+                    img = preprocess(img)
+                except Exception:
+                    # If image is missing/corrupt, use zeros
+                    img = torch.zeros(3, 300, 300)
+                batch_imgs.append(img)
+            batch_tensor = torch.stack(batch_imgs).to(device)
+            feats = model(batch_tensor)
+            feats = feats.cpu().numpy()
+            features.append(feats)
+    features = np.concatenate(features, axis=0)
+    return features
+
+if __name__ == "__main__":
+    # 1. LOAD DATA
+    train = pd.read_csv(TRAIN_CSV)
+    test = pd.read_csv(TEST_CSV)
+    test_ext = get_test_file_extension(TEST_CSV)
+    results_path = os.path.join(OUTPUT_DIR, f"results{test_ext}")
+
+    # 2. DATA PREPROCESSING
+
+    # Remove unnecessary index column if present
+    for df in [train, test]:
+        if "Unnamed: 0" in df.columns:
+            df.drop(columns=["Unnamed: 0"], inplace=True)
+
+    # Remove training samples without valid labels (drop NA from train only)
+    train["label"] = train["label"].map(map_label_to_binary)
+    train = train.dropna(subset=["label"]).reset_index(drop=True)
+    train["label"] = train["label"].astype(int)
+
+    # Construct absolute image paths for train and test
+    train["image"] = train["image_name"].apply(get_absolute_image_path)
+    # start change
+    # test["image"] = test["image_name"].apply(get_absolute_image_path)  # original (.jpg)
+    test["image"] = test["image_name"].apply(
+        lambda x: os.path.abspath(os.path.join(IMAGE_DIR, f"{x}.png"))
+    )
+    # end change
+
+    # 3. FEATURE EXTRACTION (IMAGE + TABULAR)
+    import torch
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    # Extract image features (EfficientNet-B3, larger batch for speed)
+    train_image_features = extract_image_features(train["image"].tolist(), batch_size=64, device=device)
+    test_image_features = extract_image_features(test["image"].tolist(), batch_size=64, device=device)
+
+    # Use tabular features (skin_tone, alternative_skin_tone) ONLY if present in BOTH train and test
+    tabular_cols = []
+    for col in ["skin_tone", "alternative_skin_tone"]:
+        if col in train.columns and col in test.columns:
+            tabular_cols.append(col)
+    train_tabular = train[tabular_cols].fillna(-1).to_numpy() if tabular_cols else None
+    test_tabular = test[tabular_cols].fillna(-1).to_numpy() if tabular_cols else None
+
+    # Concatenate image and tabular features
+    if train_tabular is not None and test_tabular is not None:
+        X_train = np.concatenate([train_image_features, train_tabular], axis=1)
+        X_test = np.concatenate([test_image_features, test_tabular], axis=1)
+    else:
+        X_train = train_image_features
+        X_test = test_image_features
+    y_train = train["label"].values
+
+    # 4. FAIRNESS-AWARE CLASS WEIGHTING
+    class_weights = compute_class_weights(
+        y_train, skin_tones=train["skin_tone"] if "skin_tone" in train.columns else None
+    )
+    # LightGBM expects class_weight as dict {0: w0, 1: w1}
+    lgbm_class_weight = {0: float(class_weights[0]), 1: float(class_weights[1])}
+
+    # 5. TRAIN/VALIDATION SPLIT
+    from sklearn.model_selection import train_test_split
+    X_tr, X_val, y_tr, y_val = train_test_split(
+        X_train, y_train, test_size=0.10, random_state=42, stratify=y_train
+    )
+
+    # 6. MODEL TRAINING (LightGBM, optimized for AUROC)
+    import lightgbm as lgb
+    lgbm_params = {
+        "objective": "binary",
+        "metric": "auc",
+        "n_estimators": 400,  # More trees for better performance
+        "learning_rate": 0.025,  # Lower learning rate for better generalization
+        "num_leaves": 128,       # More leaves for more complex splits
+        "n_jobs": 64,            # Use many CPUs
+        "class_weight": lgbm_class_weight,
+        "verbosity": -1,
+        "device": "gpu" if device == "cuda" else "cpu",
+        "boosting_type": "gbdt",
+        "max_depth": 10,
+        "min_child_samples": 10,
+        "subsample": 0.9,
+        "colsample_bytree": 0.8,
+        "reg_alpha": 1.0,
+        "reg_lambda": 1.0,
+    }
+    model = lgb.LGBMClassifier(**lgbm_params)
+    callbacks = []
+    try:
+        callbacks.append(lgb.early_stopping(30))
+    except Exception:
+        pass
+    model.fit(X_tr, y_tr, eval_set=[(X_val, y_val)], callbacks=callbacks)
+
+    # Save model
+    os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
+    model_path = os.path.join(MODEL_SAVE_DIR, "lgbm_model.txt")
+    model.booster_.save_model(model_path)
+
+    # 7. PREDICTION ON TEST SET
+    malignancy_prob = model.predict_proba(X_test)[:, 1]
+
+    # start change
+    _ddi_df = pd.DataFrame({
+        "DDI_file": test["image_name"].astype(str) + ".png",
+        "predicted_probability": malignancy_prob.astype(float),
+    }).reset_index(drop=True)
+    _ddi_df.to_csv(os.path.join(OUTPUT_DIR, "DDI_predictions.csv"), index=False)
+    # end change
+
+    # 8. FORMAT OUTPUT
+    results = test[["image_name"]].copy()
+    results["label"] = malignancy_prob
+
+    # Ensure order and indices match test set
+    assert len(results) == len(test)
+    assert all(results["image_name"].values == test["image_name"].values)
+
+    # Save results in the same format as test file
+    save_results(results, results_path, test_ext)
+
+    # 9. VALIDATION CHECKS
+
+    # Check: output file exists and matches test set rows
+    df_out = pd.read_csv(results_path) if test_ext == ".csv" else pd.read_parquet(results_path)
+    assert len(df_out) == len(test), "Number of predictions does not match test set"
+    assert list(df_out.columns) == ["image_name", "label"], "Output columns do not match requirements"
+    assert all(df_out["image_name"].values == test["image_name"].values), "Test indices/order mismatch"
+    assert np.all((df_out["label"] >= 0) & (df_out["label"] <= 1)), "Probabilities out of [0,1] range"
+
+    print(f"Predictions saved to: {results_path}")
+
+    # 10. VALIDATION METRIC ON HOLDOUT SET
+    try:
+        from sklearn.metrics import roc_auc_score
+        val_prob = model.predict_proba(X_val)[:, 1]
+        val_auc = roc_auc_score(y_val, val_prob)
+        print(f"Validation AUROC: {val_auc:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # 11. FUNCTION FOR NEW IMAGE FOLDER INFERENCE
+
+    def predict_malignancy_for_folder(image_folder, model_dir=MODEL_SAVE_DIR):
+        """
+        Given a folder path containing new images, return a DataFrame with
+        image_name and malignancy probability (float in [0,1]) for each image.
+        """
+        import torch
+        import lightgbm as lgb
+        from torchvision import models, transforms
+        from PIL import Image
+
+        # List all jpg files in the folder
+        image_files = [
+            f for f in os.listdir(image_folder)
+            if f.lower().endswith(".jpg")
+        ]
+        if not image_files:
+            raise ValueError(f"No .jpg images found in {image_folder}")
+
+        df = pd.DataFrame({
+            "image_name": [os.path.splitext(f)[0] for f in image_files],
+            "image": [os.path.abspath(os.path.join(image_folder, f)) for f in image_files],
+        })
+
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        feats = extract_image_features(df["image"].tolist(), batch_size=64, device=device)
+
+        # If tabular features are needed, set to zeros (not available for new images)
+        X = feats
+
+        booster = lgb.Booster(model_file=os.path.join(model_dir, "lgbm_model.txt"))
+        prob = booster.predict(X)
+        df["malignancy_probability"] = prob
+        return df[["image_name", "malignancy_probability"]]
+
+    # Example usage (commented out):
+    # new_results = predict_malignancy_for_folder("/path/to/new/images")
+    # print(new_results.head())
