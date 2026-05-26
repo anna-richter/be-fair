@@ -135,7 +135,10 @@ def main():
 
     # Load data
     train_df = pd.read_csv(TRAIN_CSV)
-    test_df = pd.read_csv(TEST_CSV)
+    # start change
+    # test_df = pd.read_csv(TEST_CSV)
+    test_df = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # Preprocess
     train_df = preprocess_train(train_df)

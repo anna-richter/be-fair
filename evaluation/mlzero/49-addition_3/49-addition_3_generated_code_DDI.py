@@ -176,7 +176,10 @@ def validate_output(pred_path, test_df, pred_col, file_ext):
 if __name__ == "__main__":
     # 1. Load data
     train_df = pd.read_csv(TRAIN_CSV)
-    test_df = pd.read_csv(TEST_CSV)
+    # start change
+    # test_df = pd.read_csv(TEST_CSV)
+    test_df = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # 2. Remove unnecessary index column if present
     for df in [train_df, test_df]:

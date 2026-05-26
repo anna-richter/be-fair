@@ -157,7 +157,10 @@ def extract_image_features(image_paths, batch_size=64, device="cuda"):
 if __name__ == "__main__":
     # 1. LOAD DATA
     train = pd.read_csv(TRAIN_CSV)
-    test = pd.read_csv(TEST_CSV)
+    # start change
+    # test = pd.read_csv(TEST_CSV)
+    test = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
     test_ext = get_test_file_extension(TEST_CSV)
     results_path = os.path.join(OUTPUT_DIR, f"results{test_ext}")
 

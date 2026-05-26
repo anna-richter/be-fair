@@ -114,7 +114,10 @@ def prepare_train_data(train_csv):
 
 def prepare_test_data(test_csv):
     """Load and preprocess test data. Do NOT drop any rows."""
-    df = pd.read_csv(test_csv)
+    # start change
+    # df = pd.read_csv(test_csv)
+    df = pd.read_csv(test_csv, dtype={"image_name": str})
+    # end change
     orig_index = df.index.copy()
     # Remove index column if present
     for idx_col in ['Unnamed: 0', 'index']:
@@ -156,7 +159,10 @@ def get_output_column_names(train_csv, test_csv):
 
 def save_predictions_with_format(test_csv, preds, output_path, label_col):
     """Save predictions to output_path, matching test file's format and columns."""
-    test_df = pd.read_csv(test_csv)
+    # start change
+    # test_df = pd.read_csv(test_csv)
+    test_df = pd.read_csv(test_csv, dtype={"image_name": str})
+    # end change
     orig_index = test_df.index.copy()
     for idx_col in ['Unnamed: 0', 'index']:
         if idx_col in test_df.columns:
@@ -177,7 +183,10 @@ def save_predictions_with_format(test_csv, preds, output_path, label_col):
 
 def validate_output(test_csv, output_path, label_col):
     """Validation checks on the output predictions file."""
-    test_df = pd.read_csv(test_csv)
+    # start change
+    # test_df = pd.read_csv(test_csv)
+    test_df = pd.read_csv(test_csv, dtype={"image_name": str})
+    # end change
     pred_df = pd.read_csv(output_path)
     assert len(test_df) == len(pred_df), f"Prediction rows ({len(pred_df)}) != test rows ({len(test_df)})"
     test_id_cols = get_test_id_column_names(test_csv)
@@ -246,7 +255,8 @@ if __name__ == "__main__":
         malignancy_proba = proba_df.iloc[:, 1].values
 
     # start change
-    _orig_test_names = pd.read_csv(TEST_CSV)["image_name"].astype(str).reset_index(drop=True)
+    # _orig_test_names = pd.read_csv(TEST_CSV)["image_name"].astype(str).reset_index(drop=True)
+    _orig_test_names = pd.read_csv(TEST_CSV, dtype={"image_name": str})["image_name"].astype(str).reset_index(drop=True)
     _ddi_df = pd.DataFrame({
         "DDI_file": _orig_test_names + ".png",
         "predicted_probability": malignancy_proba.astype(float),

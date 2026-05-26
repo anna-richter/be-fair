@@ -63,7 +63,10 @@ def compute_class_weights(labels):
 if __name__ == "__main__":
     # 1. Load data
     train = pd.read_csv(TRAIN_CSV)
-    test = pd.read_csv(TEST_CSV)
+    # start change
+    # test = pd.read_csv(TEST_CSV)
+    test = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # 2. Data preprocessing
     # Remove unnecessary index column if present

@@ -153,7 +153,10 @@ if __name__ == "__main__":
     # 1. Load Data
     # =========================
     train_df = pd.read_csv(TRAIN_CSV)
-    test_df = pd.read_csv(TEST_CSV)
+    # start change
+    # test_df = pd.read_csv(TEST_CSV)
+    test_df = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # Remove unnecessary index columns
     train_df = _drop_index_col(train_df)

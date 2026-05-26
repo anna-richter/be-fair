@@ -199,7 +199,10 @@ if __name__ == "__main__":
 
     # 1. Load data
     train_df = pd.read_csv(TRAIN_CSV)
-    test_df = pd.read_csv(TEST_CSV)
+    # start change
+    # test_df = pd.read_csv(TEST_CSV)
+    test_df = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # 2. Preprocess data
     train_df = prepare_train_data(train_df, IMAGE_DIR)

@@ -46,7 +46,10 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 if __name__ == "__main__":
     # 1. Load Data
     train = pd.read_csv(TRAIN_CSV)
-    test = pd.read_csv(TEST_CSV)
+    # start change
+    # test = pd.read_csv(TEST_CSV)
+    test = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # 2. Data Preprocessing
 

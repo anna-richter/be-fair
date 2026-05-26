@@ -58,7 +58,10 @@ if __name__ == "__main__":
 
     # ------------------- Data Loading -------------------
     train = pd.read_csv(TRAIN_CSV)
-    test = pd.read_csv(TEST_CSV)
+    # start change
+    # test = pd.read_csv(TEST_CSV)
+    test = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # Remove unnecessary index column if present
     for df in [train, test]:

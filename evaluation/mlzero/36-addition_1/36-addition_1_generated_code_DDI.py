@@ -97,7 +97,10 @@ def prepare_train_data(train_csv, img_dir):
 
 def prepare_test_data(test_csv, img_dir, train_skin_tone_median):
     """Load and preprocess test data."""
-    df = pd.read_csv(test_csv)
+    # start change
+    # df = pd.read_csv(test_csv)
+    df = pd.read_csv(test_csv, dtype={"image_name": str})
+    # end change
     orig_index = df.index.copy()
     # Remove unnecessary index column if present
     if 'Unnamed: 0' in df.columns:
@@ -123,7 +126,10 @@ def save_results(df, test_csv, output_dir, col_name='label'):
     """Save results in the same format and extension as test_csv, with correct column names."""
     ext = os.path.splitext(test_csv)[1]
     out_path = os.path.join(output_dir, "results" + ext)
-    test_df = pd.read_csv(test_csv)
+    # start change
+    # test_df = pd.read_csv(test_csv)
+    test_df = pd.read_csv(test_csv, dtype={"image_name": str})
+    # end change
     if 'Unnamed: 0' in test_df.columns:
         test_df = test_df.drop(columns=['Unnamed: 0'])
     test_df[col_name] = df[col_name].values
@@ -137,7 +143,10 @@ def save_results(df, test_csv, output_dir, col_name='label'):
 
 def validate_output(pred_path, test_csv, col_name='label'):
     """Validation checks on the prediction file."""
-    test_df = pd.read_csv(test_csv)
+    # start change
+    # test_df = pd.read_csv(test_csv)
+    test_df = pd.read_csv(test_csv, dtype={"image_name": str})
+    # end change
     pred_df = pd.read_csv(pred_path)
     for col in ['Unnamed: 0']:
         if col in test_df.columns:
@@ -220,7 +229,8 @@ if __name__ == "__main__":
     test_pred_df.index = test_orig_index
 
     # start change
-    _orig_test_names = pd.read_csv(TEST_CSV)["image_name"].astype(str).reset_index(drop=True)
+    # _orig_test_names = pd.read_csv(TEST_CSV)["image_name"].astype(str).reset_index(drop=True)
+    _orig_test_names = pd.read_csv(TEST_CSV, dtype={"image_name": str})["image_name"].astype(str).reset_index(drop=True)
     _ddi_df = pd.DataFrame({
         "DDI_file": _orig_test_names + ".png",
         "predicted_probability": test_pred_df["label"].astype(float).values,

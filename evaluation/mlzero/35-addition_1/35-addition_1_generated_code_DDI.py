@@ -61,7 +61,10 @@ def map_label_to_binary(label):
 def main():
     # 1. Data Loading and Preprocessing
     train = pd.read_csv(TRAIN_CSV)
-    test = pd.read_csv(TEST_CSV)
+    # start change
+    # test = pd.read_csv(TEST_CSV)
+    test = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # Remove unnecessary index column if present
     for col in ['Unnamed: 0', 'index']:

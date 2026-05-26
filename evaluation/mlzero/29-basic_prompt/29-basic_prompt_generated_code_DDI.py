@@ -97,7 +97,10 @@ def main():
 
     # 1. Data Loading and Preprocessing
     train_df = pd.read_csv(TRAIN_CSV)
-    test_df = pd.read_csv(TEST_CSV)
+    # start change
+    # test_df = pd.read_csv(TEST_CSV)
+    test_df = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # Remove unnecessary index column if present
     for df in [train_df, test_df]:

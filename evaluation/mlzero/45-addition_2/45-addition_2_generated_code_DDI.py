@@ -110,7 +110,10 @@ if __name__ == "__main__":
     # ==============================
     # Load train and test data
     train_df = pd.read_csv(TRAIN_CSV)
-    test_df = pd.read_csv(TEST_CSV)
+    # start change
+    # test_df = pd.read_csv(TEST_CSV)
+    test_df = pd.read_csv(TEST_CSV, dtype={"image_name": str})
+    # end change
 
     # Remove unnecessary index column if present
     for df in [train_df, test_df]:
@@ -208,7 +211,8 @@ if __name__ == "__main__":
         malignancy_proba = proba[:, 1] if proba.shape[1] == 2 else proba[:, 0]
 
     # start change
-    _orig_test_names = pd.read_csv(TEST_CSV)["image_name"].astype(str).reset_index(drop=True)
+    # _orig_test_names = pd.read_csv(TEST_CSV)["image_name"].astype(str).reset_index(drop=True)
+    _orig_test_names = pd.read_csv(TEST_CSV, dtype={"image_name": str})["image_name"].astype(str).reset_index(drop=True)
     _ddi_df = pd.DataFrame({
         "DDI_file": _orig_test_names + ".png",
         "predicted_probability": malignancy_proba.astype(float),
