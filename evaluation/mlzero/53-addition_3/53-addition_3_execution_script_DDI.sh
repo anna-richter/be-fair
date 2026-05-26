@@ -11,7 +11,9 @@ PY_SCRIPT="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/53-ad
 # end change
 
 # 1. Create conda env in custom folder with Python 3.11
-conda create --yes --prefix "$ENV_DIR" python=3.11
+if [ ! -d "$ENV_DIR" ]; then
+    conda create --yes --prefix "$ENV_DIR" python=3.11
+fi
 
 # 2. Activate the environment
 source "$(conda info --base)/etc/profile.d/conda.sh"
