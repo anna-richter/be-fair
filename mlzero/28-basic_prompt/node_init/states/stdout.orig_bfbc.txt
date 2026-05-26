@@ -1,0 +1,5 @@
+File: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_4982.jpg
+Type: Image (JPEG)
+Size_MB: 0.0226
+Mode: RGB
+Size_px: (292, 192)

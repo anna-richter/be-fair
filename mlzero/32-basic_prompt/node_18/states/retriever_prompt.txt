@@ -1,0 +1,109 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data structure and description files):**
+
+- **Problem Type:** Image classification (binary classification)
+- **Input Format:** RGB JPEG images of skin lesions (e.g., files like MyImages/image_12520.jpg)
+- **Prediction Output Format:** For each input image, output a malignancy probability (a float between 0 and 1), indicating the likelihood that the lesion is malignant.
+- **Additional Details:**  
+  - The model is trained to classify lesions as malignant or benign.
+  - The evaluation metric is Area under the Receiver Operator Curve (AUROC).
+  - A function is required that takes a folder path of new images and returns a malignancy probability for each image.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+First lines:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_12520.jpg
+Content:
+File Path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_12520.jpg
+File Size (MB): 0.07
+File Type: JPEG Image
+Format: JPEG
+Mode: RGB
+Size (WxH): (410, 369)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The process was terminated after reaching the 1-hour (3600 seconds) wall-clock time limit, causing model training to be interrupted before completion. As a result, the model may not be fully trained, and subsequent steps such as prediction, saving results, and validation AUROC calculation may not have executed or finished properly.
+
+SUGGESTED_FIX:  
+Reduce the training time by setting a lower `time_limit` parameter in `predictor.fit()` (e.g., 3000 seconds or less to allow time for inference and saving), use a smaller model or fewer epochs, or decrease dataset size for faster training. Monitor training progress and ensure that all required steps (prediction, saving, validation) can complete within the 1-hour limit.
+
+ERROR_SUMMARY: The script fails with a KeyError: "None of [Index(['skin_tone', 'alternative_skin_tone'], dtype='str')] are in the [columns]" when constructing the test dataset. This occurs because the test.csv file does not contain the columns 'skin_tone' and 'alternative_skin_tone', but the code attempts to access them as tabular features for the test set.
+
+SUGGESTED_FIX:  
+Update the code to only use tabular features that are present in both train and test datasets. Before defining tabular_cols, check which columns exist in both train and test, and use only those for tabular feature extraction and model input; if none exist, set tabular_cols to an empty list and adjust the model and dataset accordingly to use image data only for the test set.
+
+ERROR_SUMMARY: The error occurs because the script attempts to import `BGEM3Image` from the `FlagEmbedding` package, but this class does not exist in the installed version of FlagEmbedding. This is likely due to either a typo in the class name, a mismatch between the code and the FlagEmbedding API, or using an outdated or incompatible version of the FlagEmbedding library that does not provide `BGEM3Image`.
+
+SUGGESTED_FIX:  
+Check the official [FlagEmbedding documentation](https://github.com/FlagOpen/FlagEmbedding) or the installed package to confirm the correct class name for image embedding (commonly `FlagModel` or similar, not `BGEM3Image`). Replace `from FlagEmbedding import BGEM3Image` with the correct import and update the model instantiation accordingly. If image embedding is not supported in your installed version, either upgrade FlagEmbedding or use an alternative image embedding model (e.g., torchvision or timm) for feature extraction.
+
+ERROR_SUMMARY: The error occurs because the hyperparameter keys used for optimization in the AutoGluon MultiModalPredictor (`"optimization.max_epochs"`, `"optimization.learning_rate"`, and `"optimization.lr_scheduler"`) are deprecated and no longer recognized in the current version of AutoGluon. The correct keys now use the `"optim."` prefix (e.g., `"optim.max_epochs"`, `"optim.lr"`, `"optim.lr_scheduler"`), and using the old keys results in a KeyError during model configuration.
+
+SUGGESTED_FIX:  
+Update your `hyperparameters` dictionary in the `predictor.fit()` call to use the new `"optim."` prefix for all optimization-related keys. Specifically, replace `"optimization.max_epochs"` with `"optim.max_epochs"`, `"optimization.learning_rate"` with `"optim.lr"`, and `"optimization.lr_scheduler"` with `"optim.lr_scheduler"`. Double-check all hyperparameter keys for deprecated prefixes and update them accordingly to match the latest AutoGluon documentation.
+
+ERROR_SUMMARY: The error occurs because the hyperparameter "optim.lr_scheduler" is not a valid or recognized key in the current AutoGluon MultiModal configuration. When the script attempts to set "optim.lr_scheduler" to "cosine" in the hyperparameters dictionary, AutoGluon raises a KeyError since this key does not exist in its configuration schema.
+
+SUGGESTED_FIX:  
+Remove the "optim.lr_scheduler" entry from the hyperparameters dictionary in your predictor.fit() call. If you wish to set a learning rate schedule, use the correct key—such as "optim.lr_schedule" (e.g., "cosine_decay", "polynomial_decay", or "linear_decay")—as documented in the AutoGluon tutorials. Double-check the available hyperparameter keys for your AutoGluon version and only use supported options.
+
+ERROR_SUMMARY: The error is a KeyError caused by passing the hyperparameter "fusion.enable" to AutoGluon's MultiModalPredictor.fit(), but this key does not exist in the current configuration schema. As a result, the training process fails during configuration override, preventing model training and prediction.
+
+SUGGESTED_FIX: Remove the "fusion.enable" key from the hyperparameters dictionary passed to predictor.fit(). Review the official AutoGluon documentation for supported hyperparameters, and only include keys that are valid for your installed version; if you want to enable late fusion or multimodal fusion, use the recommended approach (e.g., by specifying multiple model names in "model.names" or using default fusion behavior).
+
+ERROR_SUMMARY: The script attempts to load pretrained weights for the EfficientNetV2-S model using timm, but these weights are not available in the current timm installation or model registry. As a result, a RuntimeError is raised, instructing to use pretrained=False for random initialization.
+
+SUGGESTED_FIX: Change the LesionNet model initialization in your code to use pretrained=False when calling timm.create_model for "efficientnetv2_s". This will initialize the model with random weights and allow training to proceed, though you may want to consider using a different backbone with available pretrained weights for better performance.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

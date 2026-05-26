@@ -1,0 +1,59 @@
+Certainly! Here is a **minimal, robust bash script** that:
+
+- Creates a conda env in the specified folder with Python 3.11
+- Activates it
+- Installs `uv` via pip
+- Installs only the required packages (and their dependencies) from the two requirements files using `uv pip install ... --prerelease=allow ...`
+- Does **not** upgrade/reinstall `autogluon.multimodal` if already at the correct version
+- Runs your Python script
+
+**Save this as `run_mlzero.sh` and make it executable (`chmod +x run_mlzero.sh`).**
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Paths
+ENV_DIR="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_0/conda_env"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_MM="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt"
+PY_SCRIPT="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/28-basic_prompt/node_0/generated_code.py"
+
+# 1. Create conda env if not exists
+if [ ! -d "$ENV_DIR" ]; then
+    conda create -y -p "$ENV_DIR" python=3.11
+fi
+
+# 2. Activate env
+# shellcheck disable=SC1091
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_DIR"
+
+# 3. Install uv
+pip install uv
+
+# 4. Install requirements with uv (prerelease allowed)
+uv pip install --prerelease=allow -r "$REQ_MM" -r "$REQ_COMMON"
+
+# 5. Run the Python script
+python "$PY_SCRIPT"
+```
+
+---
+
+**Notes:**
+- This script is minimal and robust.
+- It does not forcibly reinstall `autogluon.multimodal` if already present and correct, because `uv` will only install what's missing or required by the requirements files.
+- If you want to ensure *no upgrades* for already-correct packages, `uv` is the right tool (it will not upgrade unless required by the requirements).
+- If you want to force a clean install every time, add `conda remove -y --all -p "$ENV_DIR"` before the `conda create` step.
+- If you want to use `mamba` for faster conda operations, replace `conda` with `mamba` if available.
+
+---
+
+**How to use:**
+```bash
+chmod +x run_mlzero.sh
+./run_mlzero.sh
+```
+
+Let me know if you need a version that also checks for the correct version of `autogluon.multimodal` before running!

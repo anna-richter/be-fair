@@ -1,0 +1,7 @@
+Columns:
+['Unnamed: 0', 'image_name']
+First rows:
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000

@@ -1,0 +1,25 @@
+import os
+from PIL import Image
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_12520.jpg"
+
+try:
+    file_size = os.path.getsize(file_path) / (1024 * 1024)
+except Exception as e:
+    file_size = None
+
+info = {}
+info['File Path'] = file_path
+info['File Size (MB)'] = round(file_size, 2) if file_size else "Unknown"
+info['File Type'] = "JPEG Image"
+
+try:
+    with Image.open(file_path) as img:
+        info['Format'] = img.format
+        info['Mode'] = img.mode
+        info['Size (WxH)'] = img.size
+except Exception as e:
+    info['Error'] = str(e)
+
+for k, v in info.items():
+    print(f"{k}: {v}")

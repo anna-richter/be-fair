@@ -1,0 +1,6 @@
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification)
+- **Input format:** RGB JPEG images of skin lesions (e.g., MyImages/image_4530.jpg)
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1), representing the likelihood that the lesion is malignant.
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)

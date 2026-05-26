@@ -1,0 +1,6 @@
+File: image_16121.jpg
+Type: JPEG Image
+Size: 0.05 MB
+Image format: JPEG
+Image mode: RGB
+Dimensions: 429x412

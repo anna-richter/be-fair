@@ -1,0 +1,32 @@
+```bash
+#!/bin/bash
+set -e
+
+# Paths
+ENV_DIR="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/33-basic_prompt/node_8/conda_env"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_MM="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt"
+PY_SCRIPT="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/33-basic_prompt/node_8/generated_code.py"
+
+# 1. Create conda env in target folder with Python 3.11
+conda create -y -p "$ENV_DIR" python=3.11
+
+# 2. Activate the environment
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_DIR"
+
+# 3. Install uv via pip
+pip install uv
+
+# 4. Install required packages from requirements files using uv
+uv pip install --prerelease=allow -r "$REQ_MM" -r "$REQ_COMMON"
+
+# 5. Run the Python script
+python "$PY_SCRIPT"
+```
+
+**Instructions:**  
+- Save as `run_node8.sh`, `chmod +x run_node8.sh`, and execute.  
+- This script is minimal, robust, and will exit on any error.  
+- It installs only the required packages (and their dependencies) as specified.  
+- It does **not** upgrade or reinstall `autogluon.multimodal` if already at the correct version.

@@ -1,0 +1,112 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** RGB JPEG images of skin lesions (e.g., image_16121.jpg).
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+Text preview:
+ ,image_name
+0,image_10025
+1,image_14107
+2,image_4000
+3,image_3166
+4,image_15680
+5,image_10360
+6,image_5562
+7,image_701
+8,image_7126
+9,image_3911
+
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/descriptions.txt
+Content:
+First lines:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_16121.jpg
+Content:
+File: image_16121.jpg
+Type: JPEG Image
+Size: 0.05 MB
+Image format: JPEG
+Image mode: RGB
+Dimensions: 429x412
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The script failed with `ValueError: Unknown label encountered: benign` because the label mapping function (`map_label_to_binary`) only recognizes "malignant" and "non-neoplastic" as valid labels. However, the training data contains "benign" as a label, which is not handled by the mapping function, causing the error when it tries to process a "benign" label.
+
+SUGGESTED_FIX:  
+Update the `map_label_to_binary` function to recognize "benign" as a valid non-malignant class by mapping both "benign" and "non-neoplastic" to 0. Review the training data for any other possible label variants and ensure all non-malignant labels are mapped to 0, while "malignant" is mapped to 1, to prevent similar errors.
+
+ERROR_SUMMARY: The main error is that the training process exceeded the allowed wall-clock time limit of 3600 seconds (1 hour), causing the script to be forcibly terminated before model training completed (only ~52% of the final epoch was finished). The repeated OSError: [Errno 16] Device or resource busy messages are related to attempts to delete temporary files on an NFS-mounted filesystem and are cleanup warnings, not the root cause of the failure.
+
+SUGGESTED_FIX:  
+Reduce the total runtime by decreasing the number of training epochs (e.g., from 5 to 2 or 3), lowering the batch size, or using a smaller model architecture (e.g., resnet18 instead of a larger model). Additionally, consider simplifying data augmentations or using fewer workers in the DataLoader to reduce overhead. Monitor training progress and ensure that the script completes all steps (training, inference, and saving outputs) well within the 1-hour time limit.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because Ray (a parallelization backend used by AutoGluon) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions: "validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes", causing all model training to be skipped and ultimately raising RuntimeError: "No models were trained successfully during fit()".
+
+SUGGESTED_FIX:  
+Shorten the base directory paths used for temporary files and model outputs to ensure all UNIX socket paths remain under 107 bytes. Move your working directory (including data, scratch, and output folders) to a location with a much shorter absolute path (e.g., /tmp/ml or /scratch/ml), and re-run the script. If using a cluster or shared filesystem, coordinate with your administrator to ensure temporary directories (like $TMPDIR or /tmp) are used for Ray's socket files.
+
+ERROR_SUMMARY: The root cause is a KeyError: "None of [Index(['Unnamed: 0'], dtype='object')] are in the [columns]", which occurs when the code tries to select the 'Unnamed: 0' column from the test DataFrame after it has already been dropped. This happens because the code assumes the presence of identifier columns (like 'Unnamed: 0') in the test set, but after dropping them, it still attempts to access them, leading to the error. The OSError: Device or resource busy errors are related to NFS file system cleanup and are non-fatal, not affecting the main logic.
+
+SUGGESTED_FIX:  
+Update the logic that determines the identifier columns (`id_cols`) for the test set to ensure it only includes columns that actually exist after dropping index columns like 'Unnamed: 0' and 'index'. Before selecting columns for the output DataFrame, check that each column in `id_cols` is present in the DataFrame; if not, skip or remove it from the list. This will prevent KeyErrors when constructing the output.
+
+ERROR_SUMMARY: The main error is that the script was terminated after exceeding the 1-hour (3600 seconds) wall-clock time limit, so model training, prediction, or output validation did not complete. The repeated "OSError: [Errno 16] Device or resource busy: '.nfs...'" messages are secondary and occur during cleanup, likely due to open file handles on an NFS-mounted filesystem.
+
+SUGGESTED_FIX:  
+Reduce the total runtime by decreasing the model complexity (e.g., use a smaller architecture or fewer epochs), lowering batch size, or using fewer data augmentations. Additionally, ensure that all file handles are properly closed before script exit to minimize NFS cleanup errors, but focus primarily on shortening training and inference time to stay within the 1-hour limit.
+
+ERROR_SUMMARY: The primary error is that the process was terminated after exceeding the 1-hour (3600 seconds) wall-clock time limit, causing model training to be interrupted before completion and preventing predictions or validation from being performed or saved. The repeated OSError: [Errno 16] Device or resource busy messages are secondary, likely resulting from attempts to clean up temporary files that were still in use due to the abrupt termination.
+
+SUGGESTED_FIX:  
+Reduce the total runtime by decreasing the model complexity, lowering the number of training epochs (e.g., from 4 to 1–2), reducing batch size or image resolution, or using a smaller model architecture. Additionally, ensure that data loading and augmentation are efficient (e.g., lower num_workers if I/O is a bottleneck), and consider saving intermediate results or checkpoints to avoid total loss if the time limit is reached.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

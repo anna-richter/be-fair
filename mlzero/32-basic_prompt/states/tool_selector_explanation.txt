@@ -1,0 +1,19 @@
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with the requirement to output a malignancy probability for each image. The evaluation metric is AUROC. The data consists of labeled images, and the function must process a folder of new images and return probabilities.
+
+Let's analyze each available library:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for training or inference of image classification models.
+
+- machine learning: This is a generic reference to machine learning or deep learning algorithms. It is a fallback option if no specialized library is available, but it lacks specific tools or optimizations for image classification.
+
+- wav2vec2: This library is designed for audio data, specifically for speech recognition and audio classification. It is not applicable to image data.
+
+- qwen3: This is a text generation model, not designed for image classification or processing image data.
+
+- autogluon.tabular: This library is optimized for tabular data (numerical and categorical), and explicitly does not support image-based tasks. It is not suitable for this problem.
+
+- autogluon.multimodal: This library is designed for multimodal tasks, including image classification. It supports classification tasks on image data and can output probabilities for each class. It is not for generative or audio tasks, but is well-suited for image classification, which matches the requirements here.
+
+- autogluon.timeseries: This library is for time series forecasting, not for image classification.
+
+Based on the above, autogluon.multimodal is the most appropriate library, as it is specifically designed for image classification tasks and can handle the required input and output formats. The generic "machine learning" library is a fallback if no specialized library is available. The rest are either for other data types (audio, text, tabular, time series) or for unrelated tasks (retrieval/reranking).

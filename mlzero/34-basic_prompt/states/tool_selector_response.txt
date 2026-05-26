@@ -1,0 +1,20 @@
+---
+EXPLANATION: The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with the output being a malignancy probability (float between 0 and 1) for each image. The evaluation metric is AUROC. The data consists of image files and a CSV with labels. The ideal library must support image classification, preferably with automated pipelines for deep learning on images.
+
+Analyzing the available libraries:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not image classification. It is not suitable for this task.
+- machine learning: This is a generic reference to machine learning or deep learning algorithms. It could be used if no better specialized tool is available, but it lacks automation and task-specific optimizations.
+- wav2vec2: This is an audio model, pre-trained for audio tasks like ASR and audio classification. It is not designed for image data and is not suitable here.
+- qwen3: This is a text generation model, not relevant for image classification.
+- autogluon.tabular: This library is optimized for tabular data and does not support image-based tasks, so it is not suitable.
+- autogluon.multimodal: This library is designed for multimodal tasks, including image classification. It supports classification and regression on images, and is specifically built to handle image data (as well as text and tabular data). It automates model selection and training for image classification, making it highly suitable for this task.
+- autogluon.timeseries: This is for time series forecasting, not image classification.
+
+Therefore, autogluon.multimodal is the best fit, as it is designed for image classification and automates the process. The generic "machine learning" library is a fallback if no specialized library is available. For a third option, autogluon.tabular could be considered if one were to extract tabular features from images (not optimal), but it does not natively support images. The rest are not relevant.
+
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

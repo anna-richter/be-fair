@@ -1,0 +1,6 @@
+File Path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/image_12520.jpg
+File Size (MB): 0.07
+File Type: JPEG Image
+Format: JPEG
+Mode: RGB
+Size (WxH): (410, 369)

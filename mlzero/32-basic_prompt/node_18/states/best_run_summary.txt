@@ -1,0 +1,29 @@
+Best Run Summary
+================
+Linked to: node_18
+Reason: best validation score (0.9667)
+Tool used: autogluon.multimodal
+Symlink created at: best_run
+
+Validation Score Summary:
+Node 3 (autogluon.multimodal): 0.9576
+Node 7 (autogluon.multimodal): 0.9616
+Node 12 (autogluon.multimodal): 0.959
+Node 16 (autogluon.multimodal): 0.9646
+Node 18 (autogluon.multimodal): 0.9667 (BEST)
+Node 14 (autogluon.multimodal): 0.9599
+Node 13 (autogluon.multimodal): 0.959
+Node 17 (autogluon.multimodal): 0.9626
+Node 19 (autogluon.multimodal): 0.9597
+Node 15 (autogluon.multimodal): 0.9585
+Node 9 (machine learning): 0.9212
+Node 10 (machine learning): 0.9059
+Node 11 (machine learning): 0.9059
+
+Best score: 0.9667 from node 18 using autogluon.multimodal
+
+Tool Usage Summary:
+==================
+Available tools: autogluon.multimodal, machine learning, FlagEmbedding
+Tools used: FlagEmbedding, machine learning, autogluon.multimodal
+Tools not used: 

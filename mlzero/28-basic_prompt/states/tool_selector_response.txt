@@ -1,0 +1,27 @@
+---
+EXPLANATION:  
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with the output being a malignancy probability for each image. The evaluation metric is AUROC. The dataset consists of labeled images, and the model must be able to process image files and output probabilities.
+
+Let's analyze each available library:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not in image classification. It is not suitable for training or inference on image classification problems.
+
+- machine learning: This is a general reference for machine learning or deep learning algorithms. It is a fallback option if no specialized library is available, but it does not provide specific tools or automation for image classification.
+
+- wav2vec2: This library is designed for audio data, specifically for speech recognition and audio classification. It is not applicable to image data.
+
+- qwen3: This is a text generation model, focused on dialogue and reasoning tasks. It does not support image classification.
+
+- autogluon.tabular: This library is optimized for tabular data (numerical and categorical), not for image or multimodal data. It cannot process images directly.
+
+- autogluon.multimodal: This library is designed for multimodal classification tasks, including image classification. It supports image data and can output probabilities for binary classification. It is not for generative or audio tasks, but it is well-suited for the current image classification problem.
+
+- autogluon.timeseries: This library is for time series forecasting and is not applicable to image classification.
+
+Based on the above, autogluon.multimodal is the only library specifically designed for image classification and can handle the requirements of this task. The general "machine learning" library can be considered as a fallback, and autogluon.tabular could be considered if the task were tabular, but it is not suitable here.
+
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

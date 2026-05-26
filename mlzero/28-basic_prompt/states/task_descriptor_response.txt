@@ -1,0 +1,12 @@
+**Task Type:** Image classification (binary classification)
+
+**Input Format:**  
+- Input images are RGB JPEG files located in the folder `/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/MyImages/`.  
+- Each image is referenced by its filename (e.g., `image_9385.jpg`).
+
+**Prediction Output Format:**  
+- For each input image, output a malignancy probability (a float between 0 and 1), representing the likelihood that the lesion is malignant.
+
+**Additional Details:**  
+- The model is trained to classify skin lesion images as malignant or benign.
+- Evaluation metric: Area under the receiver operator curve (AUROC).
