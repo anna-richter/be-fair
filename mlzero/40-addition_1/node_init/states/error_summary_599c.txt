@@ -1,0 +1,1 @@
+Columns are displayed as a pandas Index object instead of a plain list; column names should be shown as a list (not with dtype info).

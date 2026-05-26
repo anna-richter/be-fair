@@ -1,0 +1,5 @@
+File: image_13566.jpg
+Size (KB): 25.04
+Format: JPEG
+Mode: RGB
+Dimensions: (294, 410)

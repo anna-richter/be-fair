@@ -1,0 +1,26 @@
+---
+EXPLANATION: The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with fairness towards skin tone as an additional requirement. The evaluation metric is AUROC. The data consists of images and a CSV file with labels and skin tone information. The model must output a malignancy probability for each image.
+
+Let's analyze each available library:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, not classification or image-based tasks. It is not suitable for image classification.
+
+- machine learning: This is a generic reference to machine learning or deep learning algorithms. It is a fallback option if no specialized library is available, but it does not provide any specific tools or automation for image classification.
+
+- wav2vec2: This library is designed for audio data, specifically for speech recognition and audio classification. It is not applicable to image data.
+
+- qwen3: This is a text generation model, not suitable for image classification tasks.
+
+- autogluon.tabular: This library is optimized for tabular data (numerical and categorical), not for image or multimodal data. It cannot process images directly.
+
+- autogluon.multimodal: This library is designed for multimodal classification tasks, including image classification. It can handle image data and tabular data together, which is ideal for this task since the CSV includes skin tone and other metadata that could be used to improve fairness. It is not for generative or audio tasks, but it is well-suited for image classification with tabular metadata, and can help address fairness by incorporating skin tone as an input feature.
+
+- autogluon.timeseries: This library is for time series forecasting, not for image or tabular classification.
+
+Based on the above, autogluon.multimodal is the best fit because it is specifically designed for multimodal classification (images + tabular data), which matches the data structure and fairness requirement. The generic "machine learning" library is a fallback if no specialized library is available. autogluon.tabular is less suitable because it cannot process images, but it is more relevant than the other libraries, which are for audio, text, or retrieval tasks.
+
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. autogluon.tabular
+---

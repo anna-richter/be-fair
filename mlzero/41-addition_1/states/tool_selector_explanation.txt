@@ -1,0 +1,21 @@
+The task is image classification (malignant vs. benign skin lesion) using RGB JPEG images, with the output being a malignancy probability (float between 0 and 1) for each image. The evaluation metric is AUROC, and there is an explicit requirement for fairness towards skin tone, which is available as metadata in the training CSV.
+
+Let's analyze each available library:
+
+- FlagEmbedding: This library specializes in retrieval and reranking tasks, which are not relevant for image classification. It is not designed for training or evaluating image classifiers.
+
+- machine learning: This is described as a general reference for ML or deep learning algorithms, to be used only if other tools are not helpful. It is not a specific implementation or framework, so it should be considered only as a fallback.
+
+- wav2vec2: This is an audio model, pre-trained for audio data and tasks like ASR or audio classification. It is not suitable for image data.
+
+- qwen3: This is a text generation model, designed for dialogue and reasoning tasks. It is not applicable to image classification.
+
+- autogluon.tabular: This library is optimized for tabular data (numerical/categorical), not for image or multimodal tasks. It cannot process images directly.
+
+- autogluon.multimodal: This library is designed for multimodal classification and regression, including image classification tasks. It can handle image data and can also incorporate tabular metadata (such as skin tone) to help address fairness. It is not for generative or audio tasks, but is well-suited for this image classification problem, especially with the fairness requirement.
+
+- autogluon.timeseries: This is for time series forecasting, not for image classification.
+
+Given the above, autogluon.multimodal is the best fit: it supports image classification, can use tabular metadata (like skin tone) to help with fairness, and is designed for exactly this kind of multimodal input. The next best fallback is "machine learning" as a general reference, and then autogluon.tabular (though it cannot process images, it could be used if only tabular data were available).
+
+---

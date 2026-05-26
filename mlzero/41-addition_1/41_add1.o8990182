@@ -1,0 +1,77 @@
+BRIEF Analyzing folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data
+BRIEF Found 16580 files
+BRIEF Grouped into 3 patterns
+BRIEF Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv
+BRIEF Planner decision: SUCCESS
+BRIEF Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/test.csv
+BRIEF Planner decision: SUCCESS
+BRIEF Reading file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+BRIEF Planner decision: SUCCESS
+BRIEF Reading example file: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_3623.jpg
+BRIEF Planner decision: SUCCESS
+BRIEF Starting MCTS iteration 1/20
+WARNING Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+BRIEF Planner decision: FIX
+BRIEF Starting MCTS iteration 2/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 1 with validation score 0.89286
+BRIEF Starting MCTS iteration 3/20
+BRIEF Planner decision: FIX
+BRIEF Starting MCTS iteration 4/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 1 with validation score 0.89286
+BRIEF Starting MCTS iteration 5/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 6/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 7/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 8/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 9/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 10/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 11/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 12/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 13/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 14/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 15/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 16/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 17/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 18/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 19/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+BRIEF Starting MCTS iteration 20/20
+BRIEF Planner decision: SUCCESS
+BRIEF Task completed successfully! Best node: 4 with validation score 0.96451
+WARNING [bold red]Warning: Reached maximum iterations (20)[/bold red]
+BRIEF Total tokens — input: 3046961, output: 56136, sum: 3103097
+BRIEF MCTS search completed in 41231.51 seconds
+BRIEF Total nodes explored: 20
+BRIEF Best validation score: 0.96451
+BRIEF Tools used: autogluon.multimodal, autogluon.tabular, machine learning
+BRIEF Output saved in /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/41-addition_1

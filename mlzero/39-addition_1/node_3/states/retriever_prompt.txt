@@ -1,0 +1,87 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB JPEG images of skin lesions (e.g., /MyImages/image_252.jpg)
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1)
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)
+- **Additional note:** The model should be fair towards skin tone.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved   and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+              ...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_252.jpg
+Content:
+file_path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_252.jpg
+file_size_kb: 43.94
+format: JPEG
+mode: RGB
+size: (454, 559)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the test dataframe passed to `predictor.predict_proba()` is missing required columns (`alternative_skin_tone`, `expert_opinion`, `skin_tone`) that were present during training. AutoGluon MultiModal expects all columns used in training (except the label) to be present at prediction time, even if their values are unknown.
+
+SUGGESTED_FIX:  
+Modify the test dataframe before prediction to include the missing columns (`alternative_skin_tone`, `expert_opinion`, `skin_tone`). Add these columns to the test dataframe with placeholder values (e.g., `np.nan` or a default value consistent with training), ensuring the column names and order match the training data. Then pass this updated dataframe to `predictor.predict_proba()`.
+
+ERROR_SUMMARY: The error occurs because the 'expert_opinion' column in your training data contains non-numeric string values (e.g., '5 Potentially'), but the code attempts to use it directly as a numeric feature for LightGBM. This leads to a ValueError when scikit-learn tries to convert these string values to float during model fitting.
+
+SUGGESTED_FIX:  
+Inspect the 'expert_opinion' column for non-numeric entries and decide how to handle them: either extract the numeric part (e.g., '5' from '5 Potentially'), encode categorical values, or drop/replace problematic entries. Ensure all tabular features passed to the model are strictly numeric before concatenating with image features and fitting the model.
+
+ERROR_SUMMARY: AutoGluon Tabular failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions ("AF_UNIX path length cannot exceed 107 bytes"), causing all model training to be skipped and ultimately raising a RuntimeError due to no models being fit.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output, especially the scratch and output directories, so that the full UNIX socket paths generated by Ray remain under 107 bytes. Move your working directories (e.g., /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/39-addition_1/node_2/) to a location with a much shorter absolute path (such as /tmp/agrun or /scratch/agrun), and update all relevant environment variables and script paths accordingly before rerunning the script.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

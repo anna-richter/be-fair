@@ -1,0 +1,113 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data structure and description files):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions).
+- **Input format:** RGB JPEG images of skin lesions (e.g., image_13566.jpg), referenced by image_name in the CSV files.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Training data:** Provided in train.csv, which includes image_name and label columns (label: malignant or benign).
+- **Test data:** Provided in test.csv, which lists image_name for images to be predicted.
+- **Evaluation metric:** Area under the receiver operator curve (AUROC).
+- **Additional requirement:** The model should be fair towards skin tone.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv
+Content:
+Columns: Index(['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion',
+       'label', 'image_name'],
+      dtype='str')
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.
+Evaluation metric: Area under the receiver operator curve (AUROC)
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_13566.jpg
+Content:
+File: image_13566.jpg
+Size (KB): 25.04
+Format: JPEG
+Mode: RGB
+Dimensions: (294, 410)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurred because the `MultiModalPredictor.fit()` method from AutoGluon was called with an unsupported keyword argument: `eval_metric`. In the current version of AutoGluon MultiModal, `eval_metric` is not a valid parameter for the `fit()` method, which resulted in a `TypeError` and prevented model training from starting.
+
+SUGGESTED_FIX:  
+Remove the `eval_metric="roc_auc"` argument from the `predictor.fit()` call. If you wish to specify the evaluation metric, use the `hyperparameters` dictionary (e.g., set `"env.eval_metric": "roc_auc"` if supported), or rely on AutoGluon's default metric for binary classification. Check the latest [AutoGluon MultiModal documentation](https://auto.gluon.ai/stable/tutorials/multimodal/index.html) for the correct way to set evaluation metrics for your version.
+
+ERROR_SUMMARY: The error occurs because the code attempts to fill missing values for the columns 'skin_tone' and 'alternative_skin_tone' in the test DataFrame, but these columns do not exist in test.csv. This results in a KeyError when the script tries to access these columns in the test set, as they are only present in train.csv.
+
+SUGGESTED_FIX: Before filling missing values for fairness columns in the test DataFrame, check if each column exists in test; only attempt to fill missing values for columns that are present. Alternatively, add these columns to test (with default values, e.g., -1) if they are missing, to ensure consistent feature processing between train and test.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the UNIX socket path used by Ray (a backend library) exceeded the maximum allowed length (107 bytes) for AF_UNIX sockets on your system. This resulted in an OSError during model training, causing all models to fail and ultimately raising a RuntimeError indicating that no models were trained successfully.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and output by moving your working directory (including data, output, and conda environment) to a location with a much shorter absolute path (e.g., /tmp/mlzero or /scratch/mlzero). Ensure that all relevant environment variables (such as TMPDIR, RAY_TMPDIR, and output/model paths) are set to use these shorter paths before running your script. This will prevent Ray and AutoGluon from generating overly long UNIX socket filenames and allow model training to proceed.
+
+ERROR_SUMMARY: The error occurred because the MultiModalPredictor.fit() method in the installed version of AutoGluon does not accept a val_data keyword argument. This indicates a mismatch between the code and the API of the installed AutoGluon version, causing a TypeError and preventing model training and subsequent steps.
+
+SUGGESTED_FIX: Remove the val_data=val_data_ag argument from the predictor.fit() call. If validation is required, use the holdout_frac parameter (e.g., holdout_frac=0.1) within fit() to automatically split off a validation set, or upgrade AutoGluon to a version that supports val_data if this functionality is essential.
+
+ERROR_SUMMARY: The error occurs because the LightGBM v4.x API has removed the early_stopping_rounds argument from the LGBMClassifier.fit() method; early stopping must now be implemented using the callbacks parameter instead. Passing early_stopping_rounds directly to fit() results in a TypeError.
+
+SUGGESTED_FIX: Replace the early_stopping_rounds argument in the clf.fit() call with a callbacks parameter using lightgbm.early_stopping(30). Specifically, remove early_stopping_rounds=30 and add callbacks=[lgb.early_stopping(30)] to the fit() call to enable early stopping with the new API.
+
+ERROR_SUMMARY: The script failed with a TypeError: LGBMClassifier.fit() got an unexpected keyword argument 'verbose'. This is because, in recent versions of LightGBM (v4.x+), the scikit-learn API for LGBMClassifier.fit() no longer accepts the verbose parameter directly; verbosity should be controlled via callbacks or the LightGBM native API. As a result, model training did not proceed, and no predictions were generated.
+
+SUGGESTED_FIX:  
+Remove the verbose argument from the LGBMClassifier.fit() call. If you want to control verbosity, use the LightGBM logging callback (e.g., add lgb.log_evaluation(period=50) to the callbacks list) instead. After making this change, rerun the script to ensure model training completes successfully.
+
+ERROR_SUMMARY: The process was terminated because it exceeded the allowed wall-clock time limit of 3600 seconds (1 hour). The model training did not finish within this time, so no final validation AUROC or output file was produced. The code logic and data handling appear correct, but the job was killed before completion due to insufficient time allocation for the full workflow (data loading, training, inference).
+
+SUGGESTED_FIX:  
+Reduce the training time by setting the `time_limit` parameter in `predictor.fit()` to a value less than 3600 seconds (e.g., 3300–3500 to allow for data loading and inference). Alternatively, decrease `optim.max_epochs`, use a lighter preset (e.g., `"medium_quality"`), or reduce model complexity to ensure the script completes all steps (training, validation, prediction, saving) within the 1-hour limit. Monitor the actual runtime and adjust these parameters iteratively until the workflow reliably finishes before the time cutoff.
+
+ERROR_SUMMARY: The root cause of the error is that the UNIX domain socket path used by Ray (a dependency of AutoGluon) exceeds the maximum allowed length of 107 bytes for AF_UNIX sockets on your system. This results in an OSError ("validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes"), causing all model training to fail and ultimately leading to "No models were trained successfully during fit()".
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model outputs so that the full socket path stays under 107 bytes. Move your working/output directories (especially the scratch and output folders) to a location with a shorter absolute path (e.g., /tmp or a short-named directory in your home folder), and set environment variables such as TMPDIR, TEMP, and TMP to this shorter path before running your script to ensure Ray and AutoGluon use it for temporary files.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

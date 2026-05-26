@@ -1,0 +1,34 @@
+Best Run Summary
+================
+Linked to: node_4
+Reason: best validation score (0.9645)
+Tool used: autogluon.multimodal
+Symlink created at: best_run
+
+Validation Score Summary:
+Node 1 (machine learning): 0.89286
+Node 3 (machine learning): 0.87611
+Node 4 (autogluon.multimodal): 0.96451 (BEST)
+Node 5 (autogluon.multimodal): 0.95979
+Node 8 (autogluon.multimodal): 0.96215
+Node 16 (autogluon.multimodal): 0.95979
+Node 12 (autogluon.multimodal): 0.95979
+Node 10 (autogluon.multimodal): 0.96215
+Node 18 (autogluon.multimodal): 0.96229
+Node 14 (autogluon.multimodal): 0.95979
+Node 6 (autogluon.multimodal): 0.96238
+Node 9 (autogluon.multimodal): 0.96164
+Node 17 (autogluon.multimodal): 0.95979
+Node 13 (autogluon.multimodal): 0.96215
+Node 7 (autogluon.multimodal): 0.96215
+Node 11 (autogluon.multimodal): 0.96215
+Node 19 (autogluon.multimodal): 0.95979
+Node 15 (autogluon.multimodal): 0.95979
+
+Best score: 0.9645 from node 4 using autogluon.multimodal
+
+Tool Usage Summary:
+==================
+Available tools: autogluon.multimodal, machine learning, autogluon.tabular
+Tools used: autogluon.multimodal, autogluon.tabular, machine learning
+Tools not used: 

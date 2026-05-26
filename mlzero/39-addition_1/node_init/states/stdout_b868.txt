@@ -1,0 +1,5 @@
+file_path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_252.jpg
+file_size_kb: 43.94
+format: JPEG
+mode: RGB
+size: (454, 559)

@@ -1,0 +1,43 @@
+import os
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt"
+
+def print_truncated(s, length=50):
+    s = str(s)
+    return s if len(s) <= length else s[:length-3] + "..."
+
+def analyze_text(fp, max_chars=768):
+    with open(fp, 'r', encoding='utf-8', errors='replace') as f:
+        content = f.read(max_chars)
+    print("First lines:\n" + content)
+
+def analyze_tabular(fp):
+    import pandas as pd
+    try:
+        df = pd.read_csv(fp, nrows=3)
+    except Exception:
+        try:
+            df = pd.read_table(fp, nrows=3)
+        except Exception:
+            analyze_text(fp)
+            return
+    cols = list(df.columns)
+    if len(cols) > 20:
+        display_cols = cols[:10] + ["..."] + cols[-10:]
+    else:
+        display_cols = cols
+    print("Columns:", display_cols)
+    for _, row in df.iterrows():
+        print([print_truncated(row[c]) for c in cols])
+
+def main():
+    ext = os.path.splitext(file_path)[1].lower()
+    try:
+        if ext in ['.csv', '.tsv', '.txt']:
+            analyze_tabular(file_path)
+        else:
+            analyze_text(file_path)
+    except Exception:
+        analyze_text(file_path)
+
+main()

@@ -1,0 +1,5 @@
+File: image_3623.jpg
+Format: JPEG
+Mode: RGB
+Size (WxH): (444, 451)
+File Size (KB): 60.11

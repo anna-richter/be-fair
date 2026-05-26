@@ -1,0 +1,302 @@
+Generate a minimal bash script that will:
+
+Create and configure a conda environment in "conda_env" folder under /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/40-addition_1/node_10:
+ - Python version: 3.11
+ - Activate the environment
+ - pip install uv
+ - Install required packages from /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt and /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt using uv pip install -r /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt --prerelease=allow -r /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt
+ - Only install the exact packages specified in the requirements files with their dependencies.
+ - Do NOT upgrade or reinstall autogluon.multimodal if it's already at the correct version specified in the requirements.
+Execute the Python script: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/40-addition_1/node_10/generated_code.py
+
+### Python code in the script:
+"""
+Skin Lesion Malignancy Prediction Script using AutoGluon MultiModal
+
+This script:
+- Loads and preprocesses skin lesion image data for binary classification (malignant vs. benign).
+- Trains an AutoGluon MultiModalPredictor on the training data, using image files as input and skin tone features for fairness.
+- Handles class imbalance using focal loss with computed class weights.
+- Evaluates the model using AUROC on a held-out validation set.
+- Predicts malignancy probabilities (float in [0,1]) for the test set, preserving original indices and output format.
+- Saves the trained model and prediction results to the specified output directory.
+- Performs validation checks to ensure output correctness.
+
+Installation requirements (run if needed):
+    pip install --upgrade pip
+    pip install autogluon.multimodal
+
+Usage:
+    Place this script in any location and run it. It expects the following data structure:
+        /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/
+            - train.csv
+            - test.csv
+            - MyImages/*.jpg
+
+Output:
+    - Trained model folder (with random timestamp) in:
+        /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/40-addition_1/node_10/output/
+    - Prediction file "results" in the same format as test.csv, with malignancy probabilities.
+    - Validation AUROC printed to stdout.
+
+Note:
+    - The script is wrapped in if __name__ == "__main__" to avoid DDP errors.
+    - Errors are not silently caught except for validation, which is allowed to fail gracefully.
+"""
+
+import os
+import uuid
+import time
+import warnings
+import pandas as pd
+import numpy as np
+
+from autogluon.multimodal import MultiModalPredictor
+from sklearn.metrics import roc_auc_score
+
+warnings.filterwarnings('ignore')
+
+# ======================== PATHS ========================
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data"
+IMG_DIR = os.path.join(DATA_DIR, "MyImages")
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/40-addition_1/node_10/output"
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+def get_random_model_path():
+    ts = int(time.time() * 1000)
+    rand = uuid.uuid4().hex[:8]
+    return os.path.join(OUTPUT_DIR, f"autogluon_model_{ts}_{rand}")
+
+def compute_class_weights(labels):
+    bincount = np.bincount(labels)
+    total = np.sum(bincount)
+    weights = [total / (2 * c) if c > 0 else 0.0 for c in bincount]
+    weights = np.array(weights)
+    weights = weights / weights.sum()
+    return weights.tolist()
+
+def map_label_to_binary(label):
+    if isinstance(label, str):
+        label = label.strip().lower()
+        if label in ["malignant", "malign", "cancer", "1"]:
+            return 1
+        elif label in ["benign", "non-neoplastic", "0"]:
+            return 0
+    elif isinstance(label, (int, float)):
+        return int(label)
+    return np.nan
+
+if __name__ == "__main__":
+    # ======================== DATA LOADING ========================
+    train = pd.read_csv(TRAIN_CSV)
+    test = pd.read_csv(TEST_CSV)
+
+    # Remove unnecessary index column if present
+    for col in ['Unnamed: 0', 'index']:
+        if col in train.columns:
+            train = train.drop(columns=[col])
+        if col in test.columns:
+            test = test.drop(columns=[col])
+
+    # Drop training samples without valid labels (do NOT drop from test)
+    train = train.dropna(subset=['label'])
+
+    # Map labels to binary (malignant=1, benign=0)
+    train['label'] = train['label'].apply(map_label_to_binary)
+    train = train.dropna(subset=['label'])
+    train['label'] = train['label'].astype(int)
+
+    # ======================== IMAGE PATHS ========================
+    train['image'] = train['image_name'].apply(lambda x: os.path.abspath(os.path.join(IMG_DIR, f"{x}.jpg")))
+    test['image'] = test['image_name'].apply(lambda x: os.path.abspath(os.path.join(IMG_DIR, f"{x}.jpg")))
+
+    # ======================== FAIRNESS: SKIN TONE ========================
+    fairness_features = []
+    for col in ['skin_tone', 'alternative_skin_tone']:
+        if col in train.columns:
+            fairness_features.append(col)
+            # If missing in test, add with default -1
+            if col not in test.columns:
+                test[col] = -1
+            train[col] = train[col].fillna(-1)
+            test[col] = test[col].fillna(-1)
+
+    # ======================== TRAIN/VALIDATION SPLIT ========================
+    from sklearn.model_selection import train_test_split
+    train_data, val_data = train_test_split(
+        train,
+        test_size=0.1,
+        stratify=train['label'],
+        random_state=42,
+    )
+    train_data = train_data.reset_index(drop=True)
+    val_data = val_data.reset_index(drop=True)
+
+    # ======================== CLASS WEIGHTS FOR FOCAL LOSS ========================
+    class_weights = compute_class_weights(train_data['label'].values)
+
+    # ======================== MODEL TRAINING ========================
+    model_path = get_random_model_path()
+    predictor = MultiModalPredictor(
+        label="label",
+        problem_type="binary",
+        path=model_path,
+    )
+
+    # Only keep columns needed: image, label, fairness features
+    train_cols = ['image', 'label'] + fairness_features
+    train_data_ag = train_data[train_cols].copy()
+    val_data_ag = val_data[train_cols].copy()
+
+    # Set a time limit to avoid wall-time kill (e.g., 3300 seconds)
+    time_limit = 3300
+
+    # Fit model (remove unsupported eval_metric and val_data arguments)
+    predictor.fit(
+        train_data=train_data_ag,
+        hyperparameters={
+            "env.num_gpus": 1,
+            "optim.loss_func": "focal_loss",
+            "optim.focal_loss.alpha": class_weights,
+            "optim.focal_loss.gamma": 2.0,
+            "optim.focal_loss.reduction": "mean",
+            "optim.max_epochs": 12,  # Lowered for time safety
+        },
+        holdout_frac=0.1,  # Use 10% for validation
+        presets="medium_quality",  # Lowered for time safety
+        seed=42,
+        time_limit=time_limit
+    )
+
+    # ======================== VALIDATION EVALUATION ========================
+    try:
+        val_pred_proba = predictor.predict_proba(val_data_ag)
+        # val_pred_proba is a DataFrame with columns [0, 1] (benign, malignant)
+        # We want probability of malignant (class 1)
+        if 1 in val_pred_proba.columns:
+            val_malignant_proba = val_pred_proba[1].values
+        else:
+            val_malignant_proba = val_pred_proba[str(1)].values
+        val_true = val_data_ag['label'].values
+        val_auc = roc_auc_score(val_true, val_malignant_proba)
+        print(f"Validation AUROC: {val_auc:.5f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    # ======================== TEST PREDICTION ========================
+    # Prepare test data for prediction (must include all fairness features if present)
+    test_cols = ['image'] + fairness_features
+    test_data_ag = test[test_cols].copy()
+
+    # Predict probabilities for test set
+    test_pred_proba = predictor.predict_proba(test_data_ag)
+    if 1 in test_pred_proba.columns:
+        test_malignant_proba = test_pred_proba[1].values
+    else:
+        test_malignant_proba = test_pred_proba[str(1)].values
+
+    # ======================== OUTPUT FORMATTING ========================
+    output_df = test.copy()
+    output_df['label'] = test_malignant_proba
+
+    # Ensure output has the same number of rows and indices as test set
+    assert len(output_df) == len(test), "Output row count does not match test set"
+    assert (output_df.index == test.index).all(), "Output indices do not match test set"
+
+    # Save results in the same format/extension as test.csv (CSV)
+    result_path = os.path.join(OUTPUT_DIR, "results")
+    ext = os.path.splitext(TEST_CSV)[1].lower()
+    if ext == ".csv":
+        output_df.to_csv(result_path, index=False)
+    elif ext in [".tsv", ".txt"]:
+        output_df.to_csv(result_path, sep='\t', index=False)
+    else:
+        output_df.to_csv(result_path, index=False)
+
+    # ======================== VALIDATION CHECKS ========================
+    assert os.path.exists(result_path), "Result file was not created"
+    out_df = pd.read_csv(result_path)
+    expected_cols = list(test.columns) + ['label']
+    assert list(out_df.columns) == expected_cols, f"Output columns {list(out_df.columns)} do not match expected {expected_cols}"
+    assert len(out_df) == len(test), "Output row count does not match test set"
+    assert np.all((out_df['label'] >= 0) & (out_df['label'] <= 1)), "Predicted probabilities are not in [0,1]"
+    if 'image_name' in out_df.columns and 'image_name' in test.columns:
+        assert (out_df['image_name'] == test['image_name']).all(), "image_name column does not match test set"
+
+    print(f"Prediction results saved to: {result_path}")
+    print(f"Trained model saved to: {model_path}")
+
+### Previous Error
+ERROR_SUMMARY: The error occurred because the `MultiModalPredictor.fit()` method from AutoGluon was called with an unsupported keyword argument: `eval_metric`. In the current version of AutoGluon MultiModal, `eval_metric` is not a valid parameter for the `fit()` method, which resulted in a `TypeError` and prevented model training from starting.
+
+SUGGESTED_FIX:  
+Remove the `eval_metric="roc_auc"` argument from the `predictor.fit()` call. If you wish to specify the evaluation metric, use the `hyperparameters` dictionary (e.g., set `"env.eval_metric": "roc_auc"` if supported), or rely on AutoGluon's default metric for binary classification. Check the latest [AutoGluon MultiModal documentation](https://auto.gluon.ai/stable/tutorials/multimodal/index.html) for the correct way to set evaluation metrics for your version.
+
+ERROR_SUMMARY: The error occurs because the code attempts to fill missing values for the columns 'skin_tone' and 'alternative_skin_tone' in the test DataFrame, but these columns do not exist in test.csv. This results in a KeyError when the script tries to access these columns in the test set, as they are only present in train.csv.
+
+SUGGESTED_FIX: Before filling missing values for fairness columns in the test DataFrame, check if each column exists in test; only attempt to fill missing values for columns that are present. Alternatively, add these columns to test (with default values, e.g., -1) if they are missing, to ensure consistent feature processing between train and test.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the UNIX socket path used by Ray (a backend library) exceeded the maximum allowed length (107 bytes) for AF_UNIX sockets on your system. This resulted in an OSError during model training, causing all models to fail and ultimately raising a RuntimeError indicating that no models were trained successfully.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and output by moving your working directory (including data, output, and conda environment) to a location with a much shorter absolute path (e.g., /tmp/mlzero or /scratch/mlzero). Ensure that all relevant environment variables (such as TMPDIR, RAY_TMPDIR, and output/model paths) are set to use these shorter paths before running your script. This will prevent Ray and AutoGluon from generating overly long UNIX socket filenames and allow model training to proceed.
+
+ERROR_SUMMARY: The error occurred because the MultiModalPredictor.fit() method in the installed version of AutoGluon does not accept a val_data keyword argument. This indicates a mismatch between the code and the API of the installed AutoGluon version, causing a TypeError and preventing model training and subsequent steps.
+
+SUGGESTED_FIX: Remove the val_data=val_data_ag argument from the predictor.fit() call. If validation is required, use the holdout_frac parameter (e.g., holdout_frac=0.1) within fit() to automatically split off a validation set, or upgrade AutoGluon to a version that supports val_data if this functionality is essential.
+
+ERROR_SUMMARY: The error occurs because the LightGBM v4.x API has removed the early_stopping_rounds argument from the LGBMClassifier.fit() method; early stopping must now be implemented using the callbacks parameter instead. Passing early_stopping_rounds directly to fit() results in a TypeError.
+
+SUGGESTED_FIX: Replace the early_stopping_rounds argument in the clf.fit() call with a callbacks parameter using lightgbm.early_stopping(30). Specifically, remove early_stopping_rounds=30 and add callbacks=[lgb.early_stopping(30)] to the fit() call to enable early stopping with the new API.
+
+ERROR_SUMMARY: The script failed with a TypeError: LGBMClassifier.fit() got an unexpected keyword argument 'verbose'. This is because, in recent versions of LightGBM (v4.x+), the scikit-learn API for LGBMClassifier.fit() no longer accepts the verbose parameter directly; verbosity should be controlled via callbacks or the LightGBM native API. As a result, model training did not proceed, and no predictions were generated.
+
+SUGGESTED_FIX:  
+Remove the verbose argument from the LGBMClassifier.fit() call. If you want to control verbosity, use the LightGBM logging callback (e.g., add lgb.log_evaluation(period=50) to the callbacks list) instead. After making this change, rerun the script to ensure model training completes successfully.
+
+ERROR_SUMMARY: The process was terminated because it exceeded the allowed wall-clock time limit of 3600 seconds (1 hour). The model training did not finish within this time, so no final validation AUROC or output file was produced. The code logic and data handling appear correct, but the job was killed before completion due to insufficient time allocation for the full workflow (data loading, training, inference).
+
+SUGGESTED_FIX:  
+Reduce the training time by setting the `time_limit` parameter in `predictor.fit()` to a value less than 3600 seconds (e.g., 3300–3500 to allow for data loading and inference). Alternatively, decrease `optim.max_epochs`, use a lighter preset (e.g., `"medium_quality"`), or reduce model complexity to ensure the script completes all steps (training, validation, prediction, saving) within the 1-hour limit. Monitor the actual runtime and adjust these parameters iteratively until the workflow reliably finishes before the time cutoff.
+
+ERROR_SUMMARY: The root cause of the error is that the UNIX domain socket path used by Ray (a dependency of AutoGluon) exceeds the maximum allowed length of 107 bytes for AF_UNIX sockets on your system. This results in an OSError ("validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes"), causing all model training to fail and ultimately leading to "No models were trained successfully during fit()".
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model outputs so that the full socket path stays under 107 bytes. Move your working/output directories (especially the scratch and output folders) to a location with a shorter absolute path (e.g., /tmp or a short-named directory in your home folder), and set environment variables such as TMPDIR, TEMP, and TMP to this shorter path before running your script to ensure Ray and AutoGluon use it for temporary files.
+
+### Previous failed bash script:
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Paths
+ENV_DIR="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/40-addition_1/node_8/conda_env"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_MM="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt"
+PY_SCRIPT="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/40-addition_1/node_8/generated_code.py"
+
+# 1. Create conda env if not exists
+if [ ! -d "$ENV_DIR" ]; then
+    conda create -y -p "$ENV_DIR" python=3.11
+fi
+
+# 2. Activate env
+# shellcheck disable=SC1091
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_DIR"
+
+# 3. Install uv
+pip install uv
+
+# 4. Install requirements with uv (prerelease allowed)
+uv pip install --prerelease=allow -r "$REQ_MM" -r "$REQ_COMMON"
+
+# 5. Run the Python script
+python "$PY_SCRIPT"
+
+Notes:
+- Generate a minimal, executable bash script
+- Focus on essential commands only
+- Handle environment and package only if asked or there were errors

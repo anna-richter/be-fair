@@ -1,0 +1,25 @@
+import os
+import pandas as pd
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv"
+
+def display_tabular(df):
+    cols = list(df.columns)
+    if len(cols) > 20:
+        cols_display = cols[:10] + ['...'] + cols[-10:]
+    else:
+        cols_display = cols
+    print("Columns:", cols_display)
+    pd.set_option('display.max_colwidth', 50)
+    print(df.head(3).to_string(index=False))
+
+try:
+    df = pd.read_csv(file_path)
+    display_tabular(df)
+except Exception:
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read(768)
+            print("Text preview:\n", content)
+    except Exception as e:
+        print(f"Could not open file: {e}")

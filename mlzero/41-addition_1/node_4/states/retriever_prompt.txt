@@ -1,0 +1,83 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem Type:** Image classification (malignant vs. benign skin lesion).
+- **Input Format:** RGB JPEG images of skin lesions (e.g., image_3623.jpg).
+- **Prediction Output Format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation Metric:** Area under the receiver operator curve (AUROC).
+- **Additional Requirement:** The model should be fair towards skin tone.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone.']
+Rows:
+['Evaluation metric: Area under the receiver oper...', 'nan']
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_1_data/MyImages/image_3623.jpg
+Content:
+File: image_3623.jpg
+Format: JPEG
+Mode: RGB
+Size (WxH): (444, 451)
+File Size (KB): 60.11
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the test dataframe passed to `predictor.predict_proba()` is missing required columns (`alternative_skin_tone`, `expert_opinion`, `skin_tone`) that were present during training. AutoGluon MultiModal requires all non-label columns used in training to also be present (with the same names) in the test data, even if their values are missing or unknown.
+
+SUGGESTED_FIX:  
+Before calling `predictor.predict_proba()`, ensure the test dataframe includes all columns used during training (`image`, `alternative_skin_tone`, `expert_opinion`, `skin_tone`, and any others except the label). For columns not available in the test set, add them with placeholder values (e.g., `np.nan` or a default value) so that the test dataframe schema matches the training dataframe. This will allow AutoGluon to process the test data without raising a ValueError.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes (`AF_UNIX path length cannot exceed 107 bytes`). This resulted in repeated `OSError` exceptions during model training, causing all models to fail and ultimately raising a `RuntimeError: No models were trained successfully during fit()`.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output—specifically, move your working, scratch, and output directories to locations with much shorter absolute paths (e.g., `/tmp/agrun` or `/scratch/agrun`). Ensure that the total path length for any Ray session or socket file will not exceed 107 bytes. You may also set the `RAY_TMPDIR` environment variable to a short path before running your script to force Ray to use a shorter base directory for its temporary files. After making these changes, rerun your training script.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.
