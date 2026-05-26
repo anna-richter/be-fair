@@ -1,0 +1,4 @@
+File Size (KB): 42.01
+Format: JPEG
+Mode: RGB
+Dimensions: (640, 401)

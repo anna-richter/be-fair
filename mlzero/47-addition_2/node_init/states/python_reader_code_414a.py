@@ -1,0 +1,26 @@
+import os
+import pandas as pd
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/test.csv"
+
+def display_tabular(df):
+    cols = list(df.columns)
+    n_cols = len(cols)
+    if n_cols > 20:
+        display_cols = cols[:10] + cols[-10:]
+    else:
+        display_cols = cols
+    print("Columns:", display_cols)
+    pd.set_option('display.max_colwidth', 50)
+    print(df[display_cols].head(3).to_string(index=False))
+
+def display_text(fp):
+    with open(fp, 'r', encoding='utf-8', errors='ignore') as f:
+        content = f.read(768)
+    print("Text preview:\n", content)
+
+try:
+    df = pd.read_csv(file_path)
+    display_tabular(df)
+except Exception:
+    display_text(file_path)

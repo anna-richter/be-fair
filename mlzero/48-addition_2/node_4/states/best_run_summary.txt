@@ -1,0 +1,22 @@
+Best Run Summary
+================
+Linked to: node_4
+Reason: best validation score (0.7085)
+Tool used: machine learning
+Symlink created at: best_run
+
+Validation Score Summary:
+Node 4 (machine learning): 0.7085 (BEST)
+Node 8 (machine learning): 0.6457
+Node 14 (machine learning): 0.6457
+Node 6 (machine learning): 0.6457
+Node 16 (machine learning): 0.6457
+Node 12 (machine learning): 0.6457
+
+Best score: 0.7085 from node 4 using machine learning
+
+Tool Usage Summary:
+==================
+Available tools: autogluon.multimodal, machine learning, autogluon.tabular
+Tools used: autogluon.tabular, autogluon.multimodal, machine learning
+Tools not used: 

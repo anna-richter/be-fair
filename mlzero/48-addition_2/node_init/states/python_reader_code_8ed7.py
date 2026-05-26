@@ -1,0 +1,31 @@
+import os
+import pandas as pd
+
+file_path = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/descriptions.txt"
+
+def print_trunc(s, l=50):
+    s = str(s)
+    return s if len(s) <= l else s[:l-3] + "..."
+
+def show_tabular(df):
+    cols = list(df.columns)
+    if len(cols) > 20:
+        shown = cols[:10] + ["..."] + cols[-10:]
+    else:
+        shown = cols
+    print("Columns:", shown)
+    rows = df.head(3)
+    print("Rows:")
+    for _, row in rows.iterrows():
+        print([print_trunc(row[c]) for c in cols[:20]])
+
+def show_text(fp):
+    with open(fp, 'r', encoding='utf-8', errors='ignore') as f:
+        txt = f.read(768)
+        print(txt)
+
+try:
+    df = pd.read_csv(file_path, sep=None, engine='python')
+    show_tabular(df)
+except Exception:
+    show_text(file_path)

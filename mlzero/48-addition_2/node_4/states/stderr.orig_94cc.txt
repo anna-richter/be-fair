@@ -1,0 +1,393 @@
+
+==> WARNING: A newer version of conda exists. <==
+    current version: 25.11.0
+    latest version: 26.5.0
+Please update conda by running
+    $ conda update -n base -c conda-forge conda
+warning: Requirements file `/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt` does not contain any dependencies
+Using Python 3.11.15 environment at: 48-addition_2/node_4/conda_env
+Resolved 79 packages in 402ms
+Uninstalled 1 package in 1.79s
+Installed 78 packages in 40.47s
+ + aiohappyeyeballs==2.6.2
+ + aiohttp==3.13.5
+ + aiosignal==1.4.0
+ + annotated-doc==0.0.4
+ + annotated-types==0.7.0
+ + anyio==4.13.0
+ + attrs==26.1.0
+ + certifi==2026.5.20
+ + chardet==7.4.3
+ + charset-normalizer==3.4.7
+ + click==8.4.1
+ + cuda-bindings==13.2.0
+ + cuda-pathfinder==1.5.4
+ + cuda-toolkit==13.0.2
+ + datasets==4.8.5
+ + dill==0.4.1
+ + filelock==3.29.0
+ + frozenlist==1.8.0
+ + fsspec==2026.2.0
+ + h11==0.16.0
+ + hf-xet==1.5.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + huggingface-hub==1.16.1
+ + idna==3.16
+ + jinja2==3.1.6
+ + markdown-it-py==4.2.0
+ + markupsafe==3.0.3
+ + mdurl==0.1.2
+ + mpmath==1.3.0
+ + multidict==6.7.1
+ + multiprocess==0.70.19
+ + networkx==3.6.1
+ + numpy==2.4.6
+ + nvidia-cublas==13.1.1.3
+ + nvidia-cuda-cupti==13.0.85
+ + nvidia-cuda-nvrtc==13.0.88
+ + nvidia-cuda-runtime==13.0.96
+ + nvidia-cudnn-cu13==9.20.0.48
+ + nvidia-cufft==12.0.0.61
+ + nvidia-cufile==1.15.1.6
+ + nvidia-curand==10.4.0.35
+ + nvidia-cusolver==12.0.4.66
+ + nvidia-cusparse==12.6.3.3
+ + nvidia-cusparselt-cu13==0.8.1
+ + nvidia-nccl-cu13==2.29.7
+ + nvidia-nvjitlink==13.0.88
+ + nvidia-nvshmem-cu13==3.4.5
+ + nvidia-nvtx==13.0.85
+ + opencv-python==4.13.0.92
+ + pandas==3.0.3
+ + pillow==12.2.0
+ + propcache==0.5.2
+ + pyarrow==24.0.0
+ + pydantic==2.14.0a1
+ + pydantic-core==2.47.0
+ + pygments==2.20.0
+ + python-calamine==0.6.2
+ + python-dateutil==2.9.0.post0
+ + pytz==2026.2
+ + pyyaml==6.0.3
+ + requests==2.34.2
+ + rich==15.0.0
+ - setuptools==82.0.1
+ + setuptools==81.0.0
+ + shellingham==1.5.4
+ + six==1.17.0
+ + sympy==1.14.0
+ + torch==2.12.0
+ + torchaudio==2.11.0
+ + torchvision==0.27.0
+ + tqdm==4.67.3
+ + triton==3.7.0
+ + typer==0.25.1
+ + typing-extensions==4.15.0
+ + typing-inspection==0.4.2
+ + urllib3==2.7.0
+ + xxhash==3.7.0
+ + yarl==1.24.2
+Extracting image features:   0%|          | 0/14910 [00:00<?, ?it/s]
+Extracting image features:   0%|          | 64/14910 [00:00<00:32, 462.33it/s]
+Extracting image features:   1%|          | 111/14910 [00:00<00:49, 297.59it/s]
+Extracting image features:   1%|          | 160/14910 [00:00<00:49, 296.84it/s]
+Extracting image features:   2%|▏         | 224/14910 [00:00<00:44, 326.50it/s]
+Extracting image features:   2%|▏         | 288/14910 [00:00<00:44, 327.47it/s]
+Extracting image features:   2%|▏         | 352/14910 [00:01<00:46, 312.57it/s]
+Extracting image features:   3%|▎         | 384/14910 [00:01<00:46, 311.41it/s]
+Extracting image features:   3%|▎         | 448/14910 [00:01<00:45, 319.94it/s]
+Extracting image features:   3%|▎         | 512/14910 [00:01<00:43, 330.60it/s]
+Extracting image features:   4%|▍         | 576/14910 [00:01<00:41, 344.94it/s]
+Extracting image features:   4%|▍         | 640/14910 [00:01<00:39, 359.82it/s]
+Extracting image features:   5%|▍         | 677/14910 [00:02<00:40, 350.74it/s]
+Extracting image features:   5%|▍         | 736/14910 [00:02<00:41, 341.85it/s]
+Extracting image features:   5%|▌         | 800/14910 [00:02<00:40, 344.17it/s]
+Extracting image features:   6%|▌         | 835/14910 [00:02<00:41, 342.52it/s]
+Extracting image features:   6%|▌         | 870/14910 [00:02<00:41, 341.48it/s]
+Extracting image features:   6%|▌         | 905/14910 [00:02<00:40, 342.11it/s]
+Extracting image features:   6%|▋         | 960/14910 [00:02<00:42, 326.53it/s]
+Extracting image features:   7%|▋         | 1024/14910 [00:03<00:40, 346.42it/s]
+Extracting image features:   7%|▋         | 1088/14910 [00:03<00:39, 348.37it/s]
+Extracting image features:   8%|▊         | 1152/14910 [00:03<00:40, 336.77it/s]
+Extracting image features:   8%|▊         | 1186/14910 [00:03<00:41, 333.51it/s]
+Extracting image features:   8%|▊         | 1248/14910 [00:03<00:40, 338.81it/s]
+Extracting image features:   9%|▉         | 1312/14910 [00:03<00:39, 346.70it/s]
+Extracting image features:   9%|▉         | 1376/14910 [00:04<00:39, 340.49it/s]
+Extracting image features:   9%|▉         | 1411/14910 [00:04<00:39, 339.79it/s]
+Extracting image features:  10%|▉         | 1472/14910 [00:04<00:38, 350.22it/s]
+Extracting image features:  10%|█         | 1507/14910 [00:04<00:38, 346.57it/s]
+Extracting image features:  11%|█         | 1568/14910 [00:04<00:39, 339.92it/s]
+Extracting image features:  11%|█         | 1632/14910 [00:04<00:38, 342.67it/s]
+Extracting image features:  11%|█▏        | 1696/14910 [00:04<00:37, 354.60it/s]
+Extracting image features:  12%|█▏        | 1760/14910 [00:05<00:35, 365.34it/s]
+Extracting image features:  12%|█▏        | 1824/14910 [00:05<00:36, 359.07it/s]
+Extracting image features:  12%|█▏        | 1860/14910 [00:05<00:36, 353.26it/s]
+Extracting image features:  13%|█▎        | 1920/14910 [00:05<00:37, 345.41it/s]
+Extracting image features:  13%|█▎        | 1984/14910 [00:05<00:35, 359.94it/s]
+Extracting image features:  14%|█▎        | 2020/14910 [00:05<00:36, 353.69it/s]
+Extracting image features:  14%|█▍        | 2056/14910 [00:06<00:37, 340.73it/s]
+Extracting image features:  14%|█▍        | 2090/14910 [00:06<00:44, 288.31it/s]
+Extracting image features:  14%|█▍        | 2144/14910 [00:06<00:43, 290.71it/s]
+Extracting image features:  15%|█▍        | 2208/14910 [00:06<00:39, 319.29it/s]
+Extracting image features:  15%|█▌        | 2272/14910 [00:06<00:38, 327.93it/s]
+Extracting image features:  16%|█▌        | 2336/14910 [00:06<00:37, 336.87it/s]
+Extracting image features:  16%|█▌        | 2370/14910 [00:07<00:37, 337.23it/s]
+Extracting image features:  16%|█▋        | 2432/14910 [00:07<00:36, 340.42it/s]
+Extracting image features:  17%|█▋        | 2496/14910 [00:07<00:37, 334.23it/s]
+Extracting image features:  17%|█▋        | 2560/14910 [00:07<00:37, 332.05it/s]
+Extracting image features:  18%|█▊        | 2624/14910 [00:07<00:35, 348.22it/s]
+Extracting image features:  18%|█▊        | 2688/14910 [00:07<00:35, 349.03it/s]
+Extracting image features:  18%|█▊        | 2723/14910 [00:08<00:36, 338.34it/s]
+Extracting image features:  19%|█▊        | 2784/14910 [00:08<00:35, 337.74it/s]
+Extracting image features:  19%|█▉        | 2848/14910 [00:08<00:35, 336.35it/s]
+Extracting image features:  20%|█▉        | 2912/14910 [00:08<00:34, 352.46it/s]
+Extracting image features:  20%|█▉        | 2976/14910 [00:08<00:33, 357.72it/s]
+Extracting image features:  20%|██        | 3040/14910 [00:08<00:33, 353.36it/s]
+Extracting image features:  21%|██        | 3104/14910 [00:09<00:34, 346.46it/s]
+Extracting image features:  21%|██        | 3139/14910 [00:09<00:34, 340.25it/s]
+Extracting image features:  21%|██▏       | 3200/14910 [00:09<00:33, 344.99it/s]
+Extracting image features:  22%|██▏       | 3235/14910 [00:09<00:34, 342.28it/s]
+Extracting image features:  22%|██▏       | 3296/14910 [00:09<00:36, 315.86it/s]
+Extracting image features:  23%|██▎       | 3360/14910 [00:09<00:35, 321.74it/s]
+Extracting image features:  23%|██▎       | 3424/14910 [00:10<00:34, 332.13it/s]
+Extracting image features:  23%|██▎       | 3488/14910 [00:10<00:34, 331.79it/s]
+Extracting image features:  24%|██▍       | 3552/14910 [00:10<00:34, 327.85it/s]
+Extracting image features:  24%|██▍       | 3616/14910 [00:10<00:33, 336.65it/s]
+Extracting image features:  25%|██▍       | 3680/14910 [00:10<00:32, 342.54it/s]
+Extracting image features:  25%|██▍       | 3715/14910 [00:10<00:33, 338.44it/s]
+Extracting image features:  25%|██▌       | 3776/14910 [00:11<00:32, 340.36it/s]
+Extracting image features:  26%|██▌       | 3840/14910 [00:11<00:31, 345.95it/s]
+Extracting image features:  26%|██▌       | 3904/14910 [00:11<00:31, 350.76it/s]
+Extracting image features:  26%|██▋       | 3939/14910 [00:11<00:31, 347.68it/s]
+Extracting image features:  27%|██▋       | 4000/14910 [00:11<00:31, 349.28it/s]
+Extracting image features:  27%|██▋       | 4064/14910 [00:11<00:32, 338.17it/s]
+Extracting image features:  28%|██▊       | 4128/14910 [00:12<00:30, 347.90it/s]
+Extracting image features:  28%|██▊       | 4192/14910 [00:12<00:30, 347.61it/s]
+Extracting image features:  29%|██▊       | 4256/14910 [00:12<00:30, 353.24it/s]
+Extracting image features:  29%|██▉       | 4320/14910 [00:12<00:29, 357.53it/s]
+Extracting image features:  29%|██▉       | 4384/14910 [00:12<00:29, 359.45it/s]
+Extracting image features:  30%|██▉       | 4448/14910 [00:13<00:30, 347.55it/s]
+Extracting image features:  30%|███       | 4483/14910 [00:13<00:30, 346.35it/s]
+Extracting image features:  30%|███       | 4544/14910 [00:13<00:31, 331.76it/s]
+Extracting image features:  31%|███       | 4608/14910 [00:13<00:30, 343.25it/s]
+Extracting image features:  31%|███▏      | 4672/14910 [00:13<00:27, 366.00it/s]
+Extracting image features:  32%|███▏      | 4736/14910 [00:13<00:27, 369.43it/s]
+Extracting image features:  32%|███▏      | 4800/14910 [00:14<00:28, 360.77it/s]
+Extracting image features:  32%|███▏      | 4837/14910 [00:14<00:28, 359.26it/s]
+Extracting image features:  33%|███▎      | 4896/14910 [00:14<00:30, 332.91it/s]
+Extracting image features:  33%|███▎      | 4960/14910 [00:14<00:31, 318.09it/s]
+Extracting image features:  33%|███▎      | 4993/14910 [00:14<00:31, 313.16it/s]
+Extracting image features:  34%|███▎      | 5025/14910 [00:14<00:31, 311.71it/s]
+Extracting image features:  34%|███▍      | 5088/14910 [00:14<00:30, 325.18it/s]
+Extracting image features:  35%|███▍      | 5152/14910 [00:15<00:28, 343.47it/s]
+Extracting image features:  35%|███▍      | 5216/14910 [00:15<00:27, 346.69it/s]
+Extracting image features:  35%|███▌      | 5280/14910 [00:15<00:28, 343.14it/s]
+Extracting image features:  36%|███▌      | 5344/14910 [00:15<00:26, 355.19it/s]
+Extracting image features:  36%|███▋      | 5408/14910 [00:15<00:27, 348.96it/s]
+Extracting image features:  37%|███▋      | 5443/14910 [00:15<00:27, 348.85it/s]
+Extracting image features:  37%|███▋      | 5504/14910 [00:16<00:27, 347.10it/s]
+Extracting image features:  37%|███▋      | 5568/14910 [00:16<00:26, 357.88it/s]
+Extracting image features:  38%|███▊      | 5632/14910 [00:16<00:26, 353.78it/s]
+Extracting image features:  38%|███▊      | 5668/14910 [00:16<00:27, 342.05it/s]
+Extracting image features:  38%|███▊      | 5728/14910 [00:16<00:27, 333.15it/s]
+Extracting image features:  39%|███▉      | 5792/14910 [00:16<00:26, 339.13it/s]
+Extracting image features:  39%|███▉      | 5826/14910 [00:17<00:27, 328.45it/s]
+Extracting image features:  39%|███▉      | 5859/14910 [00:17<00:28, 322.13it/s]
+Extracting image features:  40%|███▉      | 5891/14910 [00:17<00:29, 302.04it/s]
+Extracting image features:  40%|███▉      | 5921/14910 [00:17<00:29, 301.44it/s]
+Extracting image features:  40%|████      | 5984/14910 [00:17<00:28, 310.58it/s]
+Extracting image features:  40%|████      | 6016/14910 [00:17<00:29, 302.21it/s]
+Extracting image features:  41%|████      | 6080/14910 [00:17<00:27, 323.70it/s]
+Extracting image features:  41%|████      | 6112/14910 [00:18<00:28, 313.53it/s]
+Extracting image features:  41%|████      | 6144/14910 [00:18<00:28, 311.79it/s]
+Extracting image features:  42%|████▏     | 6208/14910 [00:18<00:26, 332.03it/s]
+Extracting image features:  42%|████▏     | 6272/14910 [00:18<00:26, 331.89it/s]
+Extracting image features:  42%|████▏     | 6336/14910 [00:18<00:25, 336.53it/s]
+Extracting image features:  43%|████▎     | 6400/14910 [00:18<00:24, 353.03it/s]
+Extracting image features:  43%|████▎     | 6464/14910 [00:19<00:23, 357.20it/s]
+Extracting image features:  44%|████▍     | 6528/14910 [00:19<00:23, 349.86it/s]
+Extracting image features:  44%|████▍     | 6592/14910 [00:19<00:23, 354.07it/s]
+Extracting image features:  45%|████▍     | 6656/14910 [00:19<00:24, 343.62it/s]
+Extracting image features:  45%|████▌     | 6720/14910 [00:19<00:23, 343.56it/s]
+Extracting image features:  45%|████▌     | 6784/14910 [00:20<00:24, 334.57it/s]
+Extracting image features:  46%|████▌     | 6848/14910 [00:20<00:23, 338.78it/s]
+Extracting image features:  46%|████▋     | 6912/14910 [00:20<00:23, 339.53it/s]
+Extracting image features:  47%|████▋     | 6976/14910 [00:20<00:23, 342.40it/s]
+Extracting image features:  47%|████▋     | 7040/14910 [00:20<00:22, 344.36it/s]
+Extracting image features:  48%|████▊     | 7104/14910 [00:20<00:22, 354.52it/s]
+Extracting image features:  48%|████▊     | 7168/14910 [00:21<00:21, 365.85it/s]
+Extracting image features:  49%|████▊     | 7232/14910 [00:21<00:20, 366.70it/s]
+Extracting image features:  49%|████▉     | 7296/14910 [00:21<00:20, 366.29it/s]
+Extracting image features:  49%|████▉     | 7360/14910 [00:21<00:20, 363.53it/s]
+Extracting image features:  50%|████▉     | 7424/14910 [00:21<00:20, 361.62it/s]
+Extracting image features:  50%|█████     | 7488/14910 [00:21<00:20, 365.34it/s]
+Extracting image features:  50%|█████     | 7525/14910 [00:22<00:20, 364.10it/s]
+Extracting image features:  51%|█████     | 7562/14910 [00:22<00:20, 355.60it/s]
+Extracting image features:  51%|█████     | 7616/14910 [00:22<00:21, 340.72it/s]
+Extracting image features:  52%|█████▏    | 7680/14910 [00:22<00:21, 342.06it/s]
+Extracting image features:  52%|█████▏    | 7744/14910 [00:22<00:21, 339.28it/s]
+Extracting image features:  52%|█████▏    | 7778/14910 [00:22<00:22, 322.16it/s]
+Extracting image features:  53%|█████▎    | 7840/14910 [00:23<00:22, 317.60it/s]
+Extracting image features:  53%|█████▎    | 7904/14910 [00:23<00:20, 336.44it/s]
+Extracting image features:  53%|█████▎    | 7938/14910 [00:23<00:20, 336.34it/s]
+Extracting image features:  54%|█████▎    | 8000/14910 [00:23<00:20, 339.06it/s]
+Extracting image features:  54%|█████▍    | 8064/14910 [00:23<00:19, 343.68it/s]
+Extracting image features:  55%|█████▍    | 8128/14910 [00:23<00:20, 338.79it/s]
+Extracting image features:  55%|█████▍    | 8192/14910 [00:24<00:19, 342.27it/s]
+Extracting image features:  55%|█████▌    | 8256/14910 [00:24<00:19, 350.19it/s]
+Extracting image features:  56%|█████▌    | 8320/14910 [00:24<00:19, 344.70it/s]
+Extracting image features:  56%|█████▌    | 8384/14910 [00:24<00:18, 345.65it/s]
+Extracting image features:  56%|█████▋    | 8419/14910 [00:24<00:19, 325.62it/s]
+Extracting image features:  57%|█████▋    | 8452/14910 [00:24<00:20, 310.05it/s]
+Extracting image features:  57%|█████▋    | 8483/14910 [00:24<00:20, 309.88it/s]
+Extracting image features:  57%|█████▋    | 8514/14910 [00:25<00:20, 308.92it/s]
+Extracting image features:  58%|█████▊    | 8576/14910 [00:25<00:19, 316.77it/s]
+Extracting image features:  58%|█████▊    | 8640/14910 [00:25<00:18, 330.05it/s]
+Extracting image features:  58%|█████▊    | 8704/14910 [00:25<00:18, 327.47it/s]
+Extracting image features:  59%|█████▉    | 8768/14910 [00:25<00:17, 341.31it/s]
+Extracting image features:  59%|█████▉    | 8832/14910 [00:25<00:17, 349.88it/s]
+Extracting image features:  60%|█████▉    | 8896/14910 [00:26<00:16, 358.19it/s]
+Extracting image features:  60%|██████    | 8960/14910 [00:26<00:17, 349.08it/s]
+Extracting image features:  61%|██████    | 9024/14910 [00:26<00:16, 354.76it/s]
+Extracting image features:  61%|██████    | 9088/14910 [00:26<00:16, 349.86it/s]
+Extracting image features:  61%|██████▏   | 9152/14910 [00:26<00:16, 350.90it/s]
+Extracting image features:  62%|██████▏   | 9216/14910 [00:27<00:16, 339.67it/s]
+Extracting image features:  62%|██████▏   | 9280/14910 [00:27<00:16, 342.03it/s]
+Extracting image features:  63%|██████▎   | 9344/14910 [00:27<00:17, 326.15it/s]
+Extracting image features:  63%|██████▎   | 9408/14910 [00:27<00:16, 330.22it/s]
+Extracting image features:  64%|██████▎   | 9472/14910 [00:27<00:16, 330.14it/s]
+Extracting image features:  64%|██████▍   | 9536/14910 [00:28<00:15, 343.90it/s]
+Extracting image features:  64%|██████▍   | 9600/14910 [00:28<00:15, 346.01it/s]
+Extracting image features:  65%|██████▍   | 9664/14910 [00:28<00:15, 334.35it/s]
+Extracting image features:  65%|██████▌   | 9698/14910 [00:28<00:16, 324.11it/s]
+Extracting image features:  65%|██████▌   | 9731/14910 [00:28<00:15, 324.24it/s]
+Extracting image features:  65%|██████▌   | 9764/14910 [00:28<00:16, 306.84it/s]
+Extracting image features:  66%|██████▌   | 9824/14910 [00:28<00:16, 311.93it/s]
+Extracting image features:  66%|██████▋   | 9888/14910 [00:29<00:15, 317.25it/s]
+Extracting image features:  67%|██████▋   | 9952/14910 [00:29<00:14, 333.36it/s]
+Extracting image features:  67%|██████▋   | 10016/14910 [00:29<00:14, 330.94it/s]
+Extracting image features:  67%|██████▋   | 10049/14910 [00:29<00:14, 329.54it/s]
+Extracting image features:  68%|██████▊   | 10112/14910 [00:29<00:14, 335.71it/s]
+Extracting image features:  68%|██████▊   | 10176/14910 [00:29<00:13, 352.19it/s]
+Extracting image features:  69%|██████▊   | 10240/14910 [00:30<00:13, 353.36it/s]
+Extracting image features:  69%|██████▉   | 10304/14910 [00:30<00:12, 364.68it/s]
+Extracting image features:  70%|██████▉   | 10368/14910 [00:30<00:12, 356.18it/s]
+Extracting image features:  70%|██████▉   | 10432/14910 [00:30<00:12, 354.64it/s]
+Extracting image features:  70%|███████   | 10496/14910 [00:30<00:12, 359.46it/s]
+Extracting image features:  71%|███████   | 10560/14910 [00:31<00:12, 359.11it/s]
+Extracting image features:  71%|███████▏  | 10624/14910 [00:31<00:11, 360.99it/s]
+Extracting image features:  72%|███████▏  | 10688/14910 [00:31<00:11, 355.22it/s]
+Extracting image features:  72%|███████▏  | 10724/14910 [00:31<00:11, 349.40it/s]
+Extracting image features:  72%|███████▏  | 10784/14910 [00:31<00:12, 338.63it/s]
+Extracting image features:  73%|███████▎  | 10848/14910 [00:31<00:11, 353.46it/s]
+Extracting image features:  73%|███████▎  | 10884/14910 [00:31<00:11, 354.14it/s]
+Extracting image features:  73%|███████▎  | 10944/14910 [00:32<00:11, 335.30it/s]
+Extracting image features:  74%|███████▎  | 10978/14910 [00:32<00:11, 335.99it/s]
+Extracting image features:  74%|███████▍  | 11012/14910 [00:32<00:11, 335.23it/s]
+Extracting image features:  74%|███████▍  | 11072/14910 [00:32<00:11, 331.59it/s]
+Extracting image features:  75%|███████▍  | 11136/14910 [00:32<00:10, 348.85it/s]
+Extracting image features:  75%|███████▌  | 11200/14910 [00:32<00:10, 354.64it/s]
+Extracting image features:  75%|███████▌  | 11236/14910 [00:32<00:10, 350.09it/s]
+Extracting image features:  76%|███████▌  | 11296/14910 [00:33<00:10, 351.85it/s]
+Extracting image features:  76%|███████▌  | 11360/14910 [00:33<00:10, 349.43it/s]
+Extracting image features:  77%|███████▋  | 11424/14910 [00:33<00:09, 359.81it/s]
+Extracting image features:  77%|███████▋  | 11488/14910 [00:33<00:09, 361.14it/s]
+Extracting image features:  77%|███████▋  | 11525/14910 [00:33<00:09, 362.13it/s]
+Extracting image features:  78%|███████▊  | 11584/14910 [00:33<00:09, 342.33it/s]
+Extracting image features:  78%|███████▊  | 11619/14910 [00:34<00:09, 340.87it/s]
+Extracting image features:  78%|███████▊  | 11680/14910 [00:34<00:09, 337.55it/s]
+Extracting image features:  79%|███████▉  | 11744/14910 [00:34<00:09, 344.96it/s]
+Extracting image features:  79%|███████▉  | 11808/14910 [00:34<00:08, 350.82it/s]
+Extracting image features:  79%|███████▉  | 11844/14910 [00:34<00:08, 351.94it/s]
+Extracting image features:  80%|███████▉  | 11880/14910 [00:34<00:08, 346.95it/s]
+Extracting image features:  80%|████████  | 11936/14910 [00:35<00:09, 329.70it/s]
+Extracting image features:  80%|████████  | 11970/14910 [00:35<00:08, 328.42it/s]
+Extracting image features:  81%|████████  | 12003/14910 [00:35<00:08, 328.05it/s]
+Extracting image features:  81%|████████  | 12064/14910 [00:35<00:08, 330.54it/s]
+Extracting image features:  81%|████████▏ | 12128/14910 [00:35<00:08, 334.09it/s]
+Extracting image features:  82%|████████▏ | 12192/14910 [00:35<00:08, 331.89it/s]
+Extracting image features:  82%|████████▏ | 12256/14910 [00:35<00:07, 332.43it/s]
+Extracting image features:  82%|████████▏ | 12290/14910 [00:36<00:08, 298.89it/s]
+Extracting image features:  83%|████████▎ | 12320/14910 [00:36<00:08, 291.47it/s]
+Extracting image features:  83%|████████▎ | 12384/14910 [00:36<00:07, 328.67it/s]
+Extracting image features:  83%|████████▎ | 12448/14910 [00:36<00:07, 338.27it/s]
+Extracting image features:  84%|████████▍ | 12512/14910 [00:36<00:07, 339.31it/s]
+Extracting image features:  84%|████████▍ | 12576/14910 [00:36<00:06, 355.50it/s]
+Extracting image features:  85%|████████▍ | 12640/14910 [00:37<00:06, 352.46it/s]
+Extracting image features:  85%|████████▌ | 12704/14910 [00:37<00:05, 372.49it/s]
+Extracting image features:  86%|████████▌ | 12768/14910 [00:37<00:06, 355.70it/s]
+Extracting image features:  86%|████████▌ | 12804/14910 [00:37<00:05, 351.87it/s]
+Extracting image features:  86%|████████▋ | 12864/14910 [00:37<00:06, 340.63it/s]
+Extracting image features:  87%|████████▋ | 12899/14910 [00:37<00:05, 340.59it/s]
+Extracting image features:  87%|████████▋ | 12934/14910 [00:37<00:06, 328.01it/s]
+Extracting image features:  87%|████████▋ | 12992/14910 [00:38<00:05, 351.35it/s]
+Extracting image features:  88%|████████▊ | 13056/14910 [00:38<00:05, 344.86it/s]
+Extracting image features:  88%|████████▊ | 13120/14910 [00:38<00:05, 351.44it/s]
+Extracting image features:  88%|████████▊ | 13156/14910 [00:38<00:04, 352.74it/s]
+Extracting image features:  88%|████████▊ | 13192/14910 [00:38<00:04, 351.67it/s]
+Extracting image features:  89%|████████▉ | 13248/14910 [00:38<00:04, 348.25it/s]
+Extracting image features:  89%|████████▉ | 13312/14910 [00:39<00:04, 361.87it/s]
+Extracting image features:  90%|████████▉ | 13349/14910 [00:39<00:04, 363.56it/s]
+Extracting image features:  90%|████████▉ | 13408/14910 [00:39<00:04, 351.65it/s]
+Extracting image features:  90%|█████████ | 13472/14910 [00:39<00:03, 365.00it/s]
+Extracting image features:  91%|█████████ | 13536/14910 [00:39<00:03, 373.83it/s]
+Extracting image features:  91%|█████████ | 13600/14910 [00:39<00:03, 373.31it/s]
+Extracting image features:  92%|█████████▏| 13664/14910 [00:40<00:03, 355.32it/s]
+Extracting image features:  92%|█████████▏| 13728/14910 [00:40<00:03, 356.10it/s]
+Extracting image features:  93%|█████████▎| 13792/14910 [00:40<00:03, 366.90it/s]
+Extracting image features:  93%|█████████▎| 13856/14910 [00:40<00:02, 354.88it/s]
+Extracting image features:  93%|█████████▎| 13920/14910 [00:40<00:02, 351.64it/s]
+Extracting image features:  94%|█████████▍| 13984/14910 [00:40<00:02, 357.83it/s]
+Extracting image features:  94%|█████████▍| 14020/14910 [00:41<00:02, 357.13it/s]
+Extracting image features:  94%|█████████▍| 14080/14910 [00:41<00:02, 351.50it/s]
+Extracting image features:  95%|█████████▍| 14144/14910 [00:41<00:02, 367.38it/s]
+Extracting image features:  95%|█████████▌| 14181/14910 [00:41<00:01, 367.29it/s]
+Extracting image features:  96%|█████████▌| 14240/14910 [00:41<00:01, 357.53it/s]
+Extracting image features:  96%|█████████▌| 14276/14910 [00:41<00:01, 353.37it/s]
+Extracting image features:  96%|█████████▌| 14312/14910 [00:41<00:01, 351.84it/s]
+Extracting image features:  96%|█████████▋| 14368/14910 [00:41<00:01, 344.59it/s]
+Extracting image features:  97%|█████████▋| 14432/14910 [00:42<00:01, 357.68it/s]
+Extracting image features:  97%|█████████▋| 14496/14910 [00:42<00:01, 344.93it/s]
+Extracting image features:  97%|█████████▋| 14531/14910 [00:42<00:01, 341.73it/s]
+Extracting image features:  98%|█████████▊| 14592/14910 [00:42<00:00, 332.67it/s]
+Extracting image features:  98%|█████████▊| 14626/14910 [00:42<00:00, 325.40it/s]
+Extracting image features:  99%|█████████▊| 14688/14910 [00:42<00:00, 330.72it/s]
+Extracting image features:  99%|█████████▊| 14721/14910 [00:43<00:00, 330.23it/s]
+Extracting image features:  99%|█████████▉| 14784/14910 [00:43<00:00, 324.29it/s]
+Extracting image features: 100%|█████████▉| 14848/14910 [00:43<00:00, 344.18it/s]
+Extracting image features: 100%|██████████| 14910/14910 [00:43<00:00, 342.66it/s]
+
+Extracting image features:   0%|          | 0/1657 [00:00<?, ?it/s]
+Extracting image features:   4%|▍         | 64/1657 [00:00<00:02, 618.07it/s]
+Extracting image features:   8%|▊         | 128/1657 [00:00<00:02, 524.30it/s]
+Extracting image features:  12%|█▏        | 192/1657 [00:00<00:03, 466.66it/s]
+Extracting image features:  15%|█▌        | 256/1657 [00:00<00:03, 412.25it/s]
+Extracting image features:  19%|█▉        | 320/1657 [00:00<00:03, 396.30it/s]
+Extracting image features:  23%|██▎       | 384/1657 [00:00<00:03, 361.24it/s]
+Extracting image features:  25%|██▌       | 422/1657 [00:01<00:03, 361.42it/s]
+Extracting image features:  29%|██▉       | 480/1657 [00:01<00:03, 363.21it/s]
+Extracting image features:  33%|███▎      | 544/1657 [00:01<00:03, 363.05it/s]
+Extracting image features:  37%|███▋      | 608/1657 [00:01<00:02, 360.85it/s]
+Extracting image features:  41%|████      | 672/1657 [00:01<00:02, 366.71it/s]
+Extracting image features:  43%|████▎     | 709/1657 [00:01<00:02, 365.19it/s]
+Extracting image features:  45%|████▌     | 746/1657 [00:01<00:02, 359.69it/s]
+Extracting image features:  48%|████▊     | 800/1657 [00:02<00:02, 318.92it/s]
+Extracting image features:  50%|█████     | 833/1657 [00:02<00:02, 316.77it/s]
+Extracting image features:  52%|█████▏    | 866/1657 [00:02<00:02, 319.81it/s]
+Extracting image features:  56%|█████▌    | 928/1657 [00:02<00:02, 340.67it/s]
+Extracting image features:  60%|█████▉    | 992/1657 [00:02<00:01, 350.65it/s]
+Extracting image features:  64%|██████▎   | 1056/1657 [00:02<00:01, 354.22it/s]
+Extracting image features:  68%|██████▊   | 1120/1657 [00:03<00:01, 360.57it/s]
+Extracting image features:  71%|███████▏  | 1184/1657 [00:03<00:01, 364.72it/s]
+Extracting image features:  75%|███████▌  | 1248/1657 [00:03<00:01, 370.10it/s]
+Extracting image features:  79%|███████▉  | 1312/1657 [00:03<00:00, 365.10it/s]
+Extracting image features:  81%|████████▏ | 1349/1657 [00:03<00:00, 364.35it/s]
+Extracting image features:  85%|████████▍ | 1408/1657 [00:03<00:00, 347.43it/s]
+Extracting image features:  87%|████████▋ | 1443/1657 [00:03<00:00, 341.33it/s]
+Extracting image features:  91%|█████████ | 1504/1657 [00:04<00:00, 337.72it/s]
+Extracting image features:  95%|█████████▍| 1568/1657 [00:04<00:00, 342.25it/s]
+Extracting image features:  97%|█████████▋| 1603/1657 [00:04<00:00, 335.42it/s]
+Extracting image features: 100%|██████████| 1657/1657 [00:04<00:00, 364.79it/s]
+Extracting image features:   0%|          | 0/10 [00:00<?, ?it/s]
+Extracting image features: 100%|██████████| 10/10 [00:00<00:00, 82241.25it/s]

@@ -1,0 +1,1 @@
+ResNet50 avgpool features, 2048-dim, torchvision, ImageNet pretrained

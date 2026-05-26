@@ -1,0 +1,110 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided data and descriptions):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB JPEG images of skin lesions (e.g., /MyImages/image_XXXX.jpg)
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1)
+- **Training data:** Provided in train.csv, which includes image_name and label columns (label: malignant or benign)
+- **Test data:** Provided in test.csv, which includes image_name for images to predict
+- **Evaluation metric:** Area under the receiver operator curve (AUROC)
+- **Additional requirement:** Model fairness with respect to skin tone (minimize AUROC gap between light and dark skin tones)
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of ...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/image_11807.jpg
+Content:
+File Size (KB): 42.01
+Format: JPEG
+Mode: RGB
+Dimensions: (640, 401)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the training data contains a third label, 'non-neoplastic', in addition to the expected 'benign' and 'malignant' classes. The code attempts to compute class weights and configure focal loss for binary classification, but the presence of a third, unexpected string label causes a ValueError ("too many dimensions 'str'") when converting class weights to a torch tensor in AutoGluon.
+
+SUGGESTED_FIX:  
+Before training, filter the training DataFrame to include only rows where the label is either 'benign' or 'malignant'. Exclude all samples with the label 'non-neoplastic' from both training and validation splits, so that only the two intended classes are present when computing class weights and fitting the model.
+
+ERROR_SUMMARY: TensorFlow failed to initialize the cuDNN DNN library on the GPU, resulting in a runtime error during feature extraction with EfficientNetB0. The error "Could not create cudnn handle: CUDNN_STATUS_NOT_INITIALIZED" suggests a mismatch or incompatibility between the installed CUDA/cuDNN libraries and the NVIDIA GPU driver, or an incomplete/corrupted CUDA/cuDNN installation. As a result, no model was trained or predictions produced.
+
+SUGGESTED_FIX:  
+Check that your NVIDIA GPU driver version is compatible with the installed CUDA and cuDNN versions (driver 565.57.1 is reported; check TensorFlow's compatibility table for required versions). Ensure that the CUDA and cuDNN libraries are correctly installed and accessible in your environment, and that the correct versions are being used by TensorFlow. If necessary, update or reinstall the GPU driver, CUDA, and cuDNN to versions known to work together with your TensorFlow version, then restart the environment and rerun the script.
+
+ERROR_SUMMARY: The error occurs because the test set provided to `predictor.predict_proba()` only contains the column `image_name`, while the trained AutoGluon Tabular model expects the columns `skin_tone` and `alternative_skin_tone` (used as features during training). As a result, a KeyError is raised when the model attempts to access these missing columns in the test data.
+
+SUGGESTED_FIX:  
+Modify your test set preprocessing so that the DataFrame passed to `predictor.predict_proba()` includes all feature columns used during training (`skin_tone`, `alternative_skin_tone`, and `image_name`). If the test set does not have these columns, you must infer or impute reasonable values for them (e.g., set to a default or use predictions from another model), or adjust your training to only use features available at test time. Ensure the columns and their order match those used in training.
+
+ERROR_SUMMARY: The error occurs because the class weights (`alpha`) for focal loss are being passed as a dictionary mapping string labels to weights, but AutoGluon expects `alpha` to be a list or numpy array of floats (not a dict or list of strings), with the order matching the internal class index order. When the code tries to convert the dict to a tensor, it encounters a string key, resulting in the ValueError: "too many dimensions 'str'".
+
+SUGGESTED_FIX:  
+Modify the code so that `alpha` (class weights) is passed as a list of floats, ordered to match the class indices used by AutoGluon (typically sorted label order or as inferred by the model). Do not use a dictionary or include string labels; instead, ensure `class_weights_list = [weight_for_class0, weight_for_class1]` where the order matches the label encoding (e.g., `['benign', 'malignant']`). Pass this list directly as the value for `"optim.focal_loss.alpha"` in the hyperparameters dictionary.
+
+ERROR_SUMMARY: TensorFlow failed to initialize the cuDNN DNN library on the GPU due to a "CUDNN_STATUS_NOT_INITIALIZED" error, which is typically caused by an incompatible or insufficient NVIDIA GPU driver version relative to the installed CUDA/cuDNN libraries. As a result, feature extraction using EfficientNetB0 could not proceed, leading to a runtime error and script termination.
+
+SUGGESTED_FIX: Check that your NVIDIA GPU driver version is compatible with the installed CUDA and cuDNN versions required by your TensorFlow installation. Update your GPU driver to the latest supported version, and ensure that the CUDA and cuDNN libraries match the versions expected by TensorFlow; then restart your environment and rerun the script.
+
+ERROR_SUMMARY: The error occurs because the class weights (`alpha`) passed to AutoGluon's FocalLoss are a list of strings instead of floats. This happens because the code constructs `class_weights_list` using a dictionary with string keys (the class names), but the resulting list may contain string representations or be misaligned with the expected numeric format. FocalLoss expects `alpha` to be a list or array of floats, not strings, and thus raises a `ValueError: too many dimensions 'str'` when trying to convert the list to a PyTorch tensor.
+
+SUGGESTED_FIX:  
+Check how `class_weights_list` is constructed and ensure it is a list of floats (not strings). Explicitly convert each value in `class_weights_list` to a float before passing it to the hyperparameters (e.g., use `[float(class_weights[lab]) for lab in label_order]`). Double-check that the order matches the label encoding used by AutoGluon, and that the list contains only numeric values.
+
+ERROR_SUMMARY: TensorFlow failed to initialize the cuDNN DNN library on the GPU, resulting in a runtime error during feature extraction with EfficientNetB0. The error log shows "Could not create cudnn handle: CUDNN_STATUS_NOT_INITIALIZED" and "DNN library initialization failed," which is typically caused by a mismatch between the installed CUDA/cuDNN libraries and the NVIDIA driver version, or by insufficient available GPU memory/resources.
+
+SUGGESTED_FIX: Check that your NVIDIA driver version is fully compatible with the installed CUDA and cuDNN versions (driver 565.57.1 is reported, but the runtime/toolkit/DNN versions may not match). Ensure that no other processes are occupying GPU memory, and consider reducing the batch size in feature extraction to lower memory usage. If the problem persists, try reinstalling TensorFlow with versions specifically built for your CUDA/cuDNN stack, or run the script on CPU as a fallback.
+
+ERROR_SUMMARY: The error occurs during inference when calling `predictor.predict_proba(test_pred_df)`. The ValueError indicates that the test dataframe only contains the columns `['image_name', 'image']`, but is missing the required column `['skin_tone']`, which was present during training. AutoGluon MultiModal expects all columns used during training (except the label) to also be present at inference time.
+
+SUGGESTED_FIX:  
+Modify your test dataframe before prediction to include a `skin_tone` column. If true skin tone values are unavailable for the test set, add a placeholder column (e.g., fill with a default or median value, or use a neutral value such as -1 or the most common skin tone from the training set). Ensure the test dataframe passed to `predict_proba` has columns `['image_name', 'image', 'skin_tone']` in addition to any required columns, matching the training data structure (excluding the label).
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

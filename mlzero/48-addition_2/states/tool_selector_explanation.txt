@@ -1,0 +1,13 @@
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with a requirement to minimize AUROC gap between light and dark skin tones while maintaining overall AUROC. The data includes both images and tabular metadata (skin_tone, alternative_skin_tone, etc.), and the output is a malignancy probability per image.
+
+Analyzing the available libraries:
+
+- FlagEmbedding is specialized for retrieval and reranking, not for image classification or multimodal learning. It is not suitable for this task.
+- machine learning is a generic reference to ML algorithms, not an actual implementation or framework. It should only be considered if no other library is suitable.
+- wav2vec2 is designed for audio data, specifically speech recognition and audio classification. It is not applicable to image or tabular data.
+- qwen3 is a text generation model, not relevant for image or tabular classification tasks.
+- autogluon.tabular is optimized for tabular data only and does not support image-based tasks, so it cannot handle the primary input (images).
+- autogluon.multimodal is designed for multimodal classification tasks, including image and tabular data. It supports combining image features with tabular metadata, which is ideal for this task since both image and skin tone metadata are available. It is also designed for classification and regression, matching the requirements.
+- autogluon.timeseries is for time series forecasting, which is not relevant to this classification task.
+
+Therefore, autogluon.multimodal is the best fit, as it can handle both image and tabular data, supports classification, and is likely to provide tools for fairness-aware modeling (or at least allow for custom evaluation of AUROC gaps). The next best option is machine learning as a generic fallback, and autogluon.tabular as a distant third (if only tabular features were to be used, which is suboptimal for this image-centric task).

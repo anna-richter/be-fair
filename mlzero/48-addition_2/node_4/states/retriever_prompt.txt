@@ -1,0 +1,94 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (based only on provided files):**
+
+- **Problem Type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input Format:** RGB JPEG images of skin lesions (e.g., /MyImages/image_XXXX.jpg)
+- **Prediction Output Format:** For each input image, output a malignancy probability (a float between 0 and 1)
+- **Training Data:** Provided in train.csv, which includes image_name (corresponding to image files), label (malignant or benign), and metadata such as skin_tone and alternative_skin_tone
+- **Test Data:** test.csv contains image_name for which predictions are required
+- **Evaluation Metric:** Area under the receiver operator curve (AUROC)
+- **Additional Requirement:** The model should minimize the AUROC gap between light and dark skin tones, while maintaining overall performance
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance.']
+Rows:
+['Evaluation metric: Area under the receiver oper...', 'nan', 'nan']
+
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_2_data/MyImages/image_7857.jpg
+Content:
+File Size (KB): 35.83
+Format: JPEG
+Mode: RGB
+Dimensions: (391, 271)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the `MultiModalPredictor.fit()` method from AutoGluon does not accept a `val_data` keyword argument. Instead, validation data should be provided using the `tuning_data` parameter, or by relying on AutoGluon's internal validation split if `tuning_data` is not specified.
+
+SUGGESTED_FIX:  
+Remove the `val_data=val_data` argument from the `predictor.fit()` call and replace it with `tuning_data=val_data`. Alternatively, omit the validation split argument entirely to let AutoGluon handle validation automatically, or consult the [AutoGluon MultiModal documentation](https://auto.gluon.ai/stable/tutorials/multimodal/index.html) for the latest supported parameters.
+
+ERROR_SUMMARY: The script raises a KeyError when attempting to extract the columns ['skin_tone', 'alternative_skin_tone'] from the test DataFrame in the extract_features_df function. This occurs because test.csv does not contain these columns, but the code assumes their presence for both train and test data, leading to failure during feature extraction for the test set.
+
+SUGGESTED_FIX:  
+Modify the extract_features_df function to check if the DataFrame contains the 'skin_tone' and 'alternative_skin_tone' columns before attempting to extract them. If these columns are missing (as in the test set), fill in default values (e.g., -1) or omit them, ensuring the feature dimensions match between train and test. This will allow the script to process test data without error.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend attempted to create a UNIX domain socket with a path longer than the system limit (107 bytes), resulting in an OSError: "validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes". This is due to excessively long directory paths in the temporary scratch space, which Ray (used internally by AutoGluon for parallelism) cannot handle for its socket files.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and output, especially the scratch and working directories (e.g., /sc-scratch/sc-scratch-ikim-guidlight/...). Move your project to a location with a much shorter absolute path (ideally under /tmp or a short-named directory), and set the TMPDIR, TEMP, and TMP environment variables to this shorter path before running your script to ensure Ray and AutoGluon use it for all temporary files. Then rerun your training script.
+
+ERROR_SUMMARY: The error occurs because the `fit()` method of `MultiModalPredictor` does not accept an `eval_metric` keyword argument. Passing this unsupported argument results in a `TypeError`, which halts model training and subsequent steps.
+
+SUGGESTED_FIX:  
+Remove the `eval_metric="roc_auc"` argument from the `predictor.fit()` call. If you wish to specify the evaluation metric, use the `hyperparameters` dictionary (e.g., set `"optimization.metric_name": "roc_auc"`), or rely on AutoGluon's default metric selection for binary classification. Check the [AutoGluon MultiModal documentation](https://auto.gluon.ai/stable/tutorials/multimodal/index.html) for the correct way to set evaluation metrics.
+
+### Selected Tool/Library
+machine learning
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.
