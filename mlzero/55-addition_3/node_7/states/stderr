@@ -1,0 +1,330 @@
+
+==> WARNING: A newer version of conda exists. <==
+    current version: 25.11.0
+    latest version: 26.5.0
+Please update conda by running
+    $ conda update -n base -c conda-forge conda
+warning: Requirements file `/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt` does not contain any dependencies
+Using Python 3.11.15 environment at: 55-addition_3/node_7/conda_env
+Resolved 79 packages in 1.19s
+Uninstalled 1 package in 1.93s
+Installed 78 packages in 37.79s
+ + aiohappyeyeballs==2.6.2
+ + aiohttp==3.13.5
+ + aiosignal==1.4.0
+ + annotated-doc==0.0.4
+ + annotated-types==0.7.0
+ + anyio==4.13.0
+ + attrs==26.1.0
+ + certifi==2026.5.20
+ + chardet==7.4.3
+ + charset-normalizer==3.4.7
+ + click==8.4.1
+ + cuda-bindings==13.2.0
+ + cuda-pathfinder==1.5.4
+ + cuda-toolkit==13.0.2
+ + datasets==4.8.5
+ + dill==0.4.1
+ + filelock==3.29.0
+ + frozenlist==1.8.0
+ + fsspec==2026.2.0
+ + h11==0.16.0
+ + hf-xet==1.5.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + huggingface-hub==1.16.1
+ + idna==3.16
+ + jinja2==3.1.6
+ + markdown-it-py==4.2.0
+ + markupsafe==3.0.3
+ + mdurl==0.1.2
+ + mpmath==1.3.0
+ + multidict==6.7.1
+ + multiprocess==0.70.19
+ + networkx==3.6.1
+ + numpy==2.4.6
+ + nvidia-cublas==13.1.1.3
+ + nvidia-cuda-cupti==13.0.85
+ + nvidia-cuda-nvrtc==13.0.88
+ + nvidia-cuda-runtime==13.0.96
+ + nvidia-cudnn-cu13==9.20.0.48
+ + nvidia-cufft==12.0.0.61
+ + nvidia-cufile==1.15.1.6
+ + nvidia-curand==10.4.0.35
+ + nvidia-cusolver==12.0.4.66
+ + nvidia-cusparse==12.6.3.3
+ + nvidia-cusparselt-cu13==0.8.1
+ + nvidia-nccl-cu13==2.29.7
+ + nvidia-nvjitlink==13.0.88
+ + nvidia-nvshmem-cu13==3.4.5
+ + nvidia-nvtx==13.0.85
+ + opencv-python==4.13.0.92
+ + pandas==3.0.3
+ + pillow==12.2.0
+ + propcache==0.5.2
+ + pyarrow==24.0.0
+ + pydantic==2.14.0a1
+ + pydantic-core==2.47.0
+ + pygments==2.20.0
+ + python-calamine==0.6.2
+ + python-dateutil==2.9.0.post0
+ + pytz==2026.2
+ + pyyaml==6.0.3
+ + requests==2.34.2
+ + rich==15.0.0
+ - setuptools==82.0.1
+ + setuptools==81.0.0
+ + shellingham==1.5.4
+ + six==1.17.0
+ + sympy==1.14.0
+ + torch==2.12.0
+ + torchaudio==2.11.0
+ + torchvision==0.27.0
+ + tqdm==4.67.3
+ + triton==3.7.0
+ + typer==0.25.1
+ + typing-extensions==4.15.0
+ + typing-inspection==0.4.2
+ + urllib3==2.7.0
+ + xxhash==3.7.0
+ + yarl==1.24.2
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/55-addition_3/node_7/conda_env/lib/python3.11/site-packages/torch/cuda/__init__.py:187: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12070). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/55-addition_3/node_7/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/55-addition_3/node_7/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=EfficientNet_B3_Weights.IMAGENET1K_V1`. You can also use `weights=EfficientNet_B3_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Extracting image features (EffNetB3):   0%|          | 0/224 [00:00<?, ?it/s]
+Extracting image features (EffNetB3):   0%|          | 1/224 [00:05<19:26,  5.23s/it]
+Extracting image features (EffNetB3):   1%|          | 2/224 [00:10<18:52,  5.10s/it]
+Extracting image features (EffNetB3):   1%|▏         | 3/224 [00:15<18:46,  5.10s/it]
+Extracting image features (EffNetB3):   2%|▏         | 4/224 [00:20<18:34,  5.07s/it]
+Extracting image features (EffNetB3):   2%|▏         | 5/224 [00:25<18:23,  5.04s/it]
+Extracting image features (EffNetB3):   3%|▎         | 6/224 [00:30<18:18,  5.04s/it]
+Extracting image features (EffNetB3):   3%|▎         | 7/224 [00:35<18:10,  5.03s/it]
+Extracting image features (EffNetB3):   4%|▎         | 8/224 [00:40<18:01,  5.01s/it]
+Extracting image features (EffNetB3):   4%|▍         | 9/224 [00:45<18:02,  5.03s/it]
+Extracting image features (EffNetB3):   4%|▍         | 10/224 [00:50<18:03,  5.06s/it]
+Extracting image features (EffNetB3):   5%|▍         | 11/224 [00:55<18:11,  5.12s/it]
+Extracting image features (EffNetB3):   5%|▌         | 12/224 [01:00<18:03,  5.11s/it]
+Extracting image features (EffNetB3):   6%|▌         | 13/224 [01:05<17:52,  5.08s/it]
+Extracting image features (EffNetB3):   6%|▋         | 14/224 [01:10<17:43,  5.07s/it]
+Extracting image features (EffNetB3):   7%|▋         | 15/224 [01:16<17:44,  5.09s/it]
+Extracting image features (EffNetB3):   7%|▋         | 16/224 [01:21<17:37,  5.08s/it]
+Extracting image features (EffNetB3):   8%|▊         | 17/224 [01:26<17:27,  5.06s/it]
+Extracting image features (EffNetB3):   8%|▊         | 18/224 [01:31<17:24,  5.07s/it]
+Extracting image features (EffNetB3):   8%|▊         | 19/224 [01:36<17:18,  5.07s/it]
+Extracting image features (EffNetB3):   9%|▉         | 20/224 [01:41<17:14,  5.07s/it]
+Extracting image features (EffNetB3):   9%|▉         | 21/224 [01:46<17:12,  5.09s/it]
+Extracting image features (EffNetB3):  10%|▉         | 22/224 [01:51<17:06,  5.08s/it]
+Extracting image features (EffNetB3):  10%|█         | 23/224 [01:56<16:55,  5.05s/it]
+Extracting image features (EffNetB3):  11%|█         | 24/224 [02:01<16:50,  5.05s/it]
+Extracting image features (EffNetB3):  11%|█         | 25/224 [02:06<16:41,  5.03s/it]
+Extracting image features (EffNetB3):  12%|█▏        | 26/224 [02:11<16:38,  5.04s/it]
+Extracting image features (EffNetB3):  12%|█▏        | 27/224 [02:16<16:34,  5.05s/it]
+Extracting image features (EffNetB3):  12%|█▎        | 28/224 [02:21<16:31,  5.06s/it]
+Extracting image features (EffNetB3):  13%|█▎        | 29/224 [02:27<16:32,  5.09s/it]
+Extracting image features (EffNetB3):  13%|█▎        | 30/224 [02:32<16:25,  5.08s/it]
+Extracting image features (EffNetB3):  14%|█▍        | 31/224 [02:37<16:20,  5.08s/it]
+Extracting image features (EffNetB3):  14%|█▍        | 32/224 [02:42<16:16,  5.09s/it]
+Extracting image features (EffNetB3):  15%|█▍        | 33/224 [02:47<16:15,  5.11s/it]
+Extracting image features (EffNetB3):  15%|█▌        | 34/224 [02:52<16:09,  5.10s/it]
+Extracting image features (EffNetB3):  16%|█▌        | 35/224 [02:57<16:03,  5.10s/it]
+Extracting image features (EffNetB3):  16%|█▌        | 36/224 [03:02<15:59,  5.10s/it]
+Extracting image features (EffNetB3):  17%|█▋        | 37/224 [03:07<15:59,  5.13s/it]
+Extracting image features (EffNetB3):  17%|█▋        | 38/224 [03:12<15:52,  5.12s/it]
+Extracting image features (EffNetB3):  17%|█▋        | 39/224 [03:18<15:49,  5.13s/it]
+Extracting image features (EffNetB3):  18%|█▊        | 40/224 [03:23<15:45,  5.14s/it]
+Extracting image features (EffNetB3):  18%|█▊        | 41/224 [03:28<15:36,  5.12s/it]
+Extracting image features (EffNetB3):  19%|█▉        | 42/224 [03:33<15:30,  5.11s/it]
+Extracting image features (EffNetB3):  19%|█▉        | 43/224 [03:38<15:24,  5.11s/it]
+Extracting image features (EffNetB3):  20%|█▉        | 44/224 [03:43<15:18,  5.10s/it]
+Extracting image features (EffNetB3):  20%|██        | 45/224 [03:48<15:12,  5.10s/it]
+Extracting image features (EffNetB3):  21%|██        | 46/224 [03:53<15:09,  5.11s/it]
+Extracting image features (EffNetB3):  21%|██        | 47/224 [03:58<15:00,  5.09s/it]
+Extracting image features (EffNetB3):  21%|██▏       | 48/224 [04:03<14:50,  5.06s/it]
+Extracting image features (EffNetB3):  22%|██▏       | 49/224 [04:08<14:45,  5.06s/it]
+Extracting image features (EffNetB3):  22%|██▏       | 50/224 [04:13<14:37,  5.04s/it]
+Extracting image features (EffNetB3):  23%|██▎       | 51/224 [04:18<14:31,  5.04s/it]
+Extracting image features (EffNetB3):  23%|██▎       | 52/224 [04:23<14:23,  5.02s/it]
+Extracting image features (EffNetB3):  24%|██▎       | 53/224 [04:28<14:19,  5.02s/it]
+Extracting image features (EffNetB3):  24%|██▍       | 54/224 [04:34<14:15,  5.03s/it]
+Extracting image features (EffNetB3):  25%|██▍       | 55/224 [04:39<14:11,  5.04s/it]
+Extracting image features (EffNetB3):  25%|██▌       | 56/224 [04:44<14:06,  5.04s/it]
+Extracting image features (EffNetB3):  25%|██▌       | 57/224 [04:49<14:03,  5.05s/it]
+Extracting image features (EffNetB3):  26%|██▌       | 58/224 [04:54<13:57,  5.04s/it]
+Extracting image features (EffNetB3):  26%|██▋       | 59/224 [04:59<13:53,  5.05s/it]
+Extracting image features (EffNetB3):  27%|██▋       | 60/224 [05:04<13:44,  5.03s/it]
+Extracting image features (EffNetB3):  27%|██▋       | 61/224 [05:09<13:40,  5.04s/it]
+Extracting image features (EffNetB3):  28%|██▊       | 62/224 [05:14<13:36,  5.04s/it]
+Extracting image features (EffNetB3):  28%|██▊       | 63/224 [05:19<13:31,  5.04s/it]
+Extracting image features (EffNetB3):  29%|██▊       | 64/224 [05:24<13:24,  5.03s/it]
+Extracting image features (EffNetB3):  29%|██▉       | 65/224 [05:29<13:20,  5.04s/it]
+Extracting image features (EffNetB3):  29%|██▉       | 66/224 [05:34<13:21,  5.07s/it]
+Extracting image features (EffNetB3):  30%|██▉       | 67/224 [05:39<13:16,  5.07s/it]
+Extracting image features (EffNetB3):  30%|███       | 68/224 [05:44<13:07,  5.05s/it]
+Extracting image features (EffNetB3):  31%|███       | 69/224 [05:49<13:00,  5.04s/it]
+Extracting image features (EffNetB3):  31%|███▏      | 70/224 [05:54<12:52,  5.02s/it]
+Extracting image features (EffNetB3):  32%|███▏      | 71/224 [05:59<12:48,  5.03s/it]
+Extracting image features (EffNetB3):  32%|███▏      | 72/224 [06:04<12:41,  5.01s/it]
+Extracting image features (EffNetB3):  33%|███▎      | 73/224 [06:09<12:36,  5.01s/it]
+Extracting image features (EffNetB3):  33%|███▎      | 74/224 [06:14<12:31,  5.01s/it]
+Extracting image features (EffNetB3):  33%|███▎      | 75/224 [06:19<12:29,  5.03s/it]
+Extracting image features (EffNetB3):  34%|███▍      | 76/224 [06:24<12:23,  5.03s/it]
+Extracting image features (EffNetB3):  34%|███▍      | 77/224 [06:29<12:19,  5.03s/it]
+Extracting image features (EffNetB3):  35%|███▍      | 78/224 [06:34<12:13,  5.03s/it]
+Extracting image features (EffNetB3):  35%|███▌      | 79/224 [06:39<12:05,  5.01s/it]
+Extracting image features (EffNetB3):  36%|███▌      | 80/224 [06:44<11:58,  4.99s/it]
+Extracting image features (EffNetB3):  36%|███▌      | 81/224 [06:49<11:52,  4.98s/it]
+Extracting image features (EffNetB3):  37%|███▋      | 82/224 [06:54<11:46,  4.98s/it]
+Extracting image features (EffNetB3):  37%|███▋      | 83/224 [06:59<11:38,  4.95s/it]
+Extracting image features (EffNetB3):  38%|███▊      | 84/224 [07:04<11:32,  4.95s/it]
+Extracting image features (EffNetB3):  38%|███▊      | 85/224 [07:09<11:34,  4.99s/it]
+Extracting image features (EffNetB3):  38%|███▊      | 86/224 [07:14<11:35,  5.04s/it]
+Extracting image features (EffNetB3):  39%|███▉      | 87/224 [07:19<11:31,  5.05s/it]
+Extracting image features (EffNetB3):  39%|███▉      | 88/224 [07:24<11:28,  5.06s/it]
+Extracting image features (EffNetB3):  40%|███▉      | 89/224 [07:30<11:24,  5.07s/it]
+Extracting image features (EffNetB3):  40%|████      | 90/224 [07:35<11:16,  5.05s/it]
+Extracting image features (EffNetB3):  41%|████      | 91/224 [07:40<11:16,  5.09s/it]
+Extracting image features (EffNetB3):  41%|████      | 92/224 [07:45<11:12,  5.10s/it]
+Extracting image features (EffNetB3):  42%|████▏     | 93/224 [07:50<11:09,  5.11s/it]
+Extracting image features (EffNetB3):  42%|████▏     | 94/224 [07:55<11:05,  5.12s/it]
+Extracting image features (EffNetB3):  42%|████▏     | 95/224 [08:00<11:00,  5.12s/it]
+Extracting image features (EffNetB3):  43%|████▎     | 96/224 [08:06<11:01,  5.16s/it]
+Extracting image features (EffNetB3):  43%|████▎     | 97/224 [08:11<10:56,  5.17s/it]
+Extracting image features (EffNetB3):  44%|████▍     | 98/224 [08:16<10:51,  5.17s/it]
+Extracting image features (EffNetB3):  44%|████▍     | 99/224 [08:21<10:48,  5.19s/it]
+Extracting image features (EffNetB3):  45%|████▍     | 100/224 [08:26<10:38,  5.15s/it]
+Extracting image features (EffNetB3):  45%|████▌     | 101/224 [08:31<10:34,  5.16s/it]
+Extracting image features (EffNetB3):  46%|████▌     | 102/224 [08:36<10:28,  5.15s/it]
+Extracting image features (EffNetB3):  46%|████▌     | 103/224 [08:42<10:22,  5.14s/it]
+Extracting image features (EffNetB3):  46%|████▋     | 104/224 [08:47<10:17,  5.15s/it]
+Extracting image features (EffNetB3):  47%|████▋     | 105/224 [08:52<10:15,  5.17s/it]
+Extracting image features (EffNetB3):  47%|████▋     | 106/224 [08:57<10:06,  5.14s/it]
+Extracting image features (EffNetB3):  48%|████▊     | 107/224 [09:02<10:03,  5.16s/it]
+Extracting image features (EffNetB3):  48%|████▊     | 108/224 [09:07<09:54,  5.13s/it]
+Extracting image features (EffNetB3):  49%|████▊     | 109/224 [09:12<09:49,  5.13s/it]
+Extracting image features (EffNetB3):  49%|████▉     | 110/224 [09:18<09:43,  5.12s/it]
+Extracting image features (EffNetB3):  50%|████▉     | 111/224 [09:23<09:41,  5.15s/it]
+Extracting image features (EffNetB3):  50%|█████     | 112/224 [09:28<09:32,  5.11s/it]
+Extracting image features (EffNetB3):  50%|█████     | 113/224 [09:33<09:27,  5.11s/it]
+Extracting image features (EffNetB3):  51%|█████     | 114/224 [09:38<09:22,  5.11s/it]
+Extracting image features (EffNetB3):  51%|█████▏    | 115/224 [09:43<09:15,  5.10s/it]
+Extracting image features (EffNetB3):  52%|█████▏    | 116/224 [09:48<09:12,  5.11s/it]
+Extracting image features (EffNetB3):  52%|█████▏    | 117/224 [09:53<09:09,  5.13s/it]
+Extracting image features (EffNetB3):  53%|█████▎    | 118/224 [09:59<09:05,  5.15s/it]
+Extracting image features (EffNetB3):  53%|█████▎    | 119/224 [10:04<09:11,  5.25s/it]
+Extracting image features (EffNetB3):  54%|█████▎    | 120/224 [10:09<09:04,  5.23s/it]
+Extracting image features (EffNetB3):  54%|█████▍    | 121/224 [10:14<08:57,  5.22s/it]
+Extracting image features (EffNetB3):  54%|█████▍    | 122/224 [10:20<08:48,  5.18s/it]
+Extracting image features (EffNetB3):  55%|█████▍    | 123/224 [10:25<08:42,  5.17s/it]
+Extracting image features (EffNetB3):  55%|█████▌    | 124/224 [10:30<08:33,  5.14s/it]
+Extracting image features (EffNetB3):  56%|█████▌    | 125/224 [10:35<08:27,  5.13s/it]
+Extracting image features (EffNetB3):  56%|█████▋    | 126/224 [10:40<08:22,  5.13s/it]
+Extracting image features (EffNetB3):  57%|█████▋    | 127/224 [10:45<08:20,  5.16s/it]
+Extracting image features (EffNetB3):  57%|█████▋    | 128/224 [10:50<08:13,  5.14s/it]
+Extracting image features (EffNetB3):  58%|█████▊    | 129/224 [10:55<08:07,  5.14s/it]
+Extracting image features (EffNetB3):  58%|█████▊    | 130/224 [11:01<08:02,  5.14s/it]
+Extracting image features (EffNetB3):  58%|█████▊    | 131/224 [11:06<07:58,  5.15s/it]
+Extracting image features (EffNetB3):  59%|█████▉    | 132/224 [11:11<07:52,  5.13s/it]
+Extracting image features (EffNetB3):  59%|█████▉    | 133/224 [11:16<07:46,  5.12s/it]
+Extracting image features (EffNetB3):  60%|█████▉    | 134/224 [11:21<07:40,  5.11s/it]
+Extracting image features (EffNetB3):  60%|██████    | 135/224 [11:26<07:30,  5.06s/it]
+Extracting image features (EffNetB3):  61%|██████    | 136/224 [11:31<07:25,  5.06s/it]
+Extracting image features (EffNetB3):  61%|██████    | 137/224 [11:36<07:18,  5.04s/it]
+Extracting image features (EffNetB3):  62%|██████▏   | 138/224 [11:41<07:13,  5.04s/it]
+Extracting image features (EffNetB3):  62%|██████▏   | 139/224 [11:46<07:09,  5.06s/it]
+Extracting image features (EffNetB3):  62%|██████▎   | 140/224 [11:51<07:03,  5.04s/it]
+Extracting image features (EffNetB3):  63%|██████▎   | 141/224 [11:56<06:59,  5.05s/it]
+Extracting image features (EffNetB3):  63%|██████▎   | 142/224 [12:01<06:52,  5.03s/it]
+Extracting image features (EffNetB3):  64%|██████▍   | 143/224 [12:06<06:48,  5.05s/it]
+Extracting image features (EffNetB3):  64%|██████▍   | 144/224 [12:11<06:43,  5.05s/it]
+Extracting image features (EffNetB3):  65%|██████▍   | 145/224 [12:16<06:38,  5.05s/it]
+Extracting image features (EffNetB3):  65%|██████▌   | 146/224 [12:21<06:33,  5.04s/it]
+Extracting image features (EffNetB3):  66%|██████▌   | 147/224 [12:26<06:27,  5.04s/it]
+Extracting image features (EffNetB3):  66%|██████▌   | 148/224 [12:32<06:23,  5.05s/it]
+Extracting image features (EffNetB3):  67%|██████▋   | 149/224 [12:37<06:19,  5.06s/it]
+Extracting image features (EffNetB3):  67%|██████▋   | 150/224 [12:42<06:14,  5.06s/it]
+Extracting image features (EffNetB3):  67%|██████▋   | 151/224 [12:47<06:10,  5.08s/it]
+Extracting image features (EffNetB3):  68%|██████▊   | 152/224 [12:52<06:04,  5.06s/it]
+Extracting image features (EffNetB3):  68%|██████▊   | 153/224 [12:57<05:59,  5.06s/it]
+Extracting image features (EffNetB3):  69%|██████▉   | 154/224 [13:02<05:54,  5.06s/it]
+Extracting image features (EffNetB3):  69%|██████▉   | 155/224 [13:07<05:49,  5.06s/it]
+Extracting image features (EffNetB3):  70%|██████▉   | 156/224 [13:12<05:45,  5.08s/it]
+Extracting image features (EffNetB3):  70%|███████   | 157/224 [13:17<05:41,  5.09s/it]
+Extracting image features (EffNetB3):  71%|███████   | 158/224 [13:22<05:34,  5.07s/it]
+Extracting image features (EffNetB3):  71%|███████   | 159/224 [13:27<05:27,  5.04s/it]
+Extracting image features (EffNetB3):  71%|███████▏  | 160/224 [13:32<05:23,  5.05s/it]
+Extracting image features (EffNetB3):  72%|███████▏  | 161/224 [13:37<05:17,  5.04s/it]
+Extracting image features (EffNetB3):  72%|███████▏  | 162/224 [13:42<05:12,  5.05s/it]
+Extracting image features (EffNetB3):  73%|███████▎  | 163/224 [13:48<05:10,  5.09s/it]
+Extracting image features (EffNetB3):  73%|███████▎  | 164/224 [13:53<05:03,  5.06s/it]
+Extracting image features (EffNetB3):  74%|███████▎  | 165/224 [13:58<04:58,  5.07s/it]
+Extracting image features (EffNetB3):  74%|███████▍  | 166/224 [14:03<04:52,  5.05s/it]
+Extracting image features (EffNetB3):  75%|███████▍  | 167/224 [14:08<04:47,  5.04s/it]
+Extracting image features (EffNetB3):  75%|███████▌  | 168/224 [14:13<04:43,  5.05s/it]
+Extracting image features (EffNetB3):  75%|███████▌  | 169/224 [14:18<04:38,  5.06s/it]
+Extracting image features (EffNetB3):  76%|███████▌  | 170/224 [14:23<04:33,  5.06s/it]
+Extracting image features (EffNetB3):  76%|███████▋  | 171/224 [14:28<04:27,  5.04s/it]
+Extracting image features (EffNetB3):  77%|███████▋  | 172/224 [14:33<04:21,  5.03s/it]
+Extracting image features (EffNetB3):  77%|███████▋  | 173/224 [14:38<04:16,  5.02s/it]
+Extracting image features (EffNetB3):  78%|███████▊  | 174/224 [14:43<04:12,  5.05s/it]
+Extracting image features (EffNetB3):  78%|███████▊  | 175/224 [14:48<04:09,  5.09s/it]
+Extracting image features (EffNetB3):  79%|███████▊  | 176/224 [14:53<04:03,  5.08s/it]
+Extracting image features (EffNetB3):  79%|███████▉  | 177/224 [14:58<03:58,  5.07s/it]
+Extracting image features (EffNetB3):  79%|███████▉  | 178/224 [15:03<03:52,  5.06s/it]
+Extracting image features (EffNetB3):  80%|███████▉  | 179/224 [15:08<03:47,  5.05s/it]
+Extracting image features (EffNetB3):  80%|████████  | 180/224 [15:13<03:41,  5.04s/it]
+Extracting image features (EffNetB3):  81%|████████  | 181/224 [15:18<03:36,  5.04s/it]
+Extracting image features (EffNetB3):  81%|████████▏ | 182/224 [15:23<03:31,  5.04s/it]
+Extracting image features (EffNetB3):  82%|████████▏ | 183/224 [15:28<03:26,  5.03s/it]
+Extracting image features (EffNetB3):  82%|████████▏ | 184/224 [15:34<03:22,  5.06s/it]
+Extracting image features (EffNetB3):  83%|████████▎ | 185/224 [15:39<03:16,  5.05s/it]
+Extracting image features (EffNetB3):  83%|████████▎ | 186/224 [15:44<03:11,  5.03s/it]
+Extracting image features (EffNetB3):  83%|████████▎ | 187/224 [15:49<03:06,  5.03s/it]
+Extracting image features (EffNetB3):  84%|████████▍ | 188/224 [15:54<03:00,  5.02s/it]
+Extracting image features (EffNetB3):  84%|████████▍ | 189/224 [15:59<02:55,  5.01s/it]
+Extracting image features (EffNetB3):  85%|████████▍ | 190/224 [16:04<02:50,  5.01s/it]
+Extracting image features (EffNetB3):  85%|████████▌ | 191/224 [16:09<02:45,  5.02s/it]
+Extracting image features (EffNetB3):  86%|████████▌ | 192/224 [16:14<02:40,  5.03s/it]
+Extracting image features (EffNetB3):  86%|████████▌ | 193/224 [16:19<02:37,  5.07s/it]
+Extracting image features (EffNetB3):  87%|████████▋ | 194/224 [16:24<02:34,  5.14s/it]
+Extracting image features (EffNetB3):  87%|████████▋ | 195/224 [16:29<02:29,  5.14s/it]
+Extracting image features (EffNetB3):  88%|████████▊ | 196/224 [16:34<02:23,  5.12s/it]
+Extracting image features (EffNetB3):  88%|████████▊ | 197/224 [16:39<02:17,  5.10s/it]
+Extracting image features (EffNetB3):  88%|████████▊ | 198/224 [16:45<02:12,  5.09s/it]
+Extracting image features (EffNetB3):  89%|████████▉ | 199/224 [16:50<02:06,  5.07s/it]
+Extracting image features (EffNetB3):  89%|████████▉ | 200/224 [16:55<02:01,  5.05s/it]
+Extracting image features (EffNetB3):  90%|████████▉ | 201/224 [17:00<01:56,  5.06s/it]
+Extracting image features (EffNetB3):  90%|█████████ | 202/224 [17:05<01:51,  5.05s/it]
+Extracting image features (EffNetB3):  91%|█████████ | 203/224 [17:10<01:46,  5.08s/it]
+Extracting image features (EffNetB3):  91%|█████████ | 204/224 [17:15<01:43,  5.18s/it]
+Extracting image features (EffNetB3):  92%|█████████▏| 205/224 [17:20<01:38,  5.16s/it]
+Extracting image features (EffNetB3):  92%|█████████▏| 206/224 [17:25<01:32,  5.12s/it]
+Extracting image features (EffNetB3):  92%|█████████▏| 207/224 [17:30<01:26,  5.10s/it]
+Extracting image features (EffNetB3):  93%|█████████▎| 208/224 [17:35<01:21,  5.09s/it]
+Extracting image features (EffNetB3):  93%|█████████▎| 209/224 [17:41<01:16,  5.08s/it]
+Extracting image features (EffNetB3):  94%|█████████▍| 210/224 [17:46<01:11,  5.09s/it]
+Extracting image features (EffNetB3):  94%|█████████▍| 211/224 [17:51<01:06,  5.14s/it]
+Extracting image features (EffNetB3):  95%|█████████▍| 212/224 [17:56<01:01,  5.12s/it]
+Extracting image features (EffNetB3):  95%|█████████▌| 213/224 [18:01<00:56,  5.10s/it]
+Extracting image features (EffNetB3):  96%|█████████▌| 214/224 [18:06<00:50,  5.09s/it]
+Extracting image features (EffNetB3):  96%|█████████▌| 215/224 [18:11<00:45,  5.09s/it]
+Extracting image features (EffNetB3):  96%|█████████▋| 216/224 [18:16<00:40,  5.12s/it]
+Extracting image features (EffNetB3):  97%|█████████▋| 217/224 [18:22<00:35,  5.11s/it]
+Extracting image features (EffNetB3):  97%|█████████▋| 218/224 [18:27<00:30,  5.10s/it]
+Extracting image features (EffNetB3):  98%|█████████▊| 219/224 [18:32<00:25,  5.12s/it]
+Extracting image features (EffNetB3):  98%|█████████▊| 220/224 [18:37<00:20,  5.10s/it]
+Extracting image features (EffNetB3):  99%|█████████▊| 221/224 [18:42<00:15,  5.10s/it]
+Extracting image features (EffNetB3):  99%|█████████▉| 222/224 [18:47<00:10,  5.11s/it]
+Extracting image features (EffNetB3): 100%|█████████▉| 223/224 [18:52<00:05,  5.15s/it]
+Extracting image features (EffNetB3): 100%|██████████| 224/224 [18:57<00:00,  5.11s/it]
+Extracting image features (EffNetB3): 100%|██████████| 224/224 [18:57<00:00,  5.08s/it]
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/55-addition_3/node_7/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/55-addition_3/node_7/conda_env/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=EfficientNet_B3_Weights.IMAGENET1K_V1`. You can also use `weights=EfficientNet_B3_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+
+Extracting image features (EffNetB3):   0%|          | 0/1 [00:00<?, ?it/s]
+Extracting image features (EffNetB3): 100%|██████████| 1/1 [00:00<00:00,  1.22it/s]
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/55-addition_3/node_7/conda_env/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names

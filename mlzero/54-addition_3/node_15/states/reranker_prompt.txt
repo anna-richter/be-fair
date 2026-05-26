@@ -1,0 +1,142 @@
+
+Given the following context and list of tutorials with their summaries, select the 5 most relevant tutorials for helping with this task. Consider how well each tutorial's title and summary match the task, data, user question, and any errors.
+
+### Task Description
+**Task Description (condensed and precise):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB images (JPEG files), with image file names provided in CSV files.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC), with attention to minimizing AUROC gap between light and dark skin tones.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance. To improve fairness across skin tones', ' you may apply techniques such as filtering', ' upsampling', ' group reweighting in the loss function', ' or any other appropriate methods.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/image_5073.jpg
+Content:
+File: image_5073.jpg
+Type: Image (JPEG)
+Size: 0.04 MB
+Format: JPEG
+Mode: RGB
+Size: (473, 375)
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the `MultiModalPredictor.fit()` method in the installed version of AutoGluon MultiModal does not accept a `verbose` keyword argument. Passing `verbose=True` to `fit()` causes a `TypeError`, as this parameter is not defined in the method's signature.
+
+SUGGESTED_FIX:  
+Remove the `verbose` argument from the call to `predictor.fit()`. The method will use its default logging behavior, and if you need to control verbosity, refer to the official documentation for supported logging or verbosity options.
+
+ERROR_SUMMARY: The process was terminated after exceeding the 1-hour wall-clock time limit, likely due to slow data loading and/or training. Repeated `OSError: [Errno 16] Device or resource busy` errors occurred during temporary file cleanup, which are typical on NFS filesystems when files are still open by other processes (often caused by too many DataLoader workers). Additionally, the script requested 16 DataLoader workers, while the system recommends a maximum of 2, which can cause slowness or freezing.
+
+SUGGESTED_FIX:  
+Reduce the number of DataLoader workers to 2 or fewer by setting `num_workers=2` in all DataLoader instances to avoid resource contention and slowness. Monitor and limit batch size if memory is constrained, and consider reducing the number of training epochs or using a smaller model to ensure the script completes within the 1-hour time limit. After making these changes, rerun the script and check for completion and output correctness.
+
+ERROR_SUMMARY: The error occurs because the code attempts to select the columns ['skin_tone', 'alternative_skin_tone', 'expert_opinion'] from the test DataFrame, but these columns do not exist in test.csv. This results in a KeyError when executing `test_ag = test[feature_cols].copy()`.
+
+SUGGESTED_FIX:  
+Update the code so that, when preparing the test set for prediction, you only select columns that are actually present in test.csv (i.e., only 'image_name'). Do not attempt to select or use columns like 'skin_tone', 'alternative_skin_tone', or 'expert_opinion' for the test set, as they are not available; adjust `test_ag` to use only the intersection of feature columns and test columns.
+
+ERROR_SUMMARY: The error occurs because the value passed to the focal loss alpha parameter (`optim.focal_loss.alpha`) is not in the expected format. Specifically, AutoGluon expects `alpha` to be a list or numpy array of floats (one per class), but a string or an object with an incorrect shape/type was provided, resulting in the ValueError: "too many dimensions 'str'" when calling `torch.tensor(alpha, dtype=torch.float32)`.
+
+SUGGESTED_FIX:  
+Check the value and type of `class_weights` before passing it to the hyperparameters. Ensure that `class_weights` is a Python list or numpy array of floats (e.g., `[0.5, 0.5]` for binary classification), not a string or any other type. Print or log `class_weights` right before model training to verify its structure, and confirm that it matches the number of classes and contains only numeric values.
+
+ERROR_SUMMARY: The main error is that the process exceeded the 1-hour (3600 seconds) wall-clock time limit, likely due to slow data loading or model training. Additionally, there are repeated OSError warnings related to NFS resource contention (".nfs... Device or resource busy") during temporary directory cleanup, and a warning that the installed NVIDIA GPU driver is too old for the requested CUDA version, which may prevent GPU acceleration or cause fallback to CPU.
+
+SUGGESTED_FIX:  
+Reduce the training time by decreasing the number of epochs, using a smaller model (e.g., a lighter EfficientNet variant or ResNet18), and/or lowering the batch size if I/O is a bottleneck. Investigate and resolve NFS file locking issues by ensuring no processes are holding onto deleted files, and consider using local disk for temporary files if possible. Update the NVIDIA GPU driver to a version compatible with your CUDA/PyTorch stack to enable GPU acceleration and avoid fallback to CPU, which significantly slows down training.
+
+ERROR_SUMMARY: The training process was terminated by a SIGTERM signal before completion, likely due to exceeding the wall-clock time limit (1 hour) imposed by the execution environment. This caused the AutoGluon MultiModal `.fit()` call to be interrupted, resulting in no model output or predictions.
+
+SUGGESTED_FIX:  
+Reduce the total training time by lowering `optim.max_epochs` (e.g., to 3–5), decreasing model size (e.g., use a smaller backbone via `"model.timm_image.checkpoint_name"`), or reducing dataset size (e.g., subsample training data). Also, ensure that data loading and preprocessing are efficient, and set a stricter `time_limit` in `predictor.fit()` (e.g., 1000–1200 seconds) to leave time for inference and saving outputs before the hard timeout.
+
+ERROR_SUMMARY: The main error is that the process was terminated after exceeding the 1-hour wall-clock time limit, meaning the script did not finish training and inference within the allowed 3600 seconds. Additional warnings indicate that the installed NVIDIA GPU driver is too old for the requested CUDA version (causing PyTorch to fall back to CPU), and there are "Device or resource busy" errors from NFS when trying to delete temporary files, but these are secondary to the timeout.
+
+SUGGESTED_FIX:  
+Reduce the total runtime by further decreasing the number of training epochs (e.g., to 1–2), using a smaller model (e.g., resnet18 instead of efficientnet_b0), and/or reducing the training dataset size (e.g., subsample for quick prototyping). Also, check your environment's GPU driver compatibility and update the NVIDIA driver if possible to enable GPU acceleration, which will significantly speed up training and inference.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions (`validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes`), causing all model training to be skipped and no models to be fit.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output—specifically, move your working/output directories to a location with a much shorter absolute path (e.g., `/tmp/ag_run` or `/scratch/ag_run`). Ensure that both the `OUTPUT_DIR` and any temp directories (including those used by Ray and AutoGluon) are as short as possible, then re-run your script. If you cannot change the base directory, set the `TMPDIR`, `TEMP`, and `TMP` environment variables to a short path before running Python, so that Ray and other libraries use a shorter temp path.
+
+ERROR_SUMMARY: The training process was terminated by a SIGTERM (signal 15), which is typically sent by the SLURM workload manager when the job exceeds its wall-clock time limit (1 hour in this case). As a result, the model did not complete training, and no predictions or validation scores were produced.
+
+SUGGESTED_FIX:  
+Reduce the total training time by lowering the number of epochs (e.g., set `"optim.max_epochs"` to 2 or 3), decrease the model size (use a lighter backbone such as `"mobilenetv3_large_100"`), or further restrict the training time via the `time_limit` parameter (e.g., `time_limit=600`). Additionally, ensure that data loading and preprocessing are efficient, and consider using fewer GPUs or workers if initialization overhead is high.
+
+ERROR_SUMMARY: The training process was terminated by a SIGTERM signal, which is typically sent by the job scheduler (SLURM) when the script exceeds its allocated wall-clock time or due to resource management policies. As a result, the model did not complete training, and no predictions or validation metrics were produced.
+
+SUGGESTED_FIX:  
+Reduce the total runtime by further lowering the number of training epochs (e.g., set `optim.max_epochs` to 1 or 2), decrease model complexity (use a smaller/faster backbone), and/or reduce dataset size (use a smaller training subset or lower image resolution). Additionally, ensure that data loading and preprocessing are efficient, and consider profiling the script to identify and optimize any slow steps.
+
+ERROR_SUMMARY: The error "RuntimeError: mat1 and mat2 shapes cannot be multiplied (32x1280 and 960x1)" occurs because the classifier head of the MobileNetV3 model is initialized with an incorrect input feature size (in_features=960), while the actual output feature size from the backbone is 1280. This shape mismatch prevents the linear layer from performing matrix multiplication during the forward pass.
+
+SUGGESTED_FIX: Check the value assigned to in_features when constructing the classifier head in your MobileNetV3Classifier. Ensure that in_features matches the output feature dimension of the backbone (which is 1280 for "mobilenetv3_large_100") by referencing self.backbone.num_features or the correct attribute from the timm model. Re-initialize the head layer with in_features=1280 to resolve the mismatch.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the UNIX socket path used by Ray (a backend for parallel processing) exceeded the maximum allowed length (107 bytes) for AF_UNIX sockets. This caused OSError exceptions during model training, resulting in all models being skipped and a final RuntimeError indicating that no models were trained. The root cause is the excessive length of the temporary directory path, likely due to deep directory nesting in your scratch space.
+
+SUGGESTED_FIX:  
+Shorten the directory path used for temporary files and model output by moving your working directory (including data, output, and conda environment) to a location with a much shorter absolute path (e.g., /tmp/youruser/ or /scratch/youruser/). Ensure that all relevant environment variables (such as TMPDIR, TEMP, and TMP) point to this shorter path before running your script, so that Ray and AutoGluon use it for temporary files and socket creation. Then, rerun your training script.
+
+ERROR_SUMMARY: The training process was terminated by a SIGTERM signal, which is typically sent by the job scheduler (SLURM) due to exceeding the wall-clock time limit or resource constraints. As a result, the model did not complete training, and no predictions or validation metrics were produced.
+
+SUGGESTED_FIX:  
+Reduce the total training time by lowering the number of epochs, using a smaller model backbone, or decreasing dataset size (e.g., subsample for development). Additionally, ensure that the combined time for data loading, training, and inference stays well below the 1-hour wall-clock limit imposed by your environment. Monitor actual runtime in logs and adjust `optim.max_epochs`, `time_limit`, and batch size accordingly to guarantee completion within the allowed time.
+
+ERROR_SUMMARY: The error "RuntimeError: mat1 and mat2 shapes cannot be multiplied (32x1280 and 960x1)" occurs because the output feature size of the MobileNetV3 backbone (1280) does not match the expected input size (960) of the classifier head. This mismatch is due to using self.backbone.num_features (which is 960 for some models, but 1280 for mobilenetv3_large_100 in timm), leading to an incorrectly sized linear layer.
+
+SUGGESTED_FIX:  
+Check the actual output feature dimension of the backbone by passing a dummy input through self.backbone and use that value to define the classifier head's input size. Replace self.backbone.num_features with the dynamically determined feature size (e.g., by running a forward pass with a dummy tensor of shape [1, 3, 224, 224]) to ensure the Linear layer matches the backbone output.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions (`validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes`), causing all model training attempts to be skipped and ultimately raising a RuntimeError due to no models being fit.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output by moving your working directories (including scratch, tmp, and output folders) to a location with a much shorter absolute path (e.g., `/tmp/your_project`). Update all relevant path variables in your scripts and environment to use these shorter paths, then rerun the training. This will ensure that Ray's socket file paths remain within the UNIX limit and allow model training to proceed.
+
+Available Tutorials:
+1. Title: Condensed: Intro to Use Machine Learning or Deep Learning algorithms
+   Summary: You can use any machine learning or deep learning algorithms to complete the tasks. Make sure you have them installed in bash script.
+
+IMPORTANT: Respond ONLY with the numbers of the selected tutorials (up to 5) separated by commas. 
+For example: "1,3,4" or "2,5" or just "1" if only one is relevant.
+DO NOT include any other text, explanation, or formatting in your response.

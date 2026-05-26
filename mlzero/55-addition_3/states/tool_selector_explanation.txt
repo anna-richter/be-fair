@@ -1,0 +1,13 @@
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with a focus on fairness across skin tones and AUROC as the main metric. The model must be saved and inference provided via a function that takes a folder of images and returns malignancy probabilities.
+
+First, I evaluate each library:
+
+- FlagEmbedding: This library is specialized for retrieval and reranking, not for image classification. It is not suitable for this task.
+- machine learning: This is a generic reference to ML/DL algorithms, not an actual implementation or framework. It should only be considered if no other suitable library exists.
+- wav2vec2: This is an audio model, pre-trained for speech and audio tasks. It is not applicable to image classification.
+- qwen3: This is a text generation model, not designed for image classification.
+- autogluon.tabular: This library is for tabular data only and does not support image-based tasks.
+- autogluon.multimodal: This library is designed for multimodal tasks, including image classification. It supports image inputs, can handle classification, and is flexible enough to allow for fairness-aware training (e.g., via custom loss weighting or upsampling). It also supports model saving and inference functions.
+- autogluon.timeseries: This is for time series forecasting, not image classification.
+
+Given the above, autogluon.multimodal is the only library directly supporting image classification with the required features. The next best is the generic "machine learning" reference, which could be used if no other library fits. The rest are not suitable for image classification.

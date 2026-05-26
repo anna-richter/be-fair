@@ -1,0 +1,6 @@
+File: image_5073.jpg
+Type: Image (JPEG)
+Size: 0.04 MB
+Format: JPEG
+Mode: RGB
+Size: (473, 375)

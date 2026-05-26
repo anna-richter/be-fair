@@ -1,0 +1,19 @@
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with fairness across skin tones as a key requirement. The input is image files referenced in CSVs, and the output is a malignancy probability per image. The evaluation metric is AUROC, with a focus on minimizing the AUROC gap between light and dark skin tones.
+
+First, I evaluate each library for suitability:
+
+- FlagEmbedding: This library specializes in retrieval and reranking, not image classification. It is not designed for training or evaluating image classifiers, so it is not suitable for this task.
+
+- machine learning: This is a generic reference to machine learning or deep learning algorithms. It is not a specific library or framework, but if no other library is suitable, it could be considered as a placeholder for implementing a custom solution.
+
+- wav2vec2: This library is designed for audio data, specifically for speech recognition and audio classification. It is not applicable to image data.
+
+- qwen3: This is a text generation model, not designed for image classification or processing image data.
+
+- autogluon.tabular: This library is optimized for tabular data (numerical and categorical), not for image or multimodal data. It cannot process images directly.
+
+- autogluon.multimodal: This library is designed for multimodal classification tasks, including image classification. It supports image inputs and can handle classification tasks where the input is an image and the output is a probability. It is also flexible enough to allow for fairness-aware training strategies (e.g., group reweighting, upsampling) by leveraging its multimodal capabilities and custom data processing. This makes it the most appropriate choice for this task.
+
+- autogluon.timeseries: This library is for time series forecasting, not for image classification.
+
+Based on the above, autogluon.multimodal is the only library directly supporting image classification and the required output format. The generic "machine learning" reference could be used if a custom solution is needed, but it is less preferable than a specialized library. autogluon.tabular could be considered if the task were tabular, but it is not suitable for images.

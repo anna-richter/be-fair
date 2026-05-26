@@ -1,0 +1,101 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (condensed and precise):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB images (JPEG files) referenced by image_name in the dataset
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1)
+- **Evaluation metric:** Area under the receiver operator curve (AUROC), with attention to minimizing AUROC gap between light and dark skin tones
+- **Additional requirement:** The model should be saved, and a function must be provided that takes a folder path of new images and returns malignancy probabilities for each image
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance. To improve fairness across skin tones', ' you may apply techniques such as filtering', ' upsampling', ' group reweighting in the loss function', ' or any other appropriate methods.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/image_3862.jpg
+Content:
+File: image_3862.jpg
+Size: 0.14 MB
+Type: Image (JPEG)
+Mode: RGB
+Size: 866x726
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs during model training when AutoGluon MultiModal attempts to initialize the FocalLoss function. The root cause is that the `alpha` parameter (class weights) is being passed as a list of floats, but internally, AutoGluon expects either a single float, a NumPy array, or a PyTorch tensor—NOT a Python list. As a result, when it tries to convert the list to a tensor, it encounters a ValueError: "too many dimensions 'str'", likely due to an unexpected type or shape.
+
+SUGGESTED_FIX:  
+Convert the `class_weights` list to a NumPy array or a PyTorch tensor before passing it as the `optim.focal_loss.alpha` hyperparameter. Specifically, update your code so that `class_weights = np.array(class_weights, dtype=np.float32)` before including it in the hyperparameters dictionary. This ensures compatibility with AutoGluon's FocalLoss implementation and prevents the ValueError during training.
+
+ERROR_SUMMARY: The script attempts to access the columns 'skin_tone' and 'alternative_skin_tone' in the test set when building the test_tabular array, but these columns do not exist in test.csv. This results in a pandas KeyError: "None of [Index(['skin_tone', 'alternative_skin_tone'], dtype='str')] are in the [columns]", causing the script to crash during test feature construction.
+
+SUGGESTED_FIX:  
+Before accessing tabular columns in the test set, check if those columns exist in test.csv. Only attempt to extract and concatenate tabular features for the test set if the relevant columns are present; otherwise, use only image features for test data. This ensures compatibility between train and test feature construction and prevents KeyError.
+
+ERROR_SUMMARY: AutoGluon Tabular failed to train any models because there were no valid tabular features available for training—none of the features in your train set (after excluding label, image_name, and expert_opinion) were present in both train and test. As a result, all candidate models were skipped, and a RuntimeError was raised: "No models were trained successfully during fit()."
+
+SUGGESTED_FIX:  
+Switch from AutoGluon Tabular to AutoGluon Multimodal, and use the image files as features by specifying the image path column (image_name mapped to the actual .jpg file path) and configuring feature_metadata to mark it as an image_path. Prepare your train and test DataFrames so that the image_name column contains the absolute path to each image file, and set up the TabularPredictor with multimodal hyperparameters and feature_metadata accordingly. This will allow AutoGluon to use the image data for training and prediction, resolving the "no valid features" error.
+
+ERROR_SUMMARY: The error occurs because the class weights (`alpha`) passed to the focal loss in AutoGluon are not strictly numeric; at least one value is a string (likely due to label mapping or class weight computation). When `torch.tensor(alpha, dtype=torch.float32)` is called, it fails with `ValueError: too many dimensions 'str'` because PyTorch cannot convert string values to floats. This typically happens if the class weights array contains non-numeric types or if the label mapping is not enforced to be strictly 0/1 integers.
+
+SUGGESTED_FIX:  
+Check the output of your `compute_class_weights` function and ensure it always returns a numpy array of floats (not strings or objects). Also, after mapping labels, explicitly convert the label column to integer type (`train["label"] = train["label"].astype(int)`) before computing class weights. Print or log `class_weights` right before passing them to the hyperparameters to confirm they are `[float, float]` (e.g., `[0.7, 1.3]`). If necessary, add an assertion: `assert np.issubdtype(class_weights.dtype, np.floating) and class_weights.shape == (2,)`.
+
+ERROR_SUMMARY: The error occurs because the `LGBMClassifier.fit()` method in the installed LightGBM version does not accept the `early_stopping_rounds` argument directly. This argument was either moved to the `fit()` method only in newer versions, or must be provided via callbacks in some versions. Passing it directly causes a `TypeError`.
+
+SUGGESTED_FIX:  
+Remove the `early_stopping_rounds` and `verbose` arguments from the `fit()` call, and instead use the LightGBM callback API for early stopping. Alternatively, check your LightGBM version and consult its documentation to use the correct method for early stopping (e.g., via `callbacks=[lgb.early_stopping(20)]`).
+
+ERROR_SUMMARY: The error occurs because the value passed as `alpha` (class weights) to the focal loss function in AutoGluon is not in the expected format; specifically, it contains a string or an object with too many dimensions, causing `torch.tensor(alpha, dtype=torch.float32)` to fail with `ValueError: too many dimensions 'str'`. This is likely due to the `compute_class_weights` function returning a numpy array with an unexpected type or the way it is passed into the AutoGluon hyperparameters.
+
+SUGGESTED_FIX:  
+Check that the `class_weights` variable is a flat list or 1D numpy array of floats (not strings or objects) before passing it to `optim.focal_loss.alpha`. Explicitly convert it using `class_weights = [float(w) for w in class_weights]` or `class_weights = np.array(class_weights, dtype=np.float32).tolist()`, and verify that no elements are strings or arrays. Then, pass this cleaned list to the hyperparameters dictionary for `optim.focal_loss.alpha`.
+
+### Selected Tool/Library
+machine learning
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

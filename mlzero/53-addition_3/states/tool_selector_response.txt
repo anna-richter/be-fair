@@ -1,0 +1,28 @@
+---
+EXPLANATION:  
+The task is binary image classification (malignant vs. benign skin lesions) using RGB JPEG images, with a strong requirement for fairness across skin tones (minimizing AUROC gap between light and dark skin) and high overall AUROC. The input is a folder of images, and the output is a malignancy probability per image. The dataset is not tabular or audio, and the fairness requirement may require custom loss weighting or group-aware training.
+
+Let's analyze each available library:
+
+- **FlagEmbedding**: This library is specialized for retrieval and reranking tasks, not for image classification. It is not suitable for this task.
+
+- **machine learning**: This is a general reference for ML/DL algorithms. It is a fallback if no other library is suitable, but it does not provide specialized tools for image classification or fairness.
+
+- **wav2vec2**: This is an audio model, pre-trained for speech and audio tasks. It is not applicable to image data.
+
+- **qwen3**: This is a text generation model, not designed for image classification.
+
+- **autogluon.tabular**: This library is optimized for tabular data and does not support image-based tasks. Not suitable.
+
+- **autogluon.multimodal**: This library is designed for multimodal tasks, including image classification. It supports image classification, can handle image inputs, and is flexible enough to allow for custom loss functions or group reweighting, which is important for fairness. It is not for generative or audio tasks, but those are not needed here. This is the best fit for the task.
+
+- **autogluon.timeseries**: This is for time series forecasting, not image classification.
+
+Given the above, **autogluon.multimodal** is the only library directly supporting image classification and is flexible enough to allow for fairness interventions. If for some reason it cannot be used, the general "machine learning" library would be the fallback, as it could reference general ML/DL frameworks (e.g., PyTorch, TensorFlow) that can be used for image classification and fairness-aware training. For a third option, "FlagEmbedding" could be considered, but it is not designed for classification, so it is not a good fit.
+
+---
+RANKED_LIBRARIES:
+1. autogluon.multimodal
+2. machine learning
+3. FlagEmbedding
+---

@@ -1,0 +1,1 @@
+The file is a text file, but the code attempted to read it as a CSV, resulting in the entire first line being interpreted as a single column header. This led to incorrect output (column names are actually the text content). The code should treat .txt files as text by default and show a text preview, not attempt to parse as tabular data.

@@ -1,0 +1,6 @@
+**Task Description (condensed and precise):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB images (JPEG files), with image file names provided in CSV files.
+- **Prediction output format:** For each input image, output a malignancy probability (a float between 0 and 1).
+- **Evaluation metric:** Area under the receiver operator curve (AUROC), with attention to minimizing AUROC gap between light and dark skin tones.

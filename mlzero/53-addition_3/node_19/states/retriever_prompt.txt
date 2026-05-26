@@ -1,0 +1,116 @@
+
+You are an expert at generating search queries to find relevant machine learning tutorials. Given the context below, generate a concise and effective search query that will help find the most relevant tutorials for this task.
+
+### Task Description
+**Task Description (condensed and precise):**
+
+- **Problem type:** Image classification (binary classification: malignant vs. benign skin lesions)
+- **Input format:** RGB images of skin lesions (JPEG files, e.g., /MyImages/image_XXXX.jpg)
+- **Prediction output format:** For each input image, output a malignancy probability (float in [0, 1])
+- **Evaluation metric:** Area under the receiver operator curve (AUROC), with emphasis on minimizing AUROC gap between light and dark skin tones
+- **Additional requirement:** The model should be fair towards skin tone (minimize AUROC gap between light and dark skin) without compromising overall performance.
+
+### Data Structures
+Absolute path to the folder: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data
+
+Files structures:
+
+----------
+
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/train.csv
+Content:
+Columns: ['Unnamed: 0', 'skin_tone', 'alternative_skin_tone', 'expert_opinion', 'label', 'image_name']
+ Unnamed: 0  skin_tone  alternative_skin_tone expert_opinion          label  image_name
+          0          1                      1            NaN non-neoplastic  image_9385
+          1          3                      3            NaN non-neoplastic  image_7196
+          2          1                      1            NaN non-neoplastic image_10681
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/test.csv
+Content:
+Columns: ['Unnamed: 0', 'image_name']
+ Unnamed: 0  image_name
+          0 image_10025
+          1 image_14107
+          2  image_4000
+
+----------
+Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/descriptions.txt
+Content:
+Columns: ["I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved", ' and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image. Be fair towards skin tone. The AUROC gap between light and dark skin should be minimal', ' without compromising overall model performance. To improve fairness across skin tones', ' you may apply techniques such as filtering', ' upsampling', ' group reweighting in the loss function', ' or any other appropriate methods.']
+I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past...
+----------
+Group pattern: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/*.jpg (total 16577 files)
+Example files:
+Content:
+
+-----Absolute path: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data/MyImages/image_5682.jpg
+Content:
+File: image_5682.jpg
+Size: 0.09 MB
+Type: JPEG Image
+Dimensions: 462x383
+Mode: RGB
+
+----------
+
+
+### User Instruction
+Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined.
+
+### Previous Error Analysis
+ERROR_SUMMARY: The error occurs because the hyperparameter override `"data.sample_weight": "group_weight"` is not recognized by AutoGluon MultiModal's configuration. The code attempts to pass a custom sample weighting column (`group_weight`) via the `data.sample_weight` key, but this key does not exist in the expected configuration, resulting in a `KeyError` and halting model training.
+
+SUGGESTED_FIX:  
+Remove the `"data.sample_weight": "group_weight"` entry from the `hyperparameters` dictionary passed to `predictor.fit()`. If you wish to implement group reweighting for fairness, you will need to use supported mechanisms such as upsampling underrepresented groups in your training data or adjusting class weights via focal loss (`optim.focal_loss.alpha`). Review the AutoGluon documentation for officially supported fairness and weighting strategies.
+
+ERROR_SUMMARY: The error occurs because the code attempts to select the columns 'skin_tone' and 'alternative_skin_tone' from `test_df`, but these columns do not exist in the test set (test.csv only contains 'Unnamed: 0' and 'image_name'). As a result, when the code tries to extract features using `test_df[feature_cols]`, it raises a KeyError.
+
+SUGGESTED_FIX:  
+Before selecting features for the test set, check if 'skin_tone' and 'alternative_skin_tone' exist in `test_df`. If they do not, remove these columns from `feature_cols` when constructing `X_test`. This ensures that only available columns are used for test feature extraction and prevents the KeyError.
+
+ERROR_SUMMARY: The error occurs because the code attempts to import `ImageEmbedding` from the `FlagEmbedding` package, but the installed version of FlagEmbedding does not contain the `ImageEmbedding` class or function. This results in an `ImportError` at runtime, preventing further execution.
+
+SUGGESTED_FIX:  
+Check the installed version of FlagEmbedding and consult its documentation or source code to verify if `ImageEmbedding` exists in that version. If not, either update FlagEmbedding to a version that provides `ImageEmbedding`, or refactor the code to use the correct class/function for image embeddings as per the available API (e.g., `FlagModel` or another relevant class).
+
+ERROR_SUMMARY: The error occurs because the hyperparameter 'env.eval_metric' is not recognized in the AutoGluon MultiModal configuration. When you pass 'env.eval_metric' in the hyperparameters dictionary, AutoGluon raises a KeyError since this key does not exist in its expected config schema for the current version, causing the training script to crash before model training begins.
+
+SUGGESTED_FIX:  
+Remove 'env.eval_metric' from the hyperparameters dictionary in your script. Instead, specify the evaluation metric directly in the fit() call using the metrics argument (e.g., metrics="roc_auc"), or rely on AutoGluon's default metric for binary classification. Double-check the [AutoGluon MultiModal documentation](https://auto.gluon.ai/stable/tutorials/multimodal/index.html) for the correct way to set evaluation metrics for your version.
+
+ERROR_SUMMARY: The error "ValueError: too many values to unpack (expected 7)" occurs because the code attempts to unpack 7 outputs from the `train_test_split` function, but only 6 arrays are returned. This is due to passing 4 arrays (`X`, `y`, `sample_weights`, and `train_df[group_col].values`) to `train_test_split`, which returns 2 splits for each input (train and validation), totaling 8 outputs; however, only 6 outputs are being returned because of incorrect unpacking or a mismatch in the number of input arrays.
+
+SUGGESTED_FIX:  
+Check the number of arrays passed to `train_test_split` and ensure you unpack exactly 2 outputs per input array. If you pass 4 arrays, you must unpack 8 outputs (e.g., `X_train, X_val, y_train, y_val, sw_train, sw_val, group_train, group_val`). Adjust the unpacking statement to match the number of arrays returned by `train_test_split`.
+
+ERROR_SUMMARY: The error occurred because the DataFrame passed to `predictor.predict_proba()` during test-time prediction was missing required columns: `['alternative_skin_tone', 'expert_opinion', 'skin_tone']`. AutoGluon MultiModal expects all columns present in the training data (except the label) to also be present in the test data, even if their values are missing or NaN.
+
+SUGGESTED_FIX:  
+Modify your test DataFrame before prediction to include the missing columns (`'alternative_skin_tone'`, `'expert_opinion'`, and `'skin_tone'`). Add these columns to `test_pred_df` with values set to `np.nan` or another appropriate placeholder, ensuring the column names and order match the training data. This will allow AutoGluon to process the test data without raising a ValueError.
+
+ERROR_SUMMARY: The error occurs because the LightGBM `train()` function in recent versions (>=4.0.0) no longer accepts the `early_stopping_rounds` argument directly. Instead, early stopping must be implemented via the `callbacks` parameter using `lgb.early_stopping()`. Passing `early_stopping_rounds` as a direct argument now results in a `TypeError`.
+
+SUGGESTED_FIX:  
+Remove the `early_stopping_rounds` argument from the `lgb.train()` call and instead add `callbacks=[lgb.early_stopping(30)]` to the function arguments. This will enable early stopping in a way compatible with the latest LightGBM API.
+
+ERROR_SUMMARY: The error occurs because the LightGBM `train()` function no longer accepts the `verbose_eval` keyword argument in recent versions. Instead, verbosity should be controlled via the `callbacks` parameter or by setting the `verbosity` parameter in the LightGBM parameters dictionary.
+
+SUGGESTED_FIX:  
+Remove the `verbose_eval=100` argument from the `lgb.train()` call. If you want to control logging frequency, add a `lgb.log_evaluation(period=100)` callback to the `callbacks` list instead.
+
+ERROR_SUMMARY: The error occurs because the code attempts to load the model `'BAAI/CLIP-ViT-B-16'` from the HuggingFace Hub using the FlagEmbedding library, but receives a 401 Unauthorized error. This indicates that the model repository is either private, does not exist, or requires authentication, and no valid HuggingFace access token was provided in the environment.
+
+SUGGESTED_FIX:  
+Check if the model identifier `'BAAI/CLIP-ViT-B-16'` is correct and publicly available on HuggingFace. If the model is private, obtain an access token with the necessary permissions and authenticate using `huggingface-cli login` or by passing the token explicitly to the FlagModel. Alternatively, use a different, publicly available model checkpoint compatible with FlagEmbedding.
+
+### Selected Tool/Library
+autogluon.multimodal
+
+
+Based on the above context, generate a search query that will help find tutorials most relevant to this task. The query should:
+1. Include key technical terms and concepts
+2. Focus on the main task/problem to solve
+3. Be concise but specific
+
+IMPORTANT: Respond ONLY with the search query text. Do not include explanations, quotes, or any other formatting.

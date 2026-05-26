@@ -1,0 +1,406 @@
+Generate a minimal bash script that will:
+
+Create and configure a conda environment in "conda_env" folder under /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/54-addition_3/node_15:
+ - Python version: 3.11
+ - Activate the environment
+ - pip install uv
+ - Install required packages from /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt and /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt using uv pip install -r /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt --prerelease=allow -r /home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt
+ - Install any additional packages that are needed for the python script to run successfully
+Execute the Python script: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/54-addition_3/node_15/generated_code.py
+
+### Python code in the script:
+"""
+Skin Lesion Malignancy Probability Prediction Script
+
+This script trains a deep learning image classifier (MobileNetV3) to predict the probability of malignancy for skin lesion images.
+It uses PyTorch and timm for model training, and is optimized for multi-GPU and multi-CPU environments.
+The script:
+- Loads and preprocesses the data (removes NA labels, drops index columns, maps image paths)
+- Extracts image features using a pretrained MobileNetV3 backbone
+- Trains a classifier head on these features
+- Saves the trained model to a timestamped folder in the specified output directory
+- Predicts malignancy probabilities for the test set, preserving original indices and output format
+- Saves predictions to the output directory, matching the test file format and column names
+- Performs validation (AUROC) on a held-out validation set if training labels are available
+- Includes validation checks to ensure output correctness
+
+# Installation (uncomment if running in a fresh environment)
+# !pip install torch torchvision timm pandas scikit-learn
+
+"""
+
+import os
+import time
+import uuid
+import pandas as pd
+import numpy as np
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
+from PIL import Image
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedShuffleSplit
+
+# Paths
+DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/addition_3_data"
+OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/54-addition_3/node_15/output"
+TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+IMAGES_DIR = os.path.join(DATA_DIR, "MyImages")
+
+# Use all available GPUs if possible
+NUM_GPUS = torch.cuda.device_count() if torch.cuda.is_available() else 0
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Limit DataLoader workers to 2 to avoid resource contention on NFS
+NUM_WORKERS = 2
+
+def get_image_path(image_name):
+    """Return absolute path to image file given image_name (without extension)."""
+    return os.path.join(IMAGES_DIR, f"{image_name}.jpg")
+
+def map_label_to_binary(label):
+    """Map label string to binary: malignant=1, non-neoplastic=0."""
+    if pd.isna(label):
+        return np.nan
+    label = str(label).strip().lower()
+    if label == "malignant":
+        return 1
+    elif label == "non-neoplastic":
+        return 0
+    else:
+        return np.nan
+
+class SkinLesionDataset(Dataset):
+    def __init__(self, df, image_col, label_col=None, transform=None):
+        self.df = df
+        self.image_col = image_col
+        self.label_col = label_col
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        img_path = self.df.iloc[idx][self.image_col]
+        image = Image.open(img_path).convert("RGB")
+        if self.transform:
+            image = self.transform(image)
+        if self.label_col is not None:
+            label = self.df.iloc[idx][self.label_col]
+            return image, label
+        else:
+            return image
+
+def compute_class_weights(df, label_col="label_binary"):
+    """Compute class weights for imbalanced data."""
+    counts = df[label_col].value_counts().sort_index()
+    weights = 1.0 / (counts + 1e-8)
+    weights = weights / weights.sum()
+    return torch.tensor([weights.get(0, 0.5), weights.get(1, 0.5)], dtype=torch.float32)
+
+class MobileNetV3Classifier(nn.Module):
+    def __init__(self, backbone_name="mobilenetv3_large_100", pretrained=True):
+        super().__init__()
+        import timm
+        self.backbone = timm.create_model(backbone_name, pretrained=pretrained, num_classes=0, global_pool="avg")
+        # Dynamically determine output feature size to avoid shape mismatch
+        with torch.no_grad():
+            dummy = torch.zeros(1, 3, 224, 224)
+            features = self.backbone(dummy)
+            in_features = features.shape[1] if len(features.shape) == 2 else features.shape[-1]
+        self.head = nn.Linear(in_features, 1)
+
+    def forward(self, x):
+        features = self.backbone(x)
+        out = self.head(features)
+        return out
+
+def train_model(model, train_loader, val_loader, class_weights, device, epochs=2, lr=1e-4):
+    # Use pos_weight for BCEWithLogitsLoss: pos_weight should be a single float for binary classification
+    # We use the ratio of negative to positive samples
+    pos_weight = class_weights[1] / class_weights[0]
+    criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+    optimizer = optim.AdamW(model.parameters(), lr=lr)
+    best_val_auc = 0
+    best_state = None
+
+    for epoch in range(epochs):
+        model.train()
+        for images, labels in train_loader:
+            images = images.to(device, non_blocking=True)
+            labels = labels.float().to(device, non_blocking=True)
+            optimizer.zero_grad()
+            logits = model(images).squeeze(1)
+            loss = criterion(logits, labels)
+            loss.backward()
+            optimizer.step()
+
+        # Validation
+        model.eval()
+        val_labels = []
+        val_probs = []
+        with torch.no_grad():
+            for images, labels in val_loader:
+                images = images.to(device, non_blocking=True)
+                labels = labels.float().to(device, non_blocking=True)
+                logits = model(images).squeeze(1)
+                probs = torch.sigmoid(logits)
+                val_labels.append(labels.cpu().numpy())
+                val_probs.append(probs.cpu().numpy())
+        val_labels = np.concatenate(val_labels)
+        val_probs = np.concatenate(val_probs)
+        try:
+            val_auc = roc_auc_score(val_labels, val_probs)
+        except Exception:
+            val_auc = 0
+        if val_auc > best_val_auc:
+            best_val_auc = val_auc
+            best_state = model.state_dict()
+    if best_state is not None:
+        model.load_state_dict(best_state)
+    return model, best_val_auc
+
+def predict_proba(model, loader, device):
+    model.eval()
+    all_probs = []
+    with torch.no_grad():
+        for images in loader:
+            if isinstance(images, (list, tuple)):
+                images = images[0]
+            images = images.to(device, non_blocking=True)
+            logits = model(images).squeeze(1)
+            probs = torch.sigmoid(logits)
+            all_probs.append(probs.cpu().numpy())
+    return np.concatenate(all_probs)
+
+def main():
+    # 1. Data Loading and Preprocessing
+    train = pd.read_csv(TRAIN_CSV)
+    test = pd.read_csv(TEST_CSV)
+
+    # Remove index columns if present
+    for col in ['Unnamed: 0', 'index']:
+        if col in train.columns:
+            train = train.drop(columns=[col])
+        if col in test.columns:
+            test = test.drop(columns=[col])
+
+    # Map image_name to absolute image path
+    train['image'] = train['image_name'].apply(get_image_path)
+    test['image'] = test['image_name'].apply(get_image_path)
+
+    # Map label to binary (malignant=1, non-neoplastic=0)
+    train['label_binary'] = train['label'].apply(map_label_to_binary)
+
+    # Drop training samples without valid labels (do NOT drop from test)
+    train = train[train['label_binary'].isin([0, 1])].reset_index(drop=True)
+
+    # 2. Prepare training/validation split
+    splitter = StratifiedShuffleSplit(n_splits=1, test_size=0.1, random_state=42)
+    train_idx, val_idx = next(splitter.split(train, train['label_binary']))
+    train_data = train.iloc[train_idx].reset_index(drop=True)
+    val_data = train.iloc[val_idx].reset_index(drop=True)
+
+    # 3. Compute class weights for fairness
+    class_weights = compute_class_weights(train_data, label_col="label_binary").to(DEVICE)
+
+    # 4. Image transforms
+    train_transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomVerticalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+    val_transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+    # 5. Datasets and Loaders
+    batch_size = 32  # Reduce batch size to avoid OOM and speed up per-epoch time
+    train_dataset = SkinLesionDataset(train_data, image_col="image", label_col="label_binary", transform=train_transform)
+    val_dataset = SkinLesionDataset(val_data, image_col="image", label_col="label_binary", transform=val_transform)
+    test_dataset = SkinLesionDataset(test, image_col="image", label_col=None, transform=val_transform)
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=NUM_WORKERS, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
+
+    # 6. Model Training
+    import timm
+    timestamp = int(time.time() * 1000)
+    model_dir = os.path.join(OUTPUT_DIR, f"torch_model_{timestamp}_{uuid.uuid4().hex[:8]}")
+    os.makedirs(model_dir, exist_ok=True)
+
+    # Use a smaller model to reduce training time and memory
+    model = MobileNetV3Classifier(backbone_name="mobilenetv3_large_100", pretrained=True)
+    if NUM_GPUS > 1:
+        model = nn.DataParallel(model)
+    model = model.to(DEVICE)
+
+    # Reduce epochs to 2 to avoid wall-clock timeout
+    model, best_val_auc = train_model(model, train_loader, val_loader, class_weights, DEVICE, epochs=2, lr=1e-4)
+
+    # Save model
+    model_path = os.path.join(model_dir, "model.pth")
+    torch.save(model.state_dict(), model_path)
+
+    # 7. Prediction
+    # Predict probabilities for test set (malignancy probability)
+    malignancy_prob = predict_proba(model, test_loader, DEVICE)
+
+    # Prepare output DataFrame
+    results = test[['image_name']].copy()
+    results['label'] = malignancy_prob
+
+    # Save results in same format/extension as test.csv (CSV)
+    results_path = os.path.join(OUTPUT_DIR, "results.csv")
+    results.to_csv(results_path, index=False)
+
+    # 8. Validation Checks
+    # a) Check that output has same number of rows as test set
+    assert len(results) == len(test), f"Prediction rows ({len(results)}) != test rows ({len(test)})"
+    # b) Check that output indices match test set
+    assert all(results['image_name'].values == test['image_name'].values), "Output image_name order does not match test set"
+    # c) Check that columns match requirements
+    assert list(results.columns) == ['image_name', 'label'], f"Output columns {list(results.columns)} do not match ['image_name', 'label']"
+    # d) Check output format (CSV)
+    assert results_path.endswith('.csv'), "Output file must be CSV"
+    # e) Check that all probabilities are in [0, 1]
+    assert np.all((results['label'] >= 0) & (results['label'] <= 1)), "Predicted probabilities not in [0, 1]"
+
+    # 9. Validation Metric (AUROC) on held-out validation set
+    try:
+        val_dataset_pred = SkinLesionDataset(val_data, image_col="image", label_col=None, transform=val_transform)
+        val_loader_pred = DataLoader(val_dataset_pred, batch_size=batch_size, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
+        val_probs = predict_proba(model, val_loader_pred, DEVICE)
+        val_true = val_data['label_binary'].values
+        val_auroc = roc_auc_score(val_true, val_probs)
+        print(f"Validation AUROC: {val_auroc:.4f}")
+    except Exception as e:
+        print(f"Validation failed: {e}")
+
+    print(f"Model saved to: {model_dir}")
+    print(f"Predictions saved to: {results_path}")
+
+if __name__ == "__main__":
+    main()
+
+### Previous Error
+ERROR_SUMMARY: The error occurs because the `MultiModalPredictor.fit()` method in the installed version of AutoGluon MultiModal does not accept a `verbose` keyword argument. Passing `verbose=True` to `fit()` causes a `TypeError`, as this parameter is not defined in the method's signature.
+
+SUGGESTED_FIX:  
+Remove the `verbose` argument from the call to `predictor.fit()`. The method will use its default logging behavior, and if you need to control verbosity, refer to the official documentation for supported logging or verbosity options.
+
+ERROR_SUMMARY: The process was terminated after exceeding the 1-hour wall-clock time limit, likely due to slow data loading and/or training. Repeated `OSError: [Errno 16] Device or resource busy` errors occurred during temporary file cleanup, which are typical on NFS filesystems when files are still open by other processes (often caused by too many DataLoader workers). Additionally, the script requested 16 DataLoader workers, while the system recommends a maximum of 2, which can cause slowness or freezing.
+
+SUGGESTED_FIX:  
+Reduce the number of DataLoader workers to 2 or fewer by setting `num_workers=2` in all DataLoader instances to avoid resource contention and slowness. Monitor and limit batch size if memory is constrained, and consider reducing the number of training epochs or using a smaller model to ensure the script completes within the 1-hour time limit. After making these changes, rerun the script and check for completion and output correctness.
+
+ERROR_SUMMARY: The error occurs because the code attempts to select the columns ['skin_tone', 'alternative_skin_tone', 'expert_opinion'] from the test DataFrame, but these columns do not exist in test.csv. This results in a KeyError when executing `test_ag = test[feature_cols].copy()`.
+
+SUGGESTED_FIX:  
+Update the code so that, when preparing the test set for prediction, you only select columns that are actually present in test.csv (i.e., only 'image_name'). Do not attempt to select or use columns like 'skin_tone', 'alternative_skin_tone', or 'expert_opinion' for the test set, as they are not available; adjust `test_ag` to use only the intersection of feature columns and test columns.
+
+ERROR_SUMMARY: The error occurs because the value passed to the focal loss alpha parameter (`optim.focal_loss.alpha`) is not in the expected format. Specifically, AutoGluon expects `alpha` to be a list or numpy array of floats (one per class), but a string or an object with an incorrect shape/type was provided, resulting in the ValueError: "too many dimensions 'str'" when calling `torch.tensor(alpha, dtype=torch.float32)`.
+
+SUGGESTED_FIX:  
+Check the value and type of `class_weights` before passing it to the hyperparameters. Ensure that `class_weights` is a Python list or numpy array of floats (e.g., `[0.5, 0.5]` for binary classification), not a string or any other type. Print or log `class_weights` right before model training to verify its structure, and confirm that it matches the number of classes and contains only numeric values.
+
+ERROR_SUMMARY: The main error is that the process exceeded the 1-hour (3600 seconds) wall-clock time limit, likely due to slow data loading or model training. Additionally, there are repeated OSError warnings related to NFS resource contention (".nfs... Device or resource busy") during temporary directory cleanup, and a warning that the installed NVIDIA GPU driver is too old for the requested CUDA version, which may prevent GPU acceleration or cause fallback to CPU.
+
+SUGGESTED_FIX:  
+Reduce the training time by decreasing the number of epochs, using a smaller model (e.g., a lighter EfficientNet variant or ResNet18), and/or lowering the batch size if I/O is a bottleneck. Investigate and resolve NFS file locking issues by ensuring no processes are holding onto deleted files, and consider using local disk for temporary files if possible. Update the NVIDIA GPU driver to a version compatible with your CUDA/PyTorch stack to enable GPU acceleration and avoid fallback to CPU, which significantly slows down training.
+
+ERROR_SUMMARY: The training process was terminated by a SIGTERM signal before completion, likely due to exceeding the wall-clock time limit (1 hour) imposed by the execution environment. This caused the AutoGluon MultiModal `.fit()` call to be interrupted, resulting in no model output or predictions.
+
+SUGGESTED_FIX:  
+Reduce the total training time by lowering `optim.max_epochs` (e.g., to 3–5), decreasing model size (e.g., use a smaller backbone via `"model.timm_image.checkpoint_name"`), or reducing dataset size (e.g., subsample training data). Also, ensure that data loading and preprocessing are efficient, and set a stricter `time_limit` in `predictor.fit()` (e.g., 1000–1200 seconds) to leave time for inference and saving outputs before the hard timeout.
+
+ERROR_SUMMARY: The main error is that the process was terminated after exceeding the 1-hour wall-clock time limit, meaning the script did not finish training and inference within the allowed 3600 seconds. Additional warnings indicate that the installed NVIDIA GPU driver is too old for the requested CUDA version (causing PyTorch to fall back to CPU), and there are "Device or resource busy" errors from NFS when trying to delete temporary files, but these are secondary to the timeout.
+
+SUGGESTED_FIX:  
+Reduce the total runtime by further decreasing the number of training epochs (e.g., to 1–2), using a smaller model (e.g., resnet18 instead of efficientnet_b0), and/or reducing the training dataset size (e.g., subsample for quick prototyping). Also, check your environment's GPU driver compatibility and update the NVIDIA driver if possible to enable GPU acceleration, which will significantly speed up training and inference.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions (`validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes`), causing all model training to be skipped and no models to be fit.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output—specifically, move your working/output directories to a location with a much shorter absolute path (e.g., `/tmp/ag_run` or `/scratch/ag_run`). Ensure that both the `OUTPUT_DIR` and any temp directories (including those used by Ray and AutoGluon) are as short as possible, then re-run your script. If you cannot change the base directory, set the `TMPDIR`, `TEMP`, and `TMP` environment variables to a short path before running Python, so that Ray and other libraries use a shorter temp path.
+
+ERROR_SUMMARY: The training process was terminated by a SIGTERM (signal 15), which is typically sent by the SLURM workload manager when the job exceeds its wall-clock time limit (1 hour in this case). As a result, the model did not complete training, and no predictions or validation scores were produced.
+
+SUGGESTED_FIX:  
+Reduce the total training time by lowering the number of epochs (e.g., set `"optim.max_epochs"` to 2 or 3), decrease the model size (use a lighter backbone such as `"mobilenetv3_large_100"`), or further restrict the training time via the `time_limit` parameter (e.g., `time_limit=600`). Additionally, ensure that data loading and preprocessing are efficient, and consider using fewer GPUs or workers if initialization overhead is high.
+
+ERROR_SUMMARY: The training process was terminated by a SIGTERM signal, which is typically sent by the job scheduler (SLURM) when the script exceeds its allocated wall-clock time or due to resource management policies. As a result, the model did not complete training, and no predictions or validation metrics were produced.
+
+SUGGESTED_FIX:  
+Reduce the total runtime by further lowering the number of training epochs (e.g., set `optim.max_epochs` to 1 or 2), decrease model complexity (use a smaller/faster backbone), and/or reduce dataset size (use a smaller training subset or lower image resolution). Additionally, ensure that data loading and preprocessing are efficient, and consider profiling the script to identify and optimize any slow steps.
+
+ERROR_SUMMARY: The error "RuntimeError: mat1 and mat2 shapes cannot be multiplied (32x1280 and 960x1)" occurs because the classifier head of the MobileNetV3 model is initialized with an incorrect input feature size (in_features=960), while the actual output feature size from the backbone is 1280. This shape mismatch prevents the linear layer from performing matrix multiplication during the forward pass.
+
+SUGGESTED_FIX: Check the value assigned to in_features when constructing the classifier head in your MobileNetV3Classifier. Ensure that in_features matches the output feature dimension of the backbone (which is 1280 for "mobilenetv3_large_100") by referencing self.backbone.num_features or the correct attribute from the timm model. Re-initialize the head layer with in_features=1280 to resolve the mismatch.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the UNIX socket path used by Ray (a backend for parallel processing) exceeded the maximum allowed length (107 bytes) for AF_UNIX sockets. This caused OSError exceptions during model training, resulting in all models being skipped and a final RuntimeError indicating that no models were trained. The root cause is the excessive length of the temporary directory path, likely due to deep directory nesting in your scratch space.
+
+SUGGESTED_FIX:  
+Shorten the directory path used for temporary files and model output by moving your working directory (including data, output, and conda environment) to a location with a much shorter absolute path (e.g., /tmp/youruser/ or /scratch/youruser/). Ensure that all relevant environment variables (such as TMPDIR, TEMP, and TMP) point to this shorter path before running your script, so that Ray and AutoGluon use it for temporary files and socket creation. Then, rerun your training script.
+
+ERROR_SUMMARY: The training process was terminated by a SIGTERM signal, which is typically sent by the job scheduler (SLURM) due to exceeding the wall-clock time limit or resource constraints. As a result, the model did not complete training, and no predictions or validation metrics were produced.
+
+SUGGESTED_FIX:  
+Reduce the total training time by lowering the number of epochs, using a smaller model backbone, or decreasing dataset size (e.g., subsample for development). Additionally, ensure that the combined time for data loading, training, and inference stays well below the 1-hour wall-clock limit imposed by your environment. Monitor actual runtime in logs and adjust `optim.max_epochs`, `time_limit`, and batch size accordingly to guarantee completion within the allowed time.
+
+ERROR_SUMMARY: The error "RuntimeError: mat1 and mat2 shapes cannot be multiplied (32x1280 and 960x1)" occurs because the output feature size of the MobileNetV3 backbone (1280) does not match the expected input size (960) of the classifier head. This mismatch is due to using self.backbone.num_features (which is 960 for some models, but 1280 for mobilenetv3_large_100 in timm), leading to an incorrectly sized linear layer.
+
+SUGGESTED_FIX:  
+Check the actual output feature dimension of the backbone by passing a dummy input through self.backbone and use that value to define the classifier head's input size. Replace self.backbone.num_features with the dynamically determined feature size (e.g., by running a forward pass with a dummy tensor of shape [1, 3, 224, 224]) to ensure the Linear layer matches the backbone output.
+
+ERROR_SUMMARY: AutoGluon failed to train any models because the Ray backend (used for parallel model training) attempted to create UNIX domain sockets with file paths exceeding the system limit of 107 bytes. This resulted in repeated OSError exceptions (`validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes`), causing all model training attempts to be skipped and ultimately raising a RuntimeError due to no models being fit.
+
+SUGGESTED_FIX:  
+Shorten the directory paths used for temporary files and model output by moving your working directories (including scratch, tmp, and output folders) to a location with a much shorter absolute path (e.g., `/tmp/your_project`). Update all relevant path variables in your scripts and environment to use these shorter paths, then rerun the training. This will ensure that Ray's socket file paths remain within the UNIX limit and allow model training to proceed.
+
+### Previous failed bash script:
+#!/bin/bash
+set -euo pipefail
+
+# Paths
+ENV_DIR="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/54-addition_3/node_4/conda_env"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_ML="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/machine learning/requirements.txt"
+PY_SCRIPT="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/54-addition_3/node_4/generated_code.py"
+
+# 1. Create conda env if not exists
+if [ ! -d "$ENV_DIR" ]; then
+    conda create --yes --prefix "$ENV_DIR" python=3.11
+fi
+
+# 2. Activate conda env
+# shellcheck disable=SC1091
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_DIR"
+
+# 3. Install uv if not already
+if ! python -m uv --version >/dev/null 2>&1; then
+    pip install uv
+fi
+
+# 4. Install requirements with uv
+uv pip install --prerelease=allow -r "$REQ_ML" -r "$REQ_COMMON"
+
+# 5. Install extra packages needed for the script
+pip install torch torchvision timm pandas scikit-learn pillow
+
+# 6. Run the Python script
+python "$PY_SCRIPT"
+
+Notes:
+- Generate a minimal, executable bash script
+- Focus on essential commands only
+- Handle environment and package only if asked or there were errors
