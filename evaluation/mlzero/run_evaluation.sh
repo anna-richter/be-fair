@@ -15,4 +15,5 @@
 cd ${SLURM_ARRAY_TASK_ID}-*
 export DIR_NAME=$(basename "$PWD")
 srun bash ${DIR_NAME}_execution_script_DDI.sh
+mv DDI_predictions.csv ${DIR_NAME}_DDI_predictions.csv || { echo "ERROR: DDI_predictions.csv not found for ${DIR_NAME}" >&2; exit 1; }
 cd ..
