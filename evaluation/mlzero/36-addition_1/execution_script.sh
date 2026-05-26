@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+# Paths
+ENV_DIR="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/36-addition_1/node_8/conda_env"
+PYTHON_VERSION="3.11"
+REQ_COMMON="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/_common/requirements.txt"
+REQ_MM="/home/anri21/.conda/envs/mlzero_env/lib/python3.11/site-packages/autogluon/assistant/tools_registry/autogluon.multimodal/requirements.txt"
+PY_SCRIPT="/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/36-addition_1/node_8/generated_code.py"
+
+# 1. Create conda env if not exists
+if [ ! -d "$ENV_DIR" ]; then
+    conda create -y -p "$ENV_DIR" python=$PYTHON_VERSION
+fi
+
+# 2. Activate env
+eval "$(conda shell.bash hook)"
+conda activate "$ENV_DIR"
+
+# 3. Install uv
+pip install uv
+
+# 4. Install requirements with uv (prerelease allowed)
+uv pip install -r "$REQ_MM" --prerelease=allow -r "$REQ_COMMON"
+
+# 5. Run the Python script
+python "$PY_SCRIPT"

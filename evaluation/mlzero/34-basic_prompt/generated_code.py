@@ -1,0 +1,181 @@
+"""
+Skin Lesion Malignancy Prediction Script using AutoGluon MultiModal
+
+This script performs binary image classification to predict the probability of malignancy for skin lesion images.
+It:
+- Loads and preprocesses the data (removes NA labels from train, removes index columns)
+- Trains an AutoGluon MultiModalPredictor using image and tabular features
+- Saves the trained model to a timestamped folder in the specified output directory
+- Predicts malignancy probability (float in [0,1]) for each test image, preserving original indices and format
+- Saves predictions in the same format as test.csv, with correct column names and order
+- Performs validation checks on the output file
+- If training data is available, holds out 10% for validation and prints AUROC on the validation set
+
+Installation requirements:
+    # pip install --upgrade pip
+    # pip install autogluon.multimodal
+
+Usage:
+    Place this script in any location and run it. It expects the data in:
+        /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data/
+    and will write all outputs to:
+        /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/34-basic_prompt/node_3/output/
+"""
+
+# Installation instructions (uncomment if running in a fresh environment)
+# import sys
+# !{sys.executable} -m pip install --upgrade pip
+# !{sys.executable} -m pip install autogluon.multimodal
+
+import os
+import uuid
+import time
+import pandas as pd
+import numpy as np
+
+from autogluon.multimodal import MultiModalPredictor
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+
+def get_abs_image_path(image_name, image_dir):
+    return os.path.abspath(os.path.join(image_dir, f"{image_name}.jpg"))
+
+if __name__ == "__main__":
+    # Paths
+    DATA_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data"
+    IMAGE_DIR = os.path.join(DATA_DIR, "MyImages")
+    OUTPUT_DIR = "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/34-basic_prompt/node_3/output"
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
+    TEST_CSV = os.path.join(DATA_DIR, "test.csv")
+    RESULT_FILE = os.path.join(OUTPUT_DIR, "results.csv")  # test.csv is CSV, so output is CSV
+
+    # 1. Data Loading and Preprocessing
+    train_df = pd.read_csv(TRAIN_CSV)
+    test_df = pd.read_csv(TEST_CSV)
+
+    # Remove unnecessary index column if present
+    for df in [train_df, test_df]:
+        if 'Unnamed: 0' in df.columns:
+            df.drop(columns=['Unnamed: 0'], inplace=True)
+
+    # Remove training samples without valid labels (drop NA from 'label' column)
+    train_df = train_df.dropna(subset=['label'])
+
+    # Map label to binary: malignant=1, non-neoplastic=0
+    train_df['label'] = train_df['label'].map(lambda x: 1 if str(x).strip().lower() == 'malignant' else 0)
+
+    # Add absolute image path columns for AutoGluon
+    train_df['image'] = train_df['image_name'].apply(lambda x: get_abs_image_path(x, IMAGE_DIR))
+    test_df['image'] = test_df['image_name'].apply(lambda x: get_abs_image_path(x, IMAGE_DIR))
+
+    # Only use features present in both train and test for prediction
+    # In this dataset, only 'image' is present in both after preprocessing
+    feature_cols = ['image']
+
+    # 2. Validation Split (if no validation set is provided)
+    # Hold out 10% of training data for validation
+    train_data, val_data = train_test_split(
+        train_df,
+        test_size=0.1,
+        stratify=train_df['label'],
+        random_state=42,
+    )
+
+    # 3. Model Training
+    # Prepare model save path with random timestamp
+    timestamp = int(time.time())
+    random_uuid = uuid.uuid4().hex[:8]
+    model_save_path = os.path.join(OUTPUT_DIR, f"autogluon_model_{timestamp}_{random_uuid}")
+    os.makedirs(model_save_path, exist_ok=True)
+
+    # AutoGluon will automatically infer modalities
+    predictor = MultiModalPredictor(
+        label="label",
+        problem_type="binary",
+        path=model_save_path
+    )
+
+    # Fit the model
+    predictor.fit(
+        train_data=train_data[feature_cols + ['label']],
+        time_limit=None,  # No explicit time limit, but script is killed after 1h
+        # presets="best_quality",  # Uncomment for best quality, but may take longer
+    )
+
+    # Save the model (already saved in fit, but ensure it's there)
+    predictor.save(model_save_path)
+
+    # 4. Prediction on Test Set
+    # Prepare test data for prediction (must match training features, but without label)
+    test_pred_df = test_df.copy()
+    test_pred_features = test_pred_df[feature_cols]
+
+    # Get predicted probabilities for class 1 (malignant)
+    proba = predictor.predict_proba(test_pred_features)
+    # For binary, proba is a DataFrame with columns [0, 1], get column 1
+    if isinstance(proba, pd.DataFrame):
+        if 1 in proba.columns:
+            malignancy_prob = proba[1].values
+        elif '1' in proba.columns:
+            malignancy_prob = proba['1'].values
+        else:
+            # fallback: take the last column
+            malignancy_prob = proba.iloc[:, -1].values
+    else:
+        # fallback: assume it's a numpy array
+        malignancy_prob = np.array(proba).reshape(-1)
+
+    # 5. Prepare Output File
+    # Output format: same as test.csv, but with an extra column 'label' (matching train)
+    # Column order: all columns from test.csv, then 'label'
+    output_df = test_df.copy()
+    output_df['label'] = malignancy_prob
+
+    # Ensure output columns match: test.csv columns + 'label'
+    expected_columns = list(test_df.columns) + ['label']
+    output_df = output_df[expected_columns]
+
+    # Save to output directory, same format as test.csv (CSV)
+    output_df.to_csv(RESULT_FILE, index=False)
+
+    # 6. Validation Checks
+    # a) Check that output file has same number of rows as test set
+    pred_df = pd.read_csv(RESULT_FILE)
+    assert len(pred_df) == len(test_df), f"Prediction file row count {len(pred_df)} != test set {len(test_df)}"
+
+    # b) Check that indices (row order) are preserved
+    assert (pred_df[test_df.columns] == test_df).all().all(), "Test set indices or columns not preserved in output"
+
+    # c) Check that output columns match required columns
+    assert list(pred_df.columns) == expected_columns, f"Output columns {list(pred_df.columns)} != expected {expected_columns}"
+
+    # d) Check that label column is float and in [0,1]
+    assert np.issubdtype(pred_df['label'].dtype, np.floating), "Label column is not float"
+    assert ((pred_df['label'] >= 0) & (pred_df['label'] <= 1)).all(), "Label probabilities not in [0,1]"
+
+    # e) Check output format (CSV)
+    assert RESULT_FILE.endswith('.csv'), "Output file is not CSV"
+
+    print(f"Prediction file '{RESULT_FILE}' created successfully with {len(pred_df)} rows.")
+
+    # 7. Validation Metric on Held-out Set
+    try:
+        val_features = val_data[feature_cols]
+        val_labels = val_data['label'].values
+        val_proba = predictor.predict_proba(val_features)
+        if isinstance(val_proba, pd.DataFrame):
+            if 1 in val_proba.columns:
+                val_pred = val_proba[1].values
+            elif '1' in val_proba.columns:
+                val_pred = val_proba['1'].values
+            else:
+                val_pred = val_proba.iloc[:, -1].values
+        else:
+            val_pred = np.array(val_proba).reshape(-1)
+        val_auc = roc_auc_score(val_labels, val_pred)
+        print(f"Validation AUROC on held-out set: {val_auc:.4f}")
+    except Exception as e:
+        print(f"Validation step failed: {e}")
