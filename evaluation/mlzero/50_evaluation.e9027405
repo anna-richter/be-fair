@@ -1,0 +1,120 @@
+Using Python 3.11.15 environment at: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/50-addition_3/node_5/conda_env
+Checked 15 packages in 4.91s
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/50-addition_3/node_5/conda_env/lib/python3.11/site-packages/autogluon/multimodal/data/templates.py:16: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+=================== System Info ===================
+AutoGluon Version:  1.5.1b20260521
+Python Version:     3.11.15
+Operating System:   Linux
+Platform Machine:   x86_64
+Platform Version:   #1 SMP PREEMPT_DYNAMIC Fri Nov 15 12:04:32 UTC 2024
+CPU Count:          2
+Pytorch Version:    2.9.1+cu128
+CUDA Version:       12.8
+GPU Memory:         GPU 0: 79.25/79.25 GB | GPU 1: 79.25/79.25 GB
+Total GPU Memory:   Free: 158.51 GB, Allocated: 0.00 GB, Total: 158.51 GB
+GPU Count:          2
+Memory Avail:       1994.00 GB / 2015.18 GB (98.9%)
+Disk Space Avail:   1950.32 GB / 2048.00 GB (95.2%)
+===================================================
+
+AutoMM starts to create your model. ✨✨✨
+
+To track the learning progress, you can open a terminal and launch Tensorboard:
+    ```shell
+    # Assume you have installed tensorboard
+    tensorboard --logdir /sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a
+    ```
+
+[rank: 0] Seed set to 0
+GPU Count: 2
+GPU Count to be Used: 1
+GPU 0 Name: NVIDIA A100-SXM4-80GB
+GPU 0 Memory: 0.75GB/80.0GB (Used/Total)
+GPU 1 Name: NVIDIA A100-SXM4-80GB
+GPU 1 Memory: 0.75GB/80.0GB (Used/Total)
+
+Using 16bit Automatic Mixed Precision (AMP)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+You are using a CUDA device ('NVIDIA A100-SXM4-80GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1]
+
+  | Name              | Type                            | Params | Mode 
+------------------------------------------------------------------------------
+0 | model             | TimmAutoModelForImagePrediction | 194 M  | train
+1 | validation_metric | BinaryAUROC                     | 0      | train
+2 | loss_func         | FocalLoss                       | 0      | train
+------------------------------------------------------------------------------
+194 M     Trainable params
+0         Non-trainable params
+194 M     Total params
+779.994   Total estimated model params size (MB)
+468       Modules in train mode
+0         Modules in eval mode
+SLURM auto-requeueing enabled. Setting signal handlers.
+Epoch 0, global step 26: 'val_roc_auc' reached 0.77568 (best 0.77568), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=0-step=26.ckpt' as top 3
+Epoch 0, global step 52: 'val_roc_auc' reached 0.88266 (best 0.88266), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=0-step=52.ckpt' as top 3
+Epoch 0, global step 78: 'val_roc_auc' reached 0.91099 (best 0.91099), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=0-step=78.ckpt' as top 3
+Epoch 0, global step 104: 'val_roc_auc' reached 0.91982 (best 0.91982), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=0-step=104.ckpt' as top 3
+Epoch 1, global step 131: 'val_roc_auc' reached 0.93240 (best 0.93240), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=1-step=131.ckpt' as top 3
+Epoch 1, global step 157: 'val_roc_auc' reached 0.92558 (best 0.93240), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=1-step=157.ckpt' as top 3
+Epoch 1, global step 183: 'val_roc_auc' reached 0.93552 (best 0.93552), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=1-step=183.ckpt' as top 3
+Epoch 1, global step 209: 'val_roc_auc' reached 0.94223 (best 0.94223), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=1-step=209.ckpt' as top 3
+Epoch 2, global step 236: 'val_roc_auc' reached 0.94122 (best 0.94223), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=2-step=236.ckpt' as top 3
+Epoch 2, global step 262: 'val_roc_auc' reached 0.94649 (best 0.94649), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=2-step=262.ckpt' as top 3
+Epoch 2, global step 288: 'val_roc_auc' reached 0.94475 (best 0.94649), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=2-step=288.ckpt' as top 3
+Epoch 2, global step 314: 'val_roc_auc' reached 0.95350 (best 0.95350), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=2-step=314.ckpt' as top 3
+Epoch 3, global step 341: 'val_roc_auc' reached 0.95658 (best 0.95658), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=3-step=341.ckpt' as top 3
+Epoch 3, global step 367: 'val_roc_auc' reached 0.95269 (best 0.95658), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=3-step=367.ckpt' as top 3
+Epoch 3, global step 393: 'val_roc_auc' was not in top 3
+Epoch 3, global step 419: 'val_roc_auc' was not in top 3
+Epoch 4, global step 446: 'val_roc_auc' was not in top 3
+Epoch 4, global step 472: 'val_roc_auc' was not in top 3
+Epoch 4, global step 498: 'val_roc_auc' reached 0.95767 (best 0.95767), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=4-step=498.ckpt' as top 3
+Epoch 4, global step 524: 'val_roc_auc' reached 0.95579 (best 0.95767), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=4-step=524.ckpt' as top 3
+Epoch 5, global step 551: 'val_roc_auc' was not in top 3
+Epoch 5, global step 577: 'val_roc_auc' reached 0.95655 (best 0.95767), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=5-step=577.ckpt' as top 3
+Epoch 5, global step 603: 'val_roc_auc' reached 0.95955 (best 0.95955), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=5-step=603.ckpt' as top 3
+Epoch 5, global step 629: 'val_roc_auc' was not in top 3
+Epoch 6, global step 656: 'val_roc_auc' was not in top 3
+Epoch 6, global step 682: 'val_roc_auc' reached 0.95661 (best 0.95955), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=6-step=682.ckpt' as top 3
+Epoch 6, global step 708: 'val_roc_auc' was not in top 3
+Epoch 6, global step 734: 'val_roc_auc' reached 0.95868 (best 0.95955), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=6-step=734.ckpt' as top 3
+Epoch 7, global step 761: 'val_roc_auc' reached 0.95887 (best 0.95955), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=7-step=761.ckpt' as top 3
+Epoch 7, global step 787: 'val_roc_auc' reached 0.96129 (best 0.96129), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=7-step=787.ckpt' as top 3
+Epoch 7, global step 813: 'val_roc_auc' was not in top 3
+Epoch 7, global step 839: 'val_roc_auc' was not in top 3
+Epoch 8, global step 866: 'val_roc_auc' reached 0.96472 (best 0.96472), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=8-step=866.ckpt' as top 3
+Epoch 8, global step 892: 'val_roc_auc' reached 0.96477 (best 0.96477), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=8-step=892.ckpt' as top 3
+Epoch 8, global step 918: 'val_roc_auc' reached 0.96245 (best 0.96477), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=8-step=918.ckpt' as top 3
+Epoch 8, global step 944: 'val_roc_auc' reached 0.96267 (best 0.96477), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=8-step=944.ckpt' as top 3
+Epoch 9, global step 971: 'val_roc_auc' was not in top 3
+Epoch 9, global step 997: 'val_roc_auc' was not in top 3
+Epoch 9, global step 1023: 'val_roc_auc' reached 0.96314 (best 0.96477), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a/epoch=9-step=1023.ckpt' as top 3
+Epoch 9, global step 1049: 'val_roc_auc' was not in top 3
+Epoch 10, global step 1076: 'val_roc_auc' was not in top 3
+Start to fuse 3 checkpoints via the greedy soup algorithm.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+AutoMM has created your model. 🎉🎉🎉
+
+To load the model, use the code below:
+    ```python
+    from autogluon.multimodal import MultiModalPredictor
+    predictor = MultiModalPredictor.load("/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/50-addition_3/automm_model_5e4f46b02e0b49d6afbf9ff1829b8f8a")
+    ```
+
+If you are not satisfied with the model, try to increase the training time, 
+adjust the hyperparameters (https://auto.gluon.ai/stable/tutorials/multimodal/advanced_topics/customization.html),
+or post issues on GitHub (https://github.com/autogluon/autogluon/issues).
+
+
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.

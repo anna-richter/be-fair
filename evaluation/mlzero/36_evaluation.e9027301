@@ -1,0 +1,90 @@
+Using Python 3.11.15 environment at: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/36-addition_1/node_8/conda_env
+Checked 15 packages in 1.74s
+/sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/36-addition_1/node_8/conda_env/lib/python3.11/site-packages/autogluon/multimodal/data/templates.py:16: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+=================== System Info ===================
+AutoGluon Version:  1.5.1b20260521
+Python Version:     3.11.15
+Operating System:   Linux
+Platform Machine:   x86_64
+Platform Version:   #1 SMP PREEMPT_DYNAMIC Fri Nov 15 12:04:32 UTC 2024
+CPU Count:          2
+Pytorch Version:    2.9.1+cu128
+CUDA Version:       12.8
+GPU Memory:         GPU 0: 79.25/79.25 GB | GPU 1: 79.25/79.25 GB
+Total GPU Memory:   Free: 158.51 GB, Allocated: 0.00 GB, Total: 158.51 GB
+GPU Count:          2
+Memory Avail:       1979.53 GB / 2015.19 GB (98.2%)
+Disk Space Avail:   1948.07 GB / 2048.00 GB (95.1%)
+===================================================
+
+AutoMM starts to create your model. ✨✨✨
+
+To track the learning progress, you can open a terminal and launch Tensorboard:
+    ```shell
+    # Assume you have installed tensorboard
+    tensorboard --logdir /sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399
+    ```
+
+[rank: 0] Seed set to 0
+GPU Count: 2
+GPU Count to be Used: 1
+GPU 0 Name: NVIDIA A100-SXM4-80GB
+GPU 0 Memory: 0.75GB/80.0GB (Used/Total)
+GPU 1 Name: NVIDIA A100-SXM4-80GB
+GPU 1 Memory: 0.75GB/80.0GB (Used/Total)
+
+Using 16bit Automatic Mixed Precision (AMP)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+You are using a CUDA device ('NVIDIA A100-SXM4-80GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1]
+
+  | Name              | Type                | Params | Mode 
+------------------------------------------------------------------
+0 | model             | MultimodalFusionMLP | 97.4 M | train
+1 | validation_metric | BinaryAUROC         | 0      | train
+2 | loss_func         | FocalLoss           | 0      | train
+------------------------------------------------------------------
+97.4 M    Trainable params
+0         Non-trainable params
+97.4 M    Total params
+389.782   Total estimated model params size (MB)
+940       Modules in train mode
+0         Modules in eval mode
+SLURM auto-requeueing enabled. Setting signal handlers.
+Epoch 0, global step 58: 'val_roc_auc' reached 0.88320 (best 0.88320), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=0-step=58.ckpt' as top 3
+Epoch 0, global step 117: 'val_roc_auc' reached 0.91338 (best 0.91338), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=0-step=117.ckpt' as top 3
+Epoch 1, global step 175: 'val_roc_auc' reached 0.92956 (best 0.92956), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=1-step=175.ckpt' as top 3
+Epoch 1, global step 234: 'val_roc_auc' reached 0.94194 (best 0.94194), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=1-step=234.ckpt' as top 3
+Epoch 2, global step 292: 'val_roc_auc' reached 0.94582 (best 0.94582), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=2-step=292.ckpt' as top 3
+Epoch 2, global step 351: 'val_roc_auc' reached 0.95068 (best 0.95068), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=2-step=351.ckpt' as top 3
+Epoch 3, global step 409: 'val_roc_auc' reached 0.95418 (best 0.95418), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=3-step=409.ckpt' as top 3
+Epoch 3, global step 468: 'val_roc_auc' reached 0.96024 (best 0.96024), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=3-step=468.ckpt' as top 3
+Epoch 4, global step 526: 'val_roc_auc' reached 0.96073 (best 0.96073), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=4-step=526.ckpt' as top 3
+Epoch 4, global step 585: 'val_roc_auc' reached 0.96047 (best 0.96073), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399/epoch=4-step=585.ckpt' as top 3
+`Trainer.fit` stopped: `max_epochs=5` reached.
+Start to fuse 3 checkpoints via the greedy soup algorithm.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+AutoMM has created your model. 🎉🎉🎉
+
+To load the model, use the code below:
+    ```python
+    from autogluon.multimodal import MultiModalPredictor
+    predictor = MultiModalPredictor.load("/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/36-addition_1/autogluon_model_1779817258_4dc00399")
+    ```
+
+If you are not satisfied with the model, try to increase the training time, 
+adjust the hyperparameters (https://auto.gluon.ai/stable/tutorials/multimodal/advanced_topics/customization.html),
+or post issues on GitHub (https://github.com/autogluon/autogluon/issues).
+
+
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.

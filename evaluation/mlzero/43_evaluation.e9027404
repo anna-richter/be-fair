@@ -1,0 +1,114 @@
+Using Python 3.11.15 environment at: /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/43-addition_2/node_11/conda_env
+Checked 15 packages in 4.68s
+=================== System Info ===================
+AutoGluon Version:  1.5.1b20260521
+Python Version:     3.11.15
+Operating System:   Linux
+Platform Machine:   x86_64
+Platform Version:   #1 SMP PREEMPT_DYNAMIC Fri Nov 15 12:04:32 UTC 2024
+CPU Count:          2
+Pytorch Version:    2.9.1+cu128
+CUDA Version:       12.8
+GPU Memory:         GPU 0: 79.25/79.25 GB | GPU 1: 79.25/79.25 GB
+Total GPU Memory:   Free: 158.51 GB, Allocated: 0.00 GB, Total: 158.51 GB
+GPU Count:          2
+Memory Avail:       1993.75 GB / 2015.18 GB (98.9%)
+Disk Space Avail:   1950.07 GB / 2048.00 GB (95.2%)
+===================================================
+AutoGluon infers your prediction problem is: 'binary' (because only two unique label-values observed).
+	2 unique label values:  ['malignant', 'benign']
+	If 'binary' is not the correct problem_type, please manually specify the problem_type parameter during Predictor init (You may specify problem_type as one of: ['binary', 'multiclass', 'regression', 'quantile'])
+
+AutoMM starts to create your model. ✨✨✨
+
+To track the learning progress, you can open a terminal and launch Tensorboard:
+    ```shell
+    # Assume you have installed tensorboard
+    tensorboard --logdir /sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb
+    ```
+
+[rank: 0] Seed set to 42
+GPU Count: 2
+GPU Count to be Used: 1
+GPU 0 Name: NVIDIA A100-SXM4-80GB
+GPU 0 Memory: 0.75GB/80.0GB (Used/Total)
+GPU 1 Name: NVIDIA A100-SXM4-80GB
+GPU 1 Memory: 0.75GB/80.0GB (Used/Total)
+
+Using 16bit Automatic Mixed Precision (AMP)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+You are using a CUDA device ('NVIDIA A100-SXM4-80GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1]
+
+  | Name              | Type                            | Params | Mode 
+------------------------------------------------------------------------------
+0 | model             | TimmAutoModelForImagePrediction | 87.6 M | train
+1 | validation_metric | BinaryAUROC                     | 0      | train
+2 | loss_func         | FocalLoss                       | 0      | train
+------------------------------------------------------------------------------
+87.6 M    Trainable params
+0         Non-trainable params
+87.6 M    Total params
+350.274   Total estimated model params size (MB)
+470       Modules in train mode
+0         Modules in eval mode
+SLURM auto-requeueing enabled. Setting signal handlers.
+Epoch 0, global step 29: 'val_roc_auc' reached 0.69491 (best 0.69491), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=0-step=29.ckpt' as top 3
+Epoch 0, global step 58: 'val_roc_auc' reached 0.82112 (best 0.82112), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=0-step=58.ckpt' as top 3
+Epoch 0, global step 87: 'val_roc_auc' reached 0.86928 (best 0.86928), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=0-step=87.ckpt' as top 3
+Epoch 0, global step 117: 'val_roc_auc' reached 0.87686 (best 0.87686), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=0-step=117.ckpt' as top 3
+Epoch 1, global step 146: 'val_roc_auc' reached 0.88767 (best 0.88767), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=1-step=146.ckpt' as top 3
+Epoch 1, global step 175: 'val_roc_auc' reached 0.90196 (best 0.90196), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=1-step=175.ckpt' as top 3
+Epoch 1, global step 204: 'val_roc_auc' reached 0.91342 (best 0.91342), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=1-step=204.ckpt' as top 3
+Epoch 1, global step 234: 'val_roc_auc' reached 0.92698 (best 0.92698), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=1-step=234.ckpt' as top 3
+Epoch 2, global step 263: 'val_roc_auc' reached 0.93070 (best 0.93070), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=2-step=263.ckpt' as top 3
+Epoch 2, global step 292: 'val_roc_auc' reached 0.92568 (best 0.93070), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=2-step=292.ckpt' as top 3
+Epoch 2, global step 321: 'val_roc_auc' reached 0.93467 (best 0.93467), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=2-step=321.ckpt' as top 3
+Epoch 2, global step 351: 'val_roc_auc' reached 0.93529 (best 0.93529), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=2-step=351.ckpt' as top 3
+Epoch 3, global step 380: 'val_roc_auc' reached 0.94201 (best 0.94201), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=3-step=380.ckpt' as top 3
+Epoch 3, global step 409: 'val_roc_auc' reached 0.93842 (best 0.94201), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=3-step=409.ckpt' as top 3
+Epoch 3, global step 438: 'val_roc_auc' reached 0.94254 (best 0.94254), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=3-step=438.ckpt' as top 3
+Epoch 3, global step 468: 'val_roc_auc' reached 0.94535 (best 0.94535), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=3-step=468.ckpt' as top 3
+Epoch 4, global step 497: 'val_roc_auc' reached 0.94454 (best 0.94535), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=4-step=497.ckpt' as top 3
+Epoch 4, global step 526: 'val_roc_auc' reached 0.94641 (best 0.94641), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=4-step=526.ckpt' as top 3
+Epoch 4, global step 555: 'val_roc_auc' reached 0.95202 (best 0.95202), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=4-step=555.ckpt' as top 3
+Epoch 4, global step 585: 'val_roc_auc' reached 0.94805 (best 0.95202), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=4-step=585.ckpt' as top 3
+Epoch 5, global step 614: 'val_roc_auc' reached 0.95004 (best 0.95202), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=5-step=614.ckpt' as top 3
+Epoch 5, global step 643: 'val_roc_auc' was not in top 3
+Epoch 5, global step 672: 'val_roc_auc' reached 0.95430 (best 0.95430), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=5-step=672.ckpt' as top 3
+Epoch 5, global step 702: 'val_roc_auc' reached 0.95170 (best 0.95430), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=5-step=702.ckpt' as top 3
+Epoch 6, global step 731: 'val_roc_auc' was not in top 3
+Epoch 6, global step 760: 'val_roc_auc' reached 0.95225 (best 0.95430), saving model to '/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb/epoch=6-step=760.ckpt' as top 3
+Epoch 6, global step 789: 'val_roc_auc' was not in top 3
+Epoch 6, global step 819: 'val_roc_auc' was not in top 3
+Start to fuse 3 checkpoints via the greedy soup algorithm.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+AutoMM has created your model. 🎉🎉🎉
+
+To load the model, use the code below:
+    ```python
+    from autogluon.multimodal import MultiModalPredictor
+    predictor = MultiModalPredictor.load("/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/autogluon_model_20260526_194146_6b3760bb")
+    ```
+
+If you are not satisfied with the model, try to increase the training time, 
+adjust the hyperparameters (https://auto.gluon.ai/stable/tutorials/multimodal/advanced_topics/customization.html),
+or post issues on GitHub (https://github.com/autogluon/autogluon/issues).
+
+
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+SLURM auto-requeueing enabled. Setting signal handlers.
+Traceback (most recent call last):
+  File "/sc-scratch/sc-scratch-ikim-guidlight/be-fair/evaluation/mlzero/43-addition_2/43-addition_2_generated_code_DDI.py", line 204, in <module>
+    assert all(pred_df["image_name"] == test["image_name"]), "Test image_name order mismatch"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Test image_name order mismatch
+srun: error: s-sc-dgx01: task 0: Exited with exit code 1

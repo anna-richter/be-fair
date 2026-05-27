@@ -1,0 +1,1 @@
+ResNet50+EfficientNetB0 avgpool features, tabular features (skin_tone, alternative_skin_tone)
