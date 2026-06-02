@@ -184,7 +184,7 @@ Tally token usage with `python utils/AIDE_sum_token_usage.py` and `python utils/
 
 ## Evaluation on the external DDI test set
 
-Each best solution is re‑run on DDI using minor patches documented in `evaluation/aide/prompt_prepare_evaluation.md` and `evaluation/mlzero/prompt_prepare_evaluation.md` (path swaps, `.jpg → .png` extension fix, etc.). Then:
+Each best solution is re‑run on DDI using minor patches documented in `evaluation/aide/prompt_prepare_evaluation.md` and `evaluation/mlzero/prompt_prepare_evaluation.md` (path swaps, `.jpg → .png` extension fix, etc.). Make sure to provide your own paths for the Fitzpatrick17k data, the DDI data and the output folder. Then you can run it with:
 
 ```bash
 # AIDE
