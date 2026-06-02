@@ -92,7 +92,7 @@ The DDI evaluation set is the [Diverse Dermatology Images dataset](https://ddi-d
 
 ## Prompts
 
-In order to steer the MLE agent towards producing a pipeline that is fair towards skin_tone, we add three additional prompts to the base prompt. For all prompts we add "Evaluation metric: Area under the receiver operator curve (AUROC)".
+In order to steer the MLE agent towards producing a pipeline that is fair towards skin_tone, we add three additional prompts to the base prompt. For all prompts we add "Evaluation metric: Area under the receiver operatoring characteristic (AUROC)".
 
 **basic_prompt**  : *"I'm a dermatologist. My colleagues and I have curated a skin lesion dataset over the past several years. I need a model trained on this data to classify lesions as malignant or benign. The trained model should be saved, and I need a function that takes a folder path of new images and returns a malignancy probability (0–1) for each image."*
 
@@ -229,7 +229,7 @@ The human (dermatologist) results we compare against were taken from the [DDI pa
 ## Upstream tools
 
 - **AIDE** - Schmidt et al., *AIDE: AI‑driven Exploration in the Space of Code* (2025). [https://github.com/WecoAI/aideml](https://github.com/WecoAI/aideml)
-- **MLZero** - [https://github.com/autogluon/autogluon-assistant](https://github.com/autogluon/autogluon-assistant)
+- **MLZero** - Fang et al., *Mlzero: A multi-agent system for end-to-end machine learning automation* (NeurIPS 2025). [https://github.com/autogluon/autogluon-assistant](https://github.com/autogluon/autogluon-assistant)
 - **MEDFAIR** - Zong et al., *MEDFAIR: Benchmarking Fairness for Medical Imaging* (ICLR 2023). [https://github.com/ys-zong/MEDFAIR](https://github.com/ys-zong/MEDFAIR)
 
 ## Datasets
