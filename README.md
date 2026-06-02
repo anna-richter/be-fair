@@ -234,7 +234,7 @@ The human (dermatologist) results we compare against were taken from the [DDI pa
 
 ## Datasets
 
-- **Fitzpatrick17k** - Groh et al., *Evaluating Deep Neural Networks Trained on Clinical Images in Dermatology with the Fitzpatrick 17k Dataset* (CVPRW 2021). [https://github.com/mattgroh/fitzpatrick17k](https://github.com/mattgroh/fitzpatrick17k)
+- **Fitzpatrick17k** - Groh et al., *Evaluating Deep Neural Networks Trained on Clinical Images in Dermatology with the Fitzpatrick 17k Dataset* (CVPR 2021). [https://github.com/mattgroh/fitzpatrick17k](https://github.com/mattgroh/fitzpatrick17k)
 - **Fitzpatrick17k clean** - Abhishek et al., *Investigating the Quality of DermaMNIST and Fitzpatrick17k Dermatological Image Datasets* (Scientific Data 2025). [https://github.com/kakumarabhishek/Corrected-Skin-Image-Datasets](https://github.com/kakumarabhishek/Corrected-Skin-Image-Datasets)
 - **Diverse Dermatology Images (DDI)** - Daneshjou et al., *Disparities in dermatology AI performance on a diverse, curated clinical image set* (Science Advances 2022). [https://ddi-dataset.github.io/](https://ddi-dataset.github.io/)
 
