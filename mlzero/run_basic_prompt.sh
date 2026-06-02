@@ -21,10 +21,10 @@ conda activate mlzero_env
 export OPENAI_API_KEY=$OPENAI_API_KEY
 
 srun mlzero \
-	--input /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/basic_prompt_data \
-	--config /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/conf.yaml \
+	--input ./basic_prompt_data \
+	--config ./conf.yaml \
 	--max-iterations 20 \
 	--initial-instruction "Hard time limit: each script run is killed after 3600 s (1 hour) wall-clock, covering data loading + training + inference combined." \
-	--output /sc-scratch/sc-scratch-ikim-guidlight/be-fair/mlzero/${SLURM_ARRAY_TASK_ID}-basic_prompt \
+	--output ./${SLURM_ARRAY_TASK_ID}-basic_prompt \
 	--continuous_improvement \
 	--remove-iteration-folders

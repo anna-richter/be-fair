@@ -1,3 +1,7 @@
+# python 3.12.13 used
+
+# for this cluster, specific torchversion is necessary, install this first
 # pip install torch torchvision torchaudio  --index-url https://download.pytorch.org/whl/cu126
 
+# use patched version of AIDE that fixes if __name__==__main__ bug
 aideml @ git+https://github.com/anna-richter/aideml.git@989e8e2df8a14eaa6dafd3747a6c77df615aed8e

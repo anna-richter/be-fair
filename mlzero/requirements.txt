@@ -1,5 +1,8 @@
+# use python 3.11 for mlzero experiments
+
+# for our cluster, specific torch version is necessary, install this first
 # pip install torch torchvision torchaudio  --index-url https://download.pytorch.org/whl/cu126
 
-# old version pip install uv && uv pip install autogluon.assistant>=1.0
 
-# correct version: pip install uv && uv pip install git+https://github.com/autogluon/autogluon-assistant.git
+# then install mlzero
+# pip install uv && uv pip install git+https://github.com/autogluon/autogluon-assistant.git
